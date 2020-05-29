@@ -1,0 +1,19 @@
+{
+  "name": "machbarschaft-backend",
+  "version": "0.0.1",
+  "description": "NodeJS Backend for Machbarschaft",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leenert/Machbarschaft-Backend.git"
+  },
+  "author": "Marc Sommer, Janik Müller, Andreas Reinecke, Leenert Specht",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/Leenert/Machbarschaft-Backend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
