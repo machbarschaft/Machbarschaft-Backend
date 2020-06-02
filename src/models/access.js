@@ -7,6 +7,6 @@ var Access = new Schema({
     password: String
 });
 
-Access.plugin(passportLocalMongoose);
+Access.plugin(passportLocalMongoose, { usernameField : 'email' });
 
-module.exports = mongoose.model('Access', Access);
+module.exports = mongoose.model('Access', Access, 'Access');
