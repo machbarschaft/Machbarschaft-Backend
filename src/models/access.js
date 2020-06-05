@@ -1,12 +1,13 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var passportLocalMongoose = require('passport-local-mongoose');
+import mongoose from 'mongoose';
+import passportLocalMongoose from 'passport-local-mongoose';
 
-var Access = new Schema({
+const accessSchema = new mongoose.Schema({
     email: String,
     password: String
 });
 
-Access.plugin(passportLocalMongoose);
+accessSchema.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('Access', Access);
+const Access = mongoose.model('Access', accessSchema);
+
+export default Access;
