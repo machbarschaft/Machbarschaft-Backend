@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema({
   },
   profile: userProfileSchema,
   access: {
-    type: mongoose.Schem.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Access',
   },
   mobileTokens: [

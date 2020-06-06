@@ -3,7 +3,7 @@
 import 'dotenv/config';
 import models from './src/models/bundle';
 import app from './src/app';
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const http = require('http');
 
@@ -12,7 +12,8 @@ app.set('port', process.env.PORT);
 const server = http.createServer(app);
 
 //Connect to the MongoDB database; then start the server
-mongoose.connect(process.env.MONGODB_URI);
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(async () => server.listen(process.env.PORT))
   .catch((err) => {
     console.log('Error connecting to the database', err.message);
