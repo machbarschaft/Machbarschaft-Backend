@@ -18,7 +18,7 @@ module.exports = {
     semi: true,
     singleQuote: true,
     trailingComma: 'es5',
-    port: process.env.PORT        || '3000';
-    mongoURI:process.env.MONGODB_URI || 'mongodb://localhost:27017/machbarschaft';
+    port: process.env.PORT        || '3000',
+    mongoURI: process.env.MONGODB_URI || 'mongodb://localhost:27017/machbarschaft',
     jwt
 }
