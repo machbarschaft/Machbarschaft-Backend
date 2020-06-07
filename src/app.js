@@ -14,7 +14,7 @@ var Access = require('./models/access');
 var auth  = require('./routes/auth');
 const config = require('./config');
 var JwtCookieComboStrategy = require('passport-jwt-cookiecombo');
-
+var jwt = require('jsonwebtoken');
 
 const app = express();
 
@@ -33,13 +33,25 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser(config.jwt.secret));
 
+// Authenticate API calls with the Cookie Combo Strategy
+
+passport.use(new JwtCookieComboStrategy({
+    secretOrPublicKey: config.jwt.secret,
+    jwtVerifyOptions: config.jwt.options,
+    passReqToCallback: false,
+}, (payload, done) => {
+    return done(null, payload.user, {});
+}));
 
 // use static authenticate method of model in LocalStrategy
 passport.use(new LocalStrategy({ usernameField: 'email' }, Access.authenticate()));
 
 // use static serialize and deserialize of model for passport session support
+
 passport.serializeUser(Access.serializeUser());
 passport.deserializeUser(Access.deserializeUser());
+
+
 
 // API routes
 app.use('/auth', auth);
