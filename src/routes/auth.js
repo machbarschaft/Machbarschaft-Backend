@@ -6,18 +6,7 @@ var passport = require('passport'), LocalStrategy = require('passport-local').St
 var Access = require('../models/access');
 const config = require('../config');
 var jwt = require('jsonwebtoken');
-var JwtCookieComboStrategy = require('passport-jwt-cookiecombo');
 
-
-// Authenticate API calls with the Cookie Combo Strategy
-
-passport.use(new JwtCookieComboStrategy({
-    secretOrPublicKey: config.jwt.secret,
-    jwtVerifyOptions: config.jwt.options,
-    passReqToCallback: false
-}, (payload, done) => {
-    return done(null, payload.user, {});
-}));
 
 // check if user with given email already exists
 
@@ -48,7 +37,8 @@ router.post('/login', passport.authenticate('local', {
 
     // Create and sign json web token with the user as payload
     jwt.sign({
-        uid: req.user._id
+        'user': {
+        uid: req.user._id }
     }, config.jwt.secret, config.jwt.options, (err, token) => {
         // error handling at JWT signing
         if (err) return res.status(500).json(err);
@@ -63,14 +53,17 @@ router.post('/login', passport.authenticate('local', {
 
 // Authentication procedure
 
-/*router.use('/authenticate', passport.authenticate('jwt-cookiecombo', {
+router.post('/authenticate', passport.authenticate('jwt-cookiecombo', {
     session: false
-}), function(req, res) {
-    console.log(req);
-    res.status(200).send();
-});*/
+}), (req, res) => {
+    Access.findOne({_id: req.user.uid}, function(err, user){
+        if(err) { return res.status(401).send('didnt find user') }
+        if(user) { res.status(200).send('user id: ' + user._id + ', user mail address: ' + user.email) }
+    }); 
+});
 
-// Logout procedure
+        
+// Logout procedure, doesn't do anything for now as our authentication is cookie based
 
 router.get('/logout', (req, res) => {
     req.logout();
