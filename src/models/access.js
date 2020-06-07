@@ -6,8 +6,11 @@ const accessSchema = new mongoose.Schema({
     password: String
 });
 
-accessSchema.plugin(passportLocalMongoose);
 
-const Access = mongoose.model('Access', accessSchema);
+// const Access = mongoose.model('Access', accessSchema);
 
-export default Access;
+accessSchema.plugin(passportLocalMongoose, { usernameField : 'email' });
+
+module.exports = mongoose.model('Access', accessSchema, 'Access');
+
+//export default Access;
