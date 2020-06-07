@@ -5,6 +5,7 @@
 var JwtCookieComboStrategy = require('passport-jwt-cookiecombo');
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
+var cookieParser = require('cookie-parser');
 
 // =============================================================================
 // Strong secret to sign the token
@@ -39,7 +40,7 @@ var jsonWebToken = jwt.sign({
 // =============================================================================
 // Store the token in an httpOnly secure signed cookie and...
 // =============================================================================
-// res.cookie('jwt', jsonWebToken, {httpOnly: true, secure: true, signed: true});
+console.log(cookieParser('jwt', jsonWebToken, {httpOnly: true, secure: true, signed: true}));
 
 // =============================================================================
 // ...or use it in the authorization header of your requests
