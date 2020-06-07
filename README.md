@@ -37,12 +37,6 @@ JWT_SECRET=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAru//ki6E7T3jACIHGqwaV+gm5
 
 ## Start the project
 
-**Development environment**
-
-```
-npm run devstart
-```
-
 **Production environment**
 
 ```
