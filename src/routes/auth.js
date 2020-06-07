@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-var passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
+var passport = require('passport');
 var Access = require('../models/access');
 const config = require('../config');
 var jwt = require('jsonwebtoken');
