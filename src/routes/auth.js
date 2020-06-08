@@ -12,7 +12,9 @@ const AccessModel = require('../models/access');
 // check if user with given email already exists
 
 router.post('/checkEmail', (req, res) =>
-    AccessModel.findOne({email: req.body.email}, function (err, user) {
+    AccessModel.findOne({
+        email: req.body.email
+    }, function (err, user) {
         if (err) {
             console.error(err);
             return res.status(400).send();
@@ -30,7 +32,9 @@ router.post('/checkEmail', (req, res) =>
 
 router.post('/register', (req, res) => {
     AccessModel.register(
-        new AccessModel({email: req.body.email}),
+        new AccessModel({
+            email: req.body.email
+        }),
         req.body.password,
         function (err) {
             if (err) {
@@ -87,12 +91,15 @@ router.post(
         AccessModel.findOne({_id: req.user.uid}, function (err, user) {
             if (err) {
                 console.error(err);
-                return res.status(401).send('didnt find user');
+                return res.status(401).send();
             }
             if (user) {
                 return res
                     .status(200)
-                    .send('user id: ' + user._id + ', user mail address: ' + user.email);
+                    .json({
+                        uid: user._id,
+                        email: user.email
+                    });
             }
         });
     }
