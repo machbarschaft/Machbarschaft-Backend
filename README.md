@@ -13,7 +13,7 @@ Just for the backend application:
 
 * mongodb [official installation guide](https://docs.mongodb.org/manual/administration/install-community/)
 
-## Setup
+## Setup (before first run)
 
 **Install node dependencies**
 
@@ -24,3 +24,31 @@ npm install
 **Set up your database**
 
 ' Start the database server
+
+**Set the environment variables**
+
+Create a .env file with the following entries (the JWT secret is for test purposes and may be subject to changes):
+
+```
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/machbarschaft
+JWT_SECRET=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAru//ki6E7T3jACIHGqwaV+gm5/ezGFUCqI7k/6Vdh7HvhOCGdL8hyEIUmOcwhYBgmkAFunuZSAq6wq8xk6QjwkHNya9nd+Nfv2/ynfqNgUNBOiYCoIVTTAYmee46tlvXBYrNYHDcPLe1PJTqL4ytgD+WmwE1oHkIZ6qDflHsh0/KnV/+0HZm6qLtW2uPaKqOfF/YitcSNBzlxrDSYBPEH4+FyWx+CGnyxldLhfiV986O6bnAHhOjX81/ASDyE4wsKRgziKR4gRReINblAeRjCwTVT2pCL623+JhrC1Of38U6aJ92zqKJxw5744YcZsSgiVse8O8wccjRsv+nRyMnZQIDAQAB
+```
+
+## Start the project
+
+**Production environment**
+
+```
+npm start
+```
+**API usage**
+
+Use
+```
+x-www-form-urlencoded
+```
+POST requests to send data to the nodejs application. 
+
+List of API endpoints to be used:
+TBD
