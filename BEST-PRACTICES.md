@@ -21,6 +21,8 @@ naming convention:
 
 Development and review guidelines:
 - create 1 feature branch per ticket from master
+- use this naming convention: MB-<JiraTicketNumber>_description_of_the_task
+- it would be helpful if you start your commit message with MB-<JiraTicketNumber> as prefix, makes the commit history on master easier to understand
 - set jira ticket to 'in review':
 	- open pull request
 	- if unable to merge, merge master into feature branch and solve conflicts
