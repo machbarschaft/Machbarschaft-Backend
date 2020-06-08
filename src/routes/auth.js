@@ -71,7 +71,7 @@ router.post(
                 }
 
                 // Send the Set-Cookie header with the jwt to the client
-                res.cookie('jwt', token, JWTConfig.jwtCookie());
+                res.cookie('jwt', token, JWTConfig.jwtCookie(JWTConfig.AuthenticationType.login));
 
                 // Send status 200 to client
                 return res.status(200).send();
@@ -134,7 +134,7 @@ router.post(
                         }
 
                         // Send the Set-Cookie header with the jwt to the client
-                        res.cookie('jwt', token, JWTConfig.jwtCookie());
+                        res.cookie('jwt', token, JWTConfig.jwtCookie(JWTConfig.AuthenticationType.logout));
 
                         // Send status 200 to client
                         return res.status(200).send();

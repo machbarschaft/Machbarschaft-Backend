@@ -19,13 +19,13 @@ const jwtOptions = (authenticationType = AuthenticationType.none) => {
     };
 }
 
-const jwtCookie = () => {
+const jwtCookie = (authenticationType = AuthenticationType.none) => {
     return {
         httpOnly: true,
         sameSite: true,
         signed: true,
         secure: false,
-        expires: new Date(new Date().setDate(new Date().getDate() + 30)),
+        expires: authenticationType === AuthenticationType.login ? new Date(new Date().setDate(new Date().getDate() + 30)) : new Date(),
     };
 }
 
