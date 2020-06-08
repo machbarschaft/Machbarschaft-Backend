@@ -5,9 +5,10 @@ Best practices:
 - use const and let, do not use var
 - use === instead of == operator
 - use Map instead of Object
+- use 'return', even if it is the last line to be executed
 
 - extract business logic as service class
-- validate request body (joi) and parameters ()
+- validate request body (joi) and parameters (express-validator)
 
 naming convention:
 - file names: kebab-case, no capital letters
@@ -19,6 +20,6 @@ Development and review guidelines:
 - set jira ticket to 'in review':
 	- open pull request
 	- if unable to merge, merge master into feature branch and solve conflicts
-	- request reviewer
+	- request at least two reviewers
 	- rework according to comments until approved (can take several review rounds)
 - after reviewing a ticket, either approve and merge into master or write comments and set jira ticket to 'in development'
