@@ -3,16 +3,18 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const config = require('../config');
 const jwt = require('jsonwebtoken');
 
 
+const JWTConfig = require('../jwt_config');
 const AccessModel = require('../models/access');
 
 // check if user with given email already exists
 
 router.post('/checkEmail', (req, res) =>
-    AccessModel.findOne({email: req.body.email}, function (err, user) {
+    AccessModel.findOne({
+        email: req.body.email
+    }, function (err, user) {
         if (err) {
             console.error(err);
             return res.status(400).send();
@@ -30,7 +32,9 @@ router.post('/checkEmail', (req, res) =>
 
 router.post('/register', (req, res) => {
     AccessModel.register(
-        new AccessModel({email: req.body.email}),
+        new AccessModel({
+            email: req.body.email
+        }),
         req.body.password,
         function (err) {
             if (err) {
@@ -57,8 +61,8 @@ router.post(
                     uid: req.user._id,
                 },
             },
-            config.jwt.secret,
-            config.jwt.options,
+            JWTConfig.jwtSecret(),
+            JWTConfig.jwtOptions(JWTConfig.AuthenticationType.login),
             (err, token) => {
                 // error handling at JWT signing
                 if (err) {
@@ -67,7 +71,7 @@ router.post(
                 }
 
                 // Send the Set-Cookie header with the jwt to the client
-                res.cookie('jwt', token, config.jwt.cookie);
+                res.cookie('jwt', token, JWTConfig.jwtCookie(JWTConfig.AuthenticationType.login));
 
                 // Send status 200 to client
                 return res.status(200).send();
@@ -87,22 +91,58 @@ router.post(
         AccessModel.findOne({_id: req.user.uid}, function (err, user) {
             if (err) {
                 console.error(err);
-                return res.status(401).send('didnt find user');
+                return res.status(401).send();
             }
             if (user) {
                 return res
                     .status(200)
-                    .send('user id: ' + user._id + ', user mail address: ' + user.email);
+                    .json({
+                        uid: user._id,
+                        email: user.email
+                    });
             }
         });
     }
 );
 
 // Logout procedure, doesn't do anything for now as our authentication is cookie based
+router.post(
+    '/logout',
+    passport.authenticate('jwt-cookiecombo', {
+        session: false,
+    }),
+    (req, res) => {
+        AccessModel.findOne({_id: req.user.uid}, function (err, user) {
+            if (err) {
+                console.error(err);
+                return res.status(401).send();
+            }
+            if (user) {
+                jwt.sign(
+                    {
+                        user: {
+                            uid: req.user._id,
+                        },
+                    },
+                    JWTConfig.jwtSecret(),
+                    JWTConfig.jwtOptions(JWTConfig.AuthenticationType.logout),
+                    (err, token) => {
+                        // error handling at JWT signing
+                        if (err) {
+                            console.error(err);
+                            return res.status(500).json(err);
+                        }
 
-router.get('/logout', (req, res) => {
-    req.logout();
-    return res.status(200).send('Log out successful!');
-});
+                        // Send the Set-Cookie header with the jwt to the client
+                        res.cookie('jwt', token, JWTConfig.jwtCookie(JWTConfig.AuthenticationType.logout));
+
+                        // Send status 200 to client
+                        return res.status(200).send();
+                    }
+                );
+            }
+        });
+    }
+);
 
 module.exports = router;
