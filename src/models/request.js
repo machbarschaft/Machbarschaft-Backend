@@ -17,6 +17,11 @@ const requestExtrasSchema = new mongoose.Schema({
 
 const requestSchema = new mongoose.Schema(
   {
+    process: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Process',
+      required: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
