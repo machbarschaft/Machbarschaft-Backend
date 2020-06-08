@@ -1,7 +1,7 @@
 "use strict";
 const mongoose = require('mongoose');
 const http = require('http');
-const config = require('./src/config');
+const config = require('./src/jwt_config');
 const api = require('./src/api');
 
 // Set the port to the API.

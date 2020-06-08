@@ -11,8 +11,9 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const accessModel = require('./models/access');
 const auth = require('./routes/auth');
-const config = require('./config');
 const JwtCookieComboStrategy = require('passport-jwt-cookiecombo');
+
+const JWTConfig = require('./jwt_config');
 
 const app = express();
 
@@ -23,14 +24,14 @@ app.use(cors()); //Cross-Origin Resource Sharing, restrict access between web ap
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cookieParser(config.jwt.secret));
+app.use(cookieParser(JWTConfig.jwtSecret()));
 
 // Authenticate API calls with the Cookie Combo Strategy
 passport.use(
   new JwtCookieComboStrategy(
     {
-      secretOrPublicKey: config.jwt.secret,
-      jwtVerifyOptions: config.jwt.options,
+      secretOrPublicKey: JWTConfig.jwtSecret(),
+      jwtVerifyOptions: JWTConfig.jwtOptions(),
       passReqToCallback: false,
     },
     (payload, done) => {
