@@ -4,17 +4,12 @@ import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 
 const accessSchema = new mongoose.Schema({
-  /*
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-  },*/
-  email: String /*
-  password: {
-    type: String,
-    required: true,
-  },*/,
+    required: false,
+  },
+  email: String,
   password: String,
   emailVerified: {
     type: Boolean,
@@ -38,6 +33,9 @@ const accessSchema = new mongoose.Schema({
   ],
 });
 
-accessSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
+accessSchema.plugin(passportLocalMongoose, {
+  usernameField: 'email',
+  passwordField: 'password',
+});
 
 module.exports = mongoose.model('accessModel', accessSchema, 'Access');
