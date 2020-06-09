@@ -40,7 +40,10 @@ passport.use(
 
 // use static authenticate method of model in LocalStrategy
 passport.use(
-  new LocalStrategy({ usernameField: 'email' }, accessModel.authenticate())
+  new LocalStrategy(
+    { usernameField: 'email', passwordField: 'password' },
+    accessModel.authenticate()
+  )
 );
 
 //all routes

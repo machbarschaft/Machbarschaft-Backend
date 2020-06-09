@@ -12,35 +12,39 @@ import {
 } from '../validator.js';
 const router = Router();
 const { validationResult } = require('express-validator');
-// Registration procedure
 
 /**
  * @swagger
- * /add:
+ * /auth/register:
  *   post:
- *     summary: Add more animal
- *     description: Add animals to the list
+ *     summary: Register user account
+ *     description: Register user account with identifier email and password after checking if user exists
  *     tags:
- *       - animals
+ *       - auth
  *     requestBody:
  *       content:
- *         application/json:
+ *         application/x-www-form-urlencoded:
  *           schema:
  *             type: object
  *             properties:
- *               animals:
- *                 type: array
- *                 items:
- *                   type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
  *     responses:
- *       200:
- *         description: Adds the animals in body
+ *       422:
+ *         description: request is not valid
  *         schema:
  *           type: object
  *           properties:
- *             message:
- *               type: string
- *               default: 'Added'
+ *             errors:
+ *               type: array
+ *       400:
+ *         description: error occured while registration or checking if user already exists
+ *       401:
+ *         description: provided user already exists
+ *       200:
+ *         description: registration was successful
  */
 
 router.post('/register', userValidationRules(), validate, (req, res) => {
@@ -67,6 +71,7 @@ router.post('/register', userValidationRules(), validate, (req, res) => {
       email: req.body.email,
     }),
     req.body.password,
+
     function (err, access) {
       if (err) {
         console.error(err);
@@ -78,6 +83,43 @@ router.post('/register', userValidationRules(), validate, (req, res) => {
     }
   );
 });
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login user account
+ *     description: Login user account with identifier email and password
+ *     tags:
+ *       - auth
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       422:
+ *         description: request is not valid
+ *         schema:
+ *           type: object
+ *           properties:
+ *             errors:
+ *               type: array
+ *       500:
+ *         description: authentication failed
+ *       200:
+ *         description: registration was successful
+ *         headers:
+ *          Set-Cookie:
+ *            schema:
+ *              type: string
+ *              example: jwt=s%3AeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVpZCI6IjVlZGUzZTFjMzlmYTlhN2RmZDgzNTYxNCJ9LCJpYXQiOjE1OTE3MjE5NTgsImV4cCI6MTU5NDMxMzk1OCwiYXVkIjoibG9jYWxob3N0IiwiaXNzIjoibG9jYWxob3N0In0.E5MMF0rCmTyB4fe-JSfg3gozphYPApDmQfYn9DYJ2QQ.OfONHJ9UDgAhPzH1MFtUjFWAsDz8Q7fJ0CQidrApckA; Expires=Thu, 09 Jul 2020 16:59:18 GMT; Path=/; HttpOnly; SameSite=Strict; Domain=localhost
+ */
 
 // Login procedure
 
@@ -123,7 +165,27 @@ router.post(
   }
 );
 
-// Authentication procedure
+/**
+ * @swagger
+ * /auth/authenticate:
+ *   post:
+ *     summary: authenticate user
+ *     description: identify user by by providing his jwt cookie
+ *     tags:
+ *       - auth
+ *     responses:
+ *       401:
+ *         description: authentication failed
+ *       200:
+ *         description: authentication was successful
+ *         schema:
+ *           type: object
+ *           properties:
+ *             uid:
+ *               type: string
+ *             email:
+ *               type: string
+ */
 
 router.post(
   '/authenticate',
@@ -148,8 +210,28 @@ router.post(
   }
 );
 
-// Logout procedure
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     description: Logout user by changing the cookie
+ *     tags:
+ *       - auth
+ *     responses:
+ *       401:
+ *         description: couldn't find user in database
+ *       500:
+ *         description: JWT signing failed
+ *         schema:
+ *          type: object
+ *          properties:
+ *            err:
+ *            type: array
 
+ *       200:
+ *         description: registration was successful
+ */
 router.post(
   '/logout',
   passport.authenticate('jwt-cookiecombo', {

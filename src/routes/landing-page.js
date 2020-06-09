@@ -7,14 +7,14 @@ const router = Router();
 
 const options = {
   definition,
-  apis: [path.resolve(__dirname, 'main.js')],
+  apis: [path.resolve(__dirname, 'auth.js')],
 };
 router.get('/', (req, res) => {
   //ToDo: landing page logic
   res.send('Hello World!');
 });
 router.get('/docs', (req, res) => {
-  res.sendFile(path.join(__dirname, 'docs.html'));
+  res.sendFile(path.join(__dirname, '../../docs.html'));
 });
 
 router.get('/swagger.json', (req, res) => {
