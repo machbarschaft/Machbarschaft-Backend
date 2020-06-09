@@ -44,4 +44,4 @@ npm start
 ```
 **API Documentation**
 
-The documentation can find on /docs.
+The documentation can be found on /docs.
