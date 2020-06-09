@@ -4,16 +4,15 @@ import cors from 'cors';
 import helmet from 'helmet';
 import express from 'express';
 import routes from './routes';
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const accessModel = require('./models/access');
-const auth = require('./routes/auth');
-const JwtCookieComboStrategy = require('passport-jwt-cookiecombo');
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import passport from 'passport';
+import accessModel from './models/access';
+import JwtCookieComboStrategy from 'passport-jwt-cookiecombo';
+import JWTConfig from './jwt_config';
 
-const JWTConfig = require('./jwt_config');
+const LocalStrategy = require('passport-local').Strategy;
 
 const app = express();
 
@@ -21,11 +20,10 @@ const app = express();
 app.use(helmet()); //enforcing some security best practices, e.g. https connection, prevent clickjacking ..
 app.use(cors()); //Cross-Origin Resource Sharing, restrict access between web applications
 
+app.use(cookieParser(JWTConfig.jwtSecret()));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cookieParser(JWTConfig.jwtSecret()));
-
 // Authenticate API calls with the Cookie Combo Strategy
 passport.use(
   new JwtCookieComboStrategy(
@@ -47,6 +45,6 @@ passport.use(
 
 //all routes
 app.use('/', routes.landingPage);
-app.use('/auth', auth);
+app.use('/auth', routes.auth);
 
 module.exports = app;
