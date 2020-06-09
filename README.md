@@ -42,13 +42,6 @@ JWT_SECRET=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAru//ki6E7T3jACIHGqwaV+gm5
 ```
 npm start
 ```
-**API usage**
+**API Documentation**
 
-Use
-```
-x-www-form-urlencoded
-```
-POST requests to send data to the nodejs application. 
-
-List of API endpoints to be used:
-TBD
+The documentation can find on /docs.
