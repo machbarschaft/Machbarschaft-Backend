@@ -1,3 +1,5 @@
+'use strict';
+
 import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 
@@ -5,13 +7,10 @@ const accessSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: false,
   },
   email: String,
-  password: {
-    type: String,
-    required: true,
-  },
+  password: String,
   emailVerified: {
     type: Boolean,
     default: false,
@@ -34,8 +33,9 @@ const accessSchema = new mongoose.Schema({
   ],
 });
 
-accessSchema.plugin(passportLocalMongoose);
+accessSchema.plugin(passportLocalMongoose, {
+  usernameField: 'email',
+  passwordField: 'password',
+});
 
-const Access = mongoose.model('Access', accessSchema);
-
-export default Access;
+module.exports = mongoose.model('accessModel', accessSchema, 'Access');
