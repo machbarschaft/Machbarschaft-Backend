@@ -9,10 +9,10 @@ import ConfirmPhone from './confirm-phone';
 import ContactForm from './contact-form';
 import { ProcessFeedback, AudioFeedback, FormFeedback } from './feedback';
 import MobileToken from './mobile-token';
-import Request from './request';
+import { Request, RequestExtras } from './request';
 import ResetPassword from './reset-password';
-import Response from './response';
-import User from './user';
+import { Response } from './response';
+import { User, UserProfile, UserPreferences } from './user';
 import Process from './process';
 
 mongoose.set('useNewUrlParser', true);
@@ -31,9 +31,12 @@ const models = {
   FormFeedback,
   MobileToken,
   Request,
+  RequestExtras,
   ResetPassword,
   Response,
   User,
+  UserProfile,
+  UserPreferences,
   Process,
 };
 

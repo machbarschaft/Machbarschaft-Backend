@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const requestTypes = ['groceries', 'medication', 'other'];
 const urgencyCategories = ['now', 'today', 'tomorrow', 'this-week'];
-const statusStages = ['open', 'accepted', 'done'];
+const statusStages = ['creating‚', 'open', 'accepted', 'done'];
 
 const requestExtrasSchema = new mongoose.Schema({
   carNecessary: {
@@ -30,7 +30,7 @@ const requestSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: statusStages,
-      required: true,
+      default: statusStages[0],
     },
     requestType: {
       type: String,
@@ -50,6 +50,13 @@ const requestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const RequestExtras = mongoose.model('RequestExtras', requestExtrasSchema);
 const Request = mongoose.model('Request', requestSchema);
 
-export default Request;
+export {
+  Request,
+  RequestExtras,
+  statusStages,
+  urgencyCategories,
+  requestTypes,
+};

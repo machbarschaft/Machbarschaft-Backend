@@ -25,4 +25,4 @@ const responseSchema = new mongoose.Schema(
 
 const Response = mongoose.model('Response', responseSchema);
 
-export default Response;
+export { Response, statusStages };
