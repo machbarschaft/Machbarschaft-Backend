@@ -228,7 +228,6 @@ router.post(
  *          properties:
  *            err:
  *            type: array
-
  *       200:
  *         description: registration was successful
  */

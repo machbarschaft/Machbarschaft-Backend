@@ -49,5 +49,6 @@ passport.use(
 //all routes
 app.use('/', routes.landingPage);
 app.use('/auth', routes.auth);
+app.use('/docs', routes.docs);
 
 module.exports = app;
