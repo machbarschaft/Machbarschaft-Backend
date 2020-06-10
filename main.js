@@ -4,8 +4,6 @@ import 'dotenv/config';
 import models from './src/models/bundle';
 import app from './src/app';
 import mongoose from 'mongoose';
-const swaggerJSDoc = require('swagger-jsdoc');
-
 const http = require('http');
 
 app.set('port', process.env.PORT);
