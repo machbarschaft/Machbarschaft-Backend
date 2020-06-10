@@ -39,10 +39,13 @@ const { validationResult } = require('express-validator');
  *           properties:
  *             errors:
  *               type: array
- *       400:
- *         description: error occured while registration or checking if user already exists
  *       401:
- *         description: provided user already exists
+ *         description: error occured while registration, checking if user already exists or user already exists
+ *         schema:
+ *           type: object
+ *           properties:
+ *             errors:
+ *               type: array
  *       200:
  *         description: registration was successful
  */
@@ -59,10 +62,10 @@ router.post('/register', userValidationRules(), validate, (req, res) => {
     function (err, access) {
       if (err) {
         console.error(err);
-        return res.status(400).send();
+        return res.status(401).send({ errors: 'error occured' });
       }
       if (access) {
-        return res.status(401).send();
+        return res.status(401).send({ errors: 'user already exists' });
       }
     }
   );
@@ -75,7 +78,7 @@ router.post('/register', userValidationRules(), validate, (req, res) => {
     function (err, access) {
       if (err) {
         console.error(err);
-        return res.status(400).send();
+        return res.status(401).send({ errors: 'error while registering' });
       }
       if (access) {
         return res.status(200).send();
