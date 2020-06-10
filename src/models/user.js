@@ -34,10 +34,6 @@ userProfileSchema.virtual('name').get(function () {
 });
 
 const userSchema = new mongoose.Schema({
-  country: {
-    type: String,
-    required: true,
-  },
   phone: {
     type: Number,
     required: true,
@@ -69,6 +65,11 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
+const UserPreferences = mongoose.model(
+  'UserPreferences',
+  userPreferencesSchema
+);
+const UserProfile = mongoose.model('UserProfile', userProfileSchema);
 const User = mongoose.model('User', userSchema);
 
-export default User;
+export { User, UserPreferences, UserProfile };
