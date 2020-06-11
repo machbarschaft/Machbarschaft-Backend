@@ -21,4 +21,8 @@ export default class UserService {
       user.confirmPhone = ConfirmPhone.create(user._id);
     });
   }
+
+  static async findUser(phone) {
+    return models.User.findOne({ phone: phone });
+  }
 }
