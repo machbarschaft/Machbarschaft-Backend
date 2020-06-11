@@ -35,12 +35,10 @@ const requestSchema = new mongoose.Schema(
     requestType: {
       type: String,
       enum: requestTypes,
-      required: true,
     },
     urgency: {
       type: String,
       enum: urgencyCategories,
-      required: true,
     },
     extras: requestExtrasSchema,
     privacyAgreed: Boolean,
