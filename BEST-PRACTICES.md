@@ -29,3 +29,13 @@ Development and review guidelines:
 	- request at least two reviewers
 	- rework according to comments until approved (can take several review rounds)
 - after reviewing a ticket, either approve and merge into master or write comments and set jira ticket to 'in development'
+
+HTTP status codes:
+- 200 OK
+- 201 Created
+- 204 No content
+- 400 Bad Request
+- 401 Unauthorized
+- 403 Forbidden
+- 404 Not found
+- 500 Internal server error
