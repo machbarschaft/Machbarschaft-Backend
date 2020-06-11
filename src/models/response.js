@@ -14,6 +14,10 @@ const responseSchema = new mongoose.Schema(
       enum: statusStages,
       required: true,
     },
+    log: {
+      type: Map,
+      of: Date,
+    },
   },
   { timestamps: true }
 );
