@@ -7,7 +7,7 @@ const processSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Request',
-        required: false,
+        required: true,
       },
     ],
     response: [

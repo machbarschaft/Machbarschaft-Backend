@@ -1,165 +1,154 @@
 import Router, { response } from 'express';
-import { validate } from '../validator.js';
+import {
+  processValidationRules,
+  cookieValidationRules,
+  validate,
+} from '../validator.js';
 import ProcessModel from '../models/process';
 import ResponseModel from '../models/response';
 import RequestModel from '../models/request';
 import passport from 'passport';
 import mongoose from 'mongoose';
+const { validationResult } = require('express-validator');
 
 const router = Router();
 
-
 /**
  * @swagger
- * /auth/logout:
+ * /request/response:
  *   post:
- *     summary: Logout user
- *     description: Logout user by changing the cookie
+ *     summary: Respond to request/process
+ *     description: Helper can change status of help request to accepted, called, on-the-way and done
  *     tags:
- *       - auth
+ *       - request
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               processId:
+ *                 type: string
  *     responses:
  *       401:
- *         description: couldn't find user in database
- *       500:
- *         description: JWT signing failed
- *         schema:
- *          type: object
- *          properties:
- *            err:
- *            type: array
+ *         description: error occured
  *       200:
- *         description: registration was successful
+ *         description: status change was successful
  */
 
- // ein put: letzten response überprüfen
- // ein post
-
-// for accept
-
-router.post('/response', passport.authenticate('jwt-cookiecombo', {
-  session: false,
-}),
-(req, res) => {
-  ProcessModel.findById(req.body.processId, function (err, process) {
-    
-    if (process.response) {
-      ProcessModel.findById(process._id).populate({
-        path  : 'response',
-        match : { status : 'aborted' },
-        //sort: { 'created_at' : -1 }
-      }).exec(
-        function (err, response) {
-          if (err) {
-          console.log(err); }
-          if (response) {
-            console.log(response);
-          }
-        }
-      );
-      // search for aborted in status
-    }
-    else if (process.response === null) {
-      console.log('no response');
-  
-  ResponseModel.create(
-    { user: { _id: req.user.uid }, status: 'accepted' },
-    function (err, response) {
-      console.log(response._id);
-      ProcessModel.findOneAndUpdate(
-        { _id: process._id },
-        { response: { _id: response.id } },
-        function (err) {
-          if (err) return res.status(500).send({ error: err });
-          return res.status(200).send('Succesfully saved.');
-        }
-      );
-    }
-  );
-    }
-  } );
- }
-);
-
-// for after accept 
-
-router.put(
+router.post(
   '/response',
+  processValidationRules(),
+  cookieValidationRules(),
+  validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
   (req, res) => {
-    console.log('auth success');
-    console.log(req.body.processId);
-    ProcessModel.findById(req.body.processId), function (err, process) {
-
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(401).json({ errors: errors.array() });
     }
-     
-    ProcessModel.findOne(
-      {
-        requests: { $in: [req.body.requestId] },
-      },
-      function (err, process) {
-        if (err) {
-          console.error(err);
-          return res.status(401).send({ errors: 'couldnt find process' });
-        }
-        // if response already exists
-        if (process.response) {
-          console.log(process.response);
-          console.log('if response');
-          ResponseModel.findById(process.response),
-            function (err, response) {
-              if (err) {
-                console.error(err);
-                return res.status(401).send({ errors: 'couldnt find process' });
-              } else if (response.status === 'accepted') {
+    ProcessModel.findById(req.body.processId, function (err, process) {
+      if (process.response.length) {
+        // get details for latest response in Array
+        ResponseModel.findById(
+          process.response[process.response.length - 1],
+          function (err, response) {
+            // if the response is from the current user and not already done, change status
+            if (response.user == req.user.uid && response.status != 'done') {
+              console.log('response.user === req.user._id && status != done');
+              if (response.status === 'accepted') {
                 var status = 'called';
                 console.log(status);
               } else if (response.status === 'called') {
                 var status = 'on-the-way';
               } else if (response.status === 'on-the-way') {
                 var status = 'done';
-              } else {
-                return res.status(401);
+                // if help seeker didn't set finishedAt yet
+                if (!process.finishedAt) {
+                  process.finishedAt = Date.now();
+                  process.save();
+                }
               }
-
-              //update the response status and timestamp
-              ResponseModel.findOneAndUpdate(
-                { _id: response._id },
-                { status: this.status },
-                function (err) {
-                  if (err) return res.send(500, { error: err });
-                  return res.status(200).send('Succesfully saved.');
-                }
-              );
-            };
-        } else if (!process.response) {
-          // if first response, works
-          console.log('first response');
-
-          ResponseModel.create(
-            { user: { _id: req.user.uid }, status: 'accepted' },
-            function (err, response) {
-              console.log(response._id);
-              ProcessModel.findOneAndUpdate(
-                { _id: process._id },
-                { response: { _id: response.id } },
-                function (err) {
-                  if (err) return res.status(500).send({ error: err });
-                  return res.status(200).send('Succesfully saved.');
-                }
-              );
+              response.status = status;
+              response.log.set(status, Date.now());
+              response.save();
+              return res.status(200).send('Succesfully saved.');
             }
-          );
-        }
+            // if the response was aborted by someone, create a new response with accepted
+            else if (response.status === 'aborted') {
+              var date = Date.now();
+              // create new response and add to process
+              ResponseModel.create(
+                {
+                  user: { _id: req.user.uid },
+                  status: 'accepted',
+                  log: { accepted: date },
+                },
+                function (err, response) {
+                  RequestModel.findOneAndUpdate(
+                    { _id: process.requests[process.requests.length - 1] },
+                    { status: 'accepted' },
+                    function (err) {
+                      if (err) return res.status(401).send({ error: err });
+                    }
+                  );
+                  ProcessModel.findOneAndUpdate(
+                    { _id: process._id },
+                    { response: { _id: response._id } },
+                    function (err) {
+                      if (err) return res.status(401).send({ error: err });
+                      return res.status(200).send('Succesfully saved.');
+                    }
+                  );
+                }
+              );
+            } else if (err) {
+              return res.status(401).send(err);
+            } else {
+              return res
+                .status(401)
+                .send('process already taken by other user or already done');
+            }
+          }
+        );
       }
-    );
+      // no response yet, create response as user accepted request
+      else if (!process.response.length) {
+        var date = Date.now();
+        RequestModel.findOneAndUpdate(
+          { _id: process.requests[process.requests.length - 1] },
+          { status: 'accepted' },
+          function (err) {
+            if (err) return res.status(401).send({ error: err });
+          }
+        );
+        ResponseModel.create(
+          {
+            user: { _id: req.user.uid },
+            status: 'accepted',
+            log: { accepted: date },
+          },
+          function (err, response) {
+            if (err) return res.status(401).send({ error: err });
+            ProcessModel.findOneAndUpdate(
+              { _id: process._id },
+              { response: { _id: response._id } },
+              function (err) {
+                if (err) return res.status(401).send({ error: err });
+                return res.status(200).send('Succesfully saved.');
+              }
+            );
+          }
+        );
+      }
+      if (err) {
+        return res.status(401).send({ error: err });
+      }
+    });
   }
 );
-
-// validate + docu fehlt
-
-// processId
 
 /**
  * @swagger
@@ -169,38 +158,192 @@ router.put(
  *     description: Get all information of a help request
  *     tags:
  *       - request
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               processId:
+ *                 type: string
  *     responses:
  *       401:
- *         description: couldn't find request
+ *         description: could not find request
  *       200:
  *         description: giving request details
  *         schema:
  *          type: object
  *          properties:
- *            err:
- *            type: array
+ *            user:
+ *              type: objectid
+ *            status:
+ *              type: string
+ *              enum: [open, accepted, done]
+ *            requestType:
+ *              type: string
+ *              enum: [groceries, medication, other]
+ *            urgency:
+ *              type: string
+ *              enum: [now, today, tomorrow, this-week]
+ *            extras:
+ *              type: object
+ *              properties:
+ *                carNecessary:
+ *                  type: boolean
+ *                prescriptionRequired:
+ *                  type: boolean
+ *            privacyAgreed:
+ *              type: boolean
+ *            raw:
+ *              type: string
+ *            locale:
+ *              type: string
+ *            log:
+ *              type: array
+ *              items:
+ *                type: date
+ *            createdAt:
+ *              type: date
+ *            updatedAt:
+ *              type: date
+ *          required:
+ *            - user
+ *            - status
+ *            - requestType
+ *            - urgency
  */
 
 router.post(
   '/details',
+  processValidationRules(),
+  cookieValidationRules(),
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
   (req, res) => {
-    RequestModel.findById(req.body.requestId, function (err, request) {
-      if (err) {
-        console.error(err);
-        return res.status(401).send({ errors: 'couldnt find request' });
-      }
-      if (request) {
-        return res.status(200).json(request);
-      }
-    });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(401).json({ errors: errors.array() });
+    }
+    ProcessModel.findById(req.body.processId),
+      function (err, process) {
+        if (err) return res.status(500).send({ error: err });
+        else {
+          RequestModel.findById(
+            process.requests[process.request.length - 1],
+            function (err, request) {
+              if (err) {
+                console.error(err);
+                return res
+                  .status(401)
+                  .send({ errors: 'could not find request' });
+              }
+              if (request) {
+                return res.status(200).json(request);
+              }
+            }
+          );
+        }
+      };
   }
 );
+
+/**
+ * @swagger
+ * /request/done:
+ *   post:
+ *     summary: Help seeker marks request as done
+ *     description: Help seeker can mark a request as successfully done
+ *     tags:
+ *       - request
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               processId:
+ *                 type: string
+ *     responses:
+ *       401:
+ *         description: error occured
+ *       200:
+ *         description: status change was successful
+ */
+
+router.post(
+  '/done',
+  processValidationRules(),
+  cookieValidationRules(),
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  (req, res) => {
+    ProcessModel.findById(req.body.processId),
+      function (err, process) {
+        if (!process.finishedAt) {
+          process.finishedAt = Date.now();
+          process.save();
+        }
+        RequestModel.findOneAndUpdate(
+          { _id: process.requests[process.requests.length - 1] },
+          { status: 'done' },
+          function (err) {
+            if (err) return res.status(401).send({ error: err });
+            return res.status(200).send();
+          }
+        );
+        if (err) return res.status(401).send({ error: err });
+      };
+  }
+);
+
+/**
+ * @swagger
+ * /request/release:
+ *   post:
+ *     summary: Help seeker marks process as done
+ *     description: Help seeker can mark a process as successfully done
+ *     tags:
+ *       - request
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               processId:
+ *                 type: string
+ *     responses:
+ *       401:
+ *         description: error occured
+ *       200:
+ *         description: status change was successful
+ */
+
+/* 
+
+router.post(
+  '/release',
+  processValidationRules(),
+  cookieValidationRules(),
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  (req, res) => {
+    ProcessModel.findById(req.body.processId),
+      function (err, process) {
+        // set request to open
+        // set last response to aborted
+      };
+  }
+); */
+
+/* // for testing purposes: create process
 
 router.get('/test', (req, res) => {
   new ProcessModel({ requests: [{ _id: '5ee25095151b0952f93d7adb' }] }).save();
 });
+*/
 
 export default router;

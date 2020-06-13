@@ -51,7 +51,7 @@ const { validationResult } = require('express-validator');
  */
 
 router.post('/register', userValidationRules(), validate, (req, res) => {
-const errors = validationResult(req);
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }

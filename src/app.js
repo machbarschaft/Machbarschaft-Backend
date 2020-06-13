@@ -18,11 +18,13 @@ const app = express();
 
 //all application-wide middlewares
 app.use(helmet()); //enforcing some security best practices, e.g. https connection, prevent clickjacking ..
-app.use(cors({
+app.use(
+  cors({
     origin: 'http://localhost:8080',
     credentials: true,
-    optionsSuccessStatus: 200
-})); //Cross-Origin Resource Sharing, restrict access between web applications
+    optionsSuccessStatus: 200,
+  })
+); //Cross-Origin Resource Sharing, restrict access between web applications
 
 app.use(cookieParser(JWTConfig.jwtSecret()));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -55,6 +57,5 @@ app.use('/', routes.landingPage);
 app.use('/auth', routes.auth);
 app.use('/docs', routes.docs);
 app.use('/request', routes.request);
-
 
 module.exports = app;

@@ -7,7 +7,7 @@ const router = Router();
 
 const options = {
   definition,
-  apis: [path.resolve(__dirname, 'auth.js')],
+  apis: [path.resolve(__dirname, '*.js')],
 };
 
 router.get('/', (req, res) => {

@@ -2,9 +2,28 @@ const { body, validationResult, header } = require('express-validator');
 const userValidationRules = () => {
   return [
     // username must be an email
-    body('email').exists().withMessage('Es muss eine E-Mail-Adresse angegeben werden.').isEmail().withMessage('Die E-Mail-Adresse muss im E-Mail-Format angegeben werden.'),
+    body('email')
+      .exists()
+      .withMessage('Es muss eine E-Mail-Adresse angegeben werden.')
+      .isEmail()
+      .withMessage(
+        'Die E-Mail-Adresse muss im E-Mail-Format angegeben werden.'
+      ),
     // password must be at least 5 chars long
-    body('password').exists().withMessage('Ein Passwort muss angegeben werden').isLength({ min: 5 }).withMessage('Das Passwort muss mindestens 5 Zeichen lang sein.'),
+    body('password')
+      .exists()
+      .withMessage('Ein Passwort muss angegeben werden')
+      .isLength({ min: 5 })
+      .withMessage('Das Passwort muss mindestens 5 Zeichen lang sein.'),
+  ];
+};
+const processValidationRules = () => {
+  return [
+    body('processId')
+      .exists()
+      .isLength({ min: 24, max: 24 })
+      .isLowercase()
+      .isAlphanumeric(),
   ];
 };
 const cookieValidationRules = () => {
@@ -28,4 +47,5 @@ module.exports = {
   userValidationRules,
   validate,
   cookieValidationRules,
+  processValidationRules,
 };
