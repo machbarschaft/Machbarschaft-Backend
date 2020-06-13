@@ -7,7 +7,7 @@ const processSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Request',
-        required: true,
+        required: false,
       },
     ],
     response: [
@@ -25,3 +25,6 @@ const processSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const Process = mongoose.model('Process', processSchema);
+
+export default Process;

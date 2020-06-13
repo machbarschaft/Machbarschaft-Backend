@@ -1,3 +1,4 @@
+'use strict';
 import mongoose from 'mongoose';
 
 const requestTypes = ['groceries', 'medication', 'other'];
@@ -20,22 +21,22 @@ const requestSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
     status: {
       type: String,
       enum: statusStages,
-      required: true,
+      required: false,
     },
     requestType: {
       type: String,
       enum: requestTypes,
-      required: true,
+      required: false,
     },
     urgency: {
       type: String,
       enum: urgencyCategories,
-      required: true,
+      required: false,
     },
     extras: requestExtrasSchema,
     privacyAgreed: Boolean,
