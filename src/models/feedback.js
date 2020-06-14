@@ -16,6 +16,10 @@ const processFeedbackSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    log: {
+      type: Map,
+      of: Date,
+    },
   },
   { timestamps: true, discriminatorKey: 'kind' }
 );
