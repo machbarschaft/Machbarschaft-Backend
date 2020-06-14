@@ -7,10 +7,6 @@ const confirmPhoneSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    country: {
-      type: String,
-      required: true,
-    },
     phone: {
       type: Number,
       required: true,
@@ -20,6 +16,10 @@ const confirmPhoneSchema = new mongoose.Schema(
       required: true,
     },
     sms: {
+      type: Boolean,
+      default: false,
+    },
+    successful: {
       type: Boolean,
       default: false,
     },

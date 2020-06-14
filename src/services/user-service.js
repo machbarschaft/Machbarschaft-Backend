@@ -1,7 +1,7 @@
 'use strict';
 
 import models from '../models/bundle';
-import ConfirmPhone from '../models/confirm-phone';
+import ConfirmPhoneService from './confirm-phone-service';
 
 export default class UserService {
   static async createUser(phone) {
@@ -18,11 +18,21 @@ export default class UserService {
       preferences: new models.UserPreferences(),
     });
     return user.save().then((user) => {
-      user.confirmPhone = ConfirmPhone.create(user._id);
+      ConfirmPhoneService.create(user._id, user.phone, false).then(
+        (confirmPhoneId) => {
+          user.confirmPhone = [confirmPhoneId];
+          user.save();
+        }
+      );
+      return user;
     });
   }
 
-  static async findUser(phone) {
+  static async findUserByPhone(phone) {
     return models.User.findOne({ phone: phone });
+  }
+
+  static async findUserById(userId) {
+    return models.User.findOne({ _id: userId });
   }
 }
