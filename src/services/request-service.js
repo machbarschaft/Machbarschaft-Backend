@@ -41,5 +41,23 @@ export default class RequestService {
     if (request.user !== userId) {
       return Promise.reject(new Error('Not your request.'));
     }
+
+    if (requestBody.requestType) {
+      request.requestType = requestBody.requestType;
+    }
+    if (requestBody.urgency) {
+      request.urgency = requestBody.urgency;
+    }
+    if (requestBody.name) {
+      request.name = requestBody.name;
+    }
+    if (requestBody.address) {
+      request.address = new models.Address(requestBody.address);
+    }
+    if (requestBody.extras) {
+      request.extras = new models.RequestExtras(requestBody.extras);
+    }
+
+    return request.save();
   }
 }

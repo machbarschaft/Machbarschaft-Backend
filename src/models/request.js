@@ -32,6 +32,11 @@ const requestSchema = new mongoose.Schema(
       enum: statusStages,
       default: statusStages[0],
     },
+    name: String,
+    address: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Address',
+    },
     requestType: {
       type: String,
       enum: requestTypes,

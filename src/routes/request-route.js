@@ -5,7 +5,7 @@ import passport from 'passport';
 
 const router = express.Router();
 
-router.post('/guest', RequestController.createLoggedOut());
+router.post('/guest', RequestController.createLoggedOut);
 router.post(
   '/',
   cookieValidationRules(),
@@ -13,7 +13,7 @@ router.post(
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
-  RequestController.createLoggedIn()
+  RequestController.createLoggedIn
 );
 router.put(
   '/:reqId',
@@ -22,7 +22,7 @@ router.put(
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
-  RequestController.updateLoggedIn()
+  RequestController.updateLoggedIn
 );
 router.put('/guest/:reqId', RequestController.updateLoggedOut);
 
