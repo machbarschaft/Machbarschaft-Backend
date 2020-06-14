@@ -44,6 +44,10 @@ const requestSchema = new mongoose.Schema(
     privacyAgreed: Boolean,
     raw: String,
     locale: String,
+    log: {
+      type: Map,
+      of: Date,
+    },
   },
   { timestamps: true }
 );
