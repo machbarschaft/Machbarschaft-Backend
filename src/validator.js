@@ -1,3 +1,5 @@
+import { colors } from './models/example';
+
 const { body, validationResult, header, oneOf } = require('express-validator');
 
 const userValidationRules = () => {
@@ -38,6 +40,25 @@ const cookieValidationRules = () => {
   return [header('cookie').exists().contains('jwt')];
 };
 
+const exampleValidationRules = () => {
+  return [
+    body('name', 'The name must only contain letters.').isAlpha(),
+    body(
+      'color',
+      'The color attribute is required, and consists of letters only.'
+    )
+      .exists()
+      .isAlpha()
+      .custom((value) => {
+        const result = colors.find((element) => element === value);
+        if (!result) {
+          return Promise.reject('No valid color.');
+        }
+        return Promise.resolve();
+      }),
+  ];
+};
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -57,4 +78,5 @@ module.exports = {
   requireUserIdOrPhoneNumber,
   validate,
   cookieValidationRules,
+  exampleValidationRules,
 };
