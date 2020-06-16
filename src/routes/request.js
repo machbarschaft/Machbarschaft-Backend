@@ -55,6 +55,7 @@ router.post(
         ResponseModel.findById(
           process.response[process.response.length - 1],
           function (err, response) {
+            var date = Date.now();
             // if the response is from the current user and not already done, change status
             if (response.user == req.user.uid && response.status != 'done') {
               console.log('response.user === req.user._id && status != done');
@@ -67,12 +68,12 @@ router.post(
                 var status = 'done';
                 // if help seeker didn't set finishedAt yet
                 if (!process.finishedAt) {
-                  process.finishedAt = Date.now();
+                  process.finishedAt = date;
                   process.save();
                 }
               }
               response.status = status;
-              response.log.set(status, Date.now());
+              response.log.set(status, date);
               response.save();
               return res.status(200).send('Succesfully saved.');
             }
@@ -87,21 +88,21 @@ router.post(
                   log: { accepted: date },
                 },
                 function (err, response) {
-                  RequestModel.findOneAndUpdate(
-                    { _id: process.requests[process.requests.length - 1] },
-                    { status: 'accepted' },
-                    function (err) {
+                  RequestModel.findById(
+                    process.requests[process.requests.length - 1],
+                    function (err, request) {
                       if (err) return res.status(401).send({ error: err });
+                      request.status = 'accepted';
+                      request.log.set('accepted', date);
+                      request.save();
                     }
                   );
-                  ProcessModel.findOneAndUpdate(
-                    { _id: process._id },
-                    { response: { _id: response._id } },
-                    function (err) {
-                      if (err) return res.status(401).send({ error: err });
-                      return res.status(200).send('Succesfully saved.');
-                    }
-                  );
+                  ProcessModel.findById(process._id, function (err, process) {
+                    if (err) return res.status(401).send({ error: err });
+                    process.response.push(response._id);
+                    process.save();
+                    return res.status(200).send('Succesfully saved.');
+                  });
                 }
               );
             } else if (err) {
@@ -117,11 +118,13 @@ router.post(
       // no response yet, create response as user accepted request
       else if (!process.response.length) {
         var date = Date.now();
-        RequestModel.findOneAndUpdate(
-          { _id: process.requests[process.requests.length - 1] },
-          { status: 'accepted' },
-          function (err) {
+        RequestModel.findById(
+          process.requests[process.requests.length - 1],
+          function (err, request) {
             if (err) return res.status(401).send({ error: err });
+            request.status = 'accepted';
+            request.log.set('accepted', date);
+            request.save();
           }
         );
         ResponseModel.create(
@@ -132,14 +135,9 @@ router.post(
           },
           function (err, response) {
             if (err) return res.status(401).send({ error: err });
-            ProcessModel.findOneAndUpdate(
-              { _id: process._id },
-              { response: { _id: response._id } },
-              function (err) {
-                if (err) return res.status(401).send({ error: err });
-                return res.status(200).send('Succesfully saved.');
-              }
-            );
+            process.response.push(response._id);
+            process.save();
+            return res.status(200).send('Succesfully saved.');
           }
         );
       }
@@ -225,26 +223,23 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    ProcessModel.findById(req.body.processId),
-      function (err, process) {
-        if (err) return res.status(500).send({ error: err });
-        else {
-          RequestModel.findById(
-            process.requests[process.request.length - 1],
-            function (err, request) {
-              if (err) {
-                console.error(err);
-                return res
-                  .status(401)
-                  .send({ errors: 'could not find request' });
-              }
-              if (request) {
-                return res.status(200).json(request);
-              }
+    ProcessModel.findById(req.body.processId, function (err, process) {
+      if (err) return res.status(500).send({ error: err });
+      else {
+        RequestModel.findById(
+          process.requests[process.requests.length - 1],
+          function (err, request) {
+            if (err) {
+              console.error(err);
+              return res.status(401).send({ errors: 'could not find request' });
             }
-          );
-        }
-      };
+            if (request) {
+              return res.status(200).json(request);
+            }
+          }
+        );
+      }
+    });
   }
 );
 
@@ -279,22 +274,27 @@ router.post(
     session: false,
   }),
   (req, res) => {
-    ProcessModel.findById(req.body.processId),
-      function (err, process) {
-        if (!process.finishedAt) {
-          process.finishedAt = Date.now();
-          process.save();
+    ProcessModel.findById(req.body.processId, function (err, process) {
+      // if not already marked as done!
+      var date = Date.now();
+      if (!process.finishedAt) {
+        process.finishedAt = date;
+        process.save();
+      }
+      if (err) return res.status(401).send({ error: err });
+      RequestModel.findById(
+        process.requests[process.requests.length - 1],
+        function (err, request) {
+          if (err) return res.status(401).send({ error: err });
+          if (request.status === 'done')
+            return res.status(401).send('request already done');
+          request.status = 'done';
+          request.log.set('done', date);
+          request.save();
+          return res.status(200).send();
         }
-        RequestModel.findOneAndUpdate(
-          { _id: process.requests[process.requests.length - 1] },
-          { status: 'done' },
-          function (err) {
-            if (err) return res.status(401).send({ error: err });
-            return res.status(200).send();
-          }
-        );
-        if (err) return res.status(401).send({ error: err });
-      };
+      );
+    });
   }
 );
 
@@ -302,8 +302,8 @@ router.post(
  * @swagger
  * /request/release:
  *   post:
- *     summary: Help seeker marks process as done
- *     description: Help seeker can mark a process as successfully done
+ *     summary: Help seeker releases existing request
+ *     description: The help request will be marked as open again, and the response as did-not-help
  *     tags:
  *       - request
  *     requestBody:
@@ -318,10 +318,8 @@ router.post(
  *       401:
  *         description: error occured
  *       200:
- *         description: status change was successful
+ *         description: release was successful
  */
-
-/* 
 
 router.post(
   '/release',
@@ -331,19 +329,33 @@ router.post(
     session: false,
   }),
   (req, res) => {
-    ProcessModel.findById(req.body.processId),
-      function (err, process) {
-        // set request to open
-        // set last response to aborted
-      };
+    ProcessModel.findById(req.body.processId, function (err, process) {
+      var date = Date.now();
+      if (err) return res.status(401).send({ error: err });
+      process.finishedAt = undefined;
+      process.save();
+      // set request to open
+      RequestModel.findById(
+        process.requests[process.requests.length - 1],
+        function (err, request) {
+          if (err) return res.status(401).send({ error: err });
+          request.status = 'open';
+          request.log.set('open', date);
+          request.save();
+        }
+      );
+      ResponseModel.findById(
+        process.response[process.response.length - 1],
+        function (err, response) {
+          if (err) return res.status(401).send({ error: err });
+          response.status = 'did-not-help';
+          response.log.set('did-not-help', date);
+          response.save();
+          return res.status(200).send();
+        }
+      );
+    });
   }
-); */
-
-/* // for testing purposes: create process
-
-router.get('/test', (req, res) => {
-  new ProcessModel({ requests: [{ _id: '5ee25095151b0952f93d7adb' }] }).save();
-});
-*/
+);
 
 export default router;
