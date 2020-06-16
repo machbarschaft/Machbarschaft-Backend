@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 const requestTypes = ['groceries', 'medication', 'other'];
 const urgencyCategories = ['now', 'today', 'tomorrow', 'this-week'];
-const statusStages = ['open', 'accepted', 'done', 'replaced'];
+const statusStages = ['open', 'accepted', 'done', 'replaced', 'aborted'];
 
 const requestExtrasSchema = new mongoose.Schema({
   carNecessary: {

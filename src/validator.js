@@ -1,4 +1,4 @@
-const { body, validationResult, header } = require('express-validator');
+const { body, validationResult, header, param } = require('express-validator');
 const userValidationRules = () => {
   return [
     // username must be an email
@@ -19,7 +19,7 @@ const userValidationRules = () => {
 };
 const processValidationRules = () => {
   return [
-    body('processId')
+    param('processId')
       .exists()
       .isLength({ min: 24, max: 24 })
       .isLowercase()
