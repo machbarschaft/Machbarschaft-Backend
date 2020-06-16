@@ -8,11 +8,11 @@ const statusStages = ['open', 'accepted', 'done', 'replaced', 'aborted'];
 const requestExtrasSchema = new mongoose.Schema({
   carNecessary: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   prescriptionRequired: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 });
 

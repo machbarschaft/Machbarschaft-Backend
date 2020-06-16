@@ -12,7 +12,6 @@ const server = http.createServer(app);
 
 //Connect to the MongoDB database; then start the server
 mongoose
-  // see https://mongoosejs.com/docs/deprecations.html#findandmodify
   .connect(process.env.MONGODB_URI)
   .then(async () => server.listen(process.env.PORT))
   .catch((err) => {
