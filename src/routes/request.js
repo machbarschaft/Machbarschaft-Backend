@@ -1,4 +1,4 @@
-import Router, { response } from 'express';
+import express from 'express';
 import {
   processValidationRules,
   cookieValidationRules,
@@ -11,7 +11,7 @@ import passport from 'passport';
 import mongoose from 'mongoose';
 const { validationResult } = require('express-validator');
 
-const router = Router();
+const router = express.Router();
 
 /**
  * @swagger

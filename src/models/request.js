@@ -8,11 +8,11 @@ const statusStages = ['open', 'accepted', 'done', 'replaced'];
 const requestExtrasSchema = new mongoose.Schema({
   carNecessary: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   prescriptionRequired: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 });
 
@@ -21,22 +21,22 @@ const requestSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: false,
+      required: true,
     },
     status: {
       type: String,
       enum: statusStages,
-      required: false,
+      required: true,
     },
     requestType: {
       type: String,
       enum: requestTypes,
-      required: false,
+      required: true,
     },
     urgency: {
       type: String,
       enum: urgencyCategories,
-      required: false,
+      required: true,
     },
     extras: requestExtrasSchema,
     privacyAgreed: Boolean,
