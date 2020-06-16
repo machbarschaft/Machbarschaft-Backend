@@ -358,4 +358,109 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /request/abortrequest:
+ *   post:
+ *     summary: Help seeker aborts a request
+ *     description: The help request will be marked as aborted in its status
+ *     tags:
+ *       - request
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               processId:
+ *                 type: string
+ *     responses:
+ *       401:
+ *         description: error occured
+ *       200:
+ *         description: abortion was successful
+ */
+
+router.post(
+  '/abortrequest',
+  processValidationRules(),
+  cookieValidationRules(),
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  (req, res) => {
+    ProcessModel.findById(req.body.processId, function (err, process) {
+      if (err) return res.status(401).send({ error: err });
+      RequestModel.findById(
+        process.requests[process.requests.length - 1],
+        function (err, request) {
+          if (err) return res.status(401).send({ error: err });
+          if (req.user.uid == request.user && !process.response.length) {
+            var date = Date.now();
+            request.status = 'aborted';
+            request.log.set('aborted', date);
+            request.save();
+            return res.status(200).send();
+          } else {
+            return res.status(401).send('user forbidden for this operation');
+          }
+        }
+      );
+    });
+  }
+);
+
+/**
+ * @swagger
+ * /request/abortresponse:
+ *   post:
+ *     summary: Helper aborts a response
+ *     description: The help request will be marked as aborted in its status
+ *     tags:
+ *       - request
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               processId:
+ *                 type: string
+ *     responses:
+ *       401:
+ *         description: error occured
+ *       200:
+ *         description: abortion was successful
+ */
+
+router.post(
+  '/abortresponse',
+  processValidationRules(),
+  cookieValidationRules(),
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  (req, res) => {
+    ProcessModel.findById(req.body.processId, function (err, process) {
+      if (err) return res.status(401).send({ error: err });
+
+      ResponseModel.findById(
+        process.response[process.response.length - 1],
+        function (err, response) {
+          if (err) return res.status(401).send({ error: err });
+          if (req.user.uid == response.user) {
+            var date = Date.now();
+            response.status = 'aborted';
+            response.log.set('aborted', date);
+            response.save();
+            return res.status(200).send();
+          } else {
+            return res.status(401).send('user forbidden for this operation');
+          }
+        }
+      );
+    });
+  }
+);
+
 export default router;
