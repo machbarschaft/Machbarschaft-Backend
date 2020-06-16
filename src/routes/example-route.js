@@ -80,7 +80,6 @@ router.get(
  *          500:
  *              description: Internal server error
  */
- */
 router.get(
   '/:id',
   // validator missing
