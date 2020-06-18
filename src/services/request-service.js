@@ -34,7 +34,7 @@ export default class RequestService {
   }
 
   static async updateRequest(userId, requestId, requestBody) {
-    const request = models.Request.findOne({ _id: requestId });
+    const request = await models.Request.findOne({ _id: requestId });
     if (!request) {
       return Promise.reject(new Error('No request with given id.'));
     }
@@ -59,5 +59,30 @@ export default class RequestService {
     }
 
     return request.save();
+  }
+
+  static async publishRequest(userId, requestId) {
+    const request = await models.Request.findOne({ _id: requestId });
+    if (!request) {
+      return Promise.reject(new Error('No request with given id.'));
+    }
+    if (request.user !== userId) {
+      return Promise.reject(new Error('Not your request.'));
+    }
+
+    if (
+      request.name &&
+      request.address &&
+      request.requestType &&
+      request.urgency
+    ) {
+      request.status = statusStages[1];
+      request.log.set(statusStages[1], Date.now());
+      return request.save();
+    }
+
+    return Promise.reject(
+      new Error('Request does not contain necessary information.')
+    );
   }
 }
