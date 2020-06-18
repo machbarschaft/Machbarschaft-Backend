@@ -19,7 +19,7 @@ router.get('/', ConfirmPhoneController.verifyMe);
  *          - phone-verification
  *       requestBody:
  *        content:
- *          application/json:
+ *          application/x-www-form-urlencoded:
  *              schema:
  *                  type: object
  *                  properties:

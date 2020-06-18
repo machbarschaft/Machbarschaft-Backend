@@ -8,15 +8,15 @@ const verifyMe = async (req, res) => {
 };
 
 const createNewTan = async (req, res) => {
-  let user, phone;
-  if (req.body.user) {
-    user = req.body.user;
-    phone = await UserService.findUserById(req.body.user).phone;
+  let userId, phone;
+  if (req.body.userId) {
+    userId = req.body.userId;
+    phone = await UserService.findUserById(req.body.userId).phone;
   } else {
     phone = req.body.phone;
-    user = await UserService.findUserByPhone(req.body.phone)._id;
+    userId = await UserService.findUserByPhone(req.body.phone)._id;
   }
-  ConfirmPhoneService.create(user, phone, req.body.sms)
+  ConfirmPhoneService.create(userId, phone, req.body.sms)
     .then((request) => {
       res.status(200).json(request);
     })
@@ -28,8 +28,8 @@ const createNewTan = async (req, res) => {
 
 const confirmTan = async (req, res) => {
   let userId;
-  if (req.body.user) {
-    userId = req.body.user;
+  if (req.body.userId) {
+    userId = req.body.userId;
   } else {
     userId = await UserService.findUserByPhone(req.body.phone)._id;
   }
