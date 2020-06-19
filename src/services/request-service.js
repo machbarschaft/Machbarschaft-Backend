@@ -16,7 +16,7 @@ export default class RequestService {
 
     const process = new models.Process();
     request = new models.Request({ process: process._id, user: userId });
-    process.request = [request._id];
+    process.requests = [request._id];
 
     request.save();
     process.save();
@@ -41,6 +41,10 @@ export default class RequestService {
 
     if (request.user.toString() !== userId.toString()) {
       return Promise.reject(new Error('Not your request.'));
+    }
+
+    if (request.status !== statusStages[0]) {
+      return Promise.reject(new Error('Request is already published.'));
     }
 
     if (requestBody.requestType) {

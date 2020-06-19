@@ -19,6 +19,7 @@ const processFeedbackSchema = new mongoose.Schema(
     log: {
       type: Map,
       of: Date,
+      default: {},
     },
   },
   { timestamps: true, discriminatorKey: 'kind' }

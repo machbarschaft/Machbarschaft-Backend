@@ -110,6 +110,8 @@ router.post(
  *         description: Successfully updated request.
  *         schema:
  *           type: request
+ *       400:
+ *          description: Request is already published.
  *       401:
  *          description: Not your request.
  *       404:
@@ -184,6 +186,8 @@ router.put(
  *         description: Successfully updated request.
  *         schema:
  *           type: request
+ *       400:
+ *          description: Request is already published.
  *       401:
  *          description: Not your request.
  *       404:
