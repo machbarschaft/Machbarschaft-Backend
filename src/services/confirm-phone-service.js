@@ -1,36 +1,65 @@
 'use strict';
 
 import models from '../models/bundle';
+import UserService from './user-service';
 
 export default class ConfirmPhoneService {
   static async create(userId, phone, sms) {
-    const tan = Math.floor(Math.random() * 9999);
+    const user = await UserService.findUserById(userId);
+    if (!user) {
+      return Promise.reject('No user found with the given id.');
+    }
+
+    const recentConfirmPhone = await ConfirmPhoneService.getMostRecentConfirmPhone(
+      userId
+    );
+    let tan;
+    if (recentConfirmPhone.successful === false) {
+      tan = recentConfirmPhone.tan;
+    } else {
+      tan = Math.floor(Math.random() * 9999);
+    }
     const confirmPhone = new models.ConfirmPhone({
       user: userId,
       phone: phone,
       tan: tan,
       sms: sms,
     });
+    user.confirmPhone.push(confirmPhone._id);
+    user.save();
     confirmPhone.save();
     //ToDo: initiate Twilio verification call/sms
-    return confirmPhone._id;
+    return;
   }
 
   static async confirm(tan, userId) {
-    let newestEntry = await models.ConfirmPhone.find({ user: userId }).sort({
+    return ConfirmPhoneService.getMostRecentConfirmPhone(userId).then(
+      async (confirmPhone) => {
+        if (confirmPhone.expiresAt.getTime() < Date.now()) {
+          return Promise.reject(new Error('This tan is expired.'));
+        }
+        if (confirmPhone.tan !== tan) {
+          return Promise.reject(new Error('The tan is incorrect.'));
+        }
+        confirmPhone.successful = true;
+        confirmPhone.save();
+        let user = await models.User.findOne({ _id: userId });
+        user.phoneVerified = true;
+        user.save();
+        return; //ToDo return cookie
+      }
+    );
+  }
+
+  static async getMostRecentConfirmPhone(userId) {
+    let sortedEntries = await models.ConfirmPhone.find({ user: userId }).sort({
       createdAt: -1,
     });
-    if (newestEntry.expiresAt < Date.now) {
-      return Promise.reject(new Error('Expired'));
+    if (!sortedEntries) {
+      return Promise.reject(
+        new Error('There was no tan generated for the given user.')
+      );
     }
-    if (newestEntry.tan !== tan) {
-      return Promise.reject(new Error('Incorrect Tan'));
-    }
-    newestEntry.successful = true;
-    newestEntry.save();
-    let user = await models.User.findOne({ _id: userId });
-    user.phoneVerified = true;
-    user.save();
-    //ToDo return cookie
+    return sortedEntries[0];
   }
 }

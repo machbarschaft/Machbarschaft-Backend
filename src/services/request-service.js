@@ -16,7 +16,7 @@ export default class RequestService {
 
     const process = new models.Process();
     request = new models.Request({ process: process._id, user: userId });
-    process.request = [request._id];
+    process.requests = [request._id];
 
     request.save();
     process.save();
@@ -34,12 +34,17 @@ export default class RequestService {
   }
 
   static async updateRequest(userId, requestId, requestBody) {
-    const request = models.Request.findOne({ _id: requestId });
+    const request = await models.Request.findOne({ _id: requestId });
     if (!request) {
       return Promise.reject(new Error('No request with given id.'));
     }
-    if (request.user !== userId) {
+
+    if (request.user.toString() !== userId.toString()) {
       return Promise.reject(new Error('Not your request.'));
+    }
+
+    if (request.status !== statusStages[0]) {
+      return Promise.reject(new Error('Request is already published.'));
     }
 
     if (requestBody.requestType) {
@@ -51,13 +56,63 @@ export default class RequestService {
     if (requestBody.name) {
       request.name = requestBody.name;
     }
-    if (requestBody.address) {
-      request.address = new models.Address(requestBody.address);
+    if (requestBody.addressId) {
+      const address = await models.Address.findOne({
+        _id: requestBody.addressId,
+      });
+      if (!address) {
+        return Promise.reject(new Error('No address with given id.'));
+      }
+      if (!address.requests) {
+        address.requests = [requestId];
+      } else {
+        if (!address.requests.includes(requestId)) {
+          address.requests.push(requestId);
+        }
+      }
+      address.save();
+      request.address = requestBody.addressId;
     }
-    if (requestBody.extras) {
-      request.extras = new models.RequestExtras(requestBody.extras);
+    if (requestBody.prescriptionRequired || requestBody.carNecessary) {
+      if (!request.extras) {
+        request.extras = new models.RequestExtras();
+      }
+      if (requestBody.prescriptionRequired) {
+        request.extras.prescriptionRequired = requestBody.prescriptionRequired;
+      }
+      if (requestBody.carNecessary) {
+        request.extras.carNecessary = requestBody.carNecessary;
+      }
     }
 
     return request.save();
+  }
+
+  static async publishRequest(userId, requestId) {
+    const request = await models.Request.findOne({ _id: requestId });
+    if (!request) {
+      return Promise.reject(new Error('No request with given id.'));
+    }
+    if (request.user.toString() !== userId.toString()) {
+      return Promise.reject(new Error('Not your request.'));
+    }
+    if (request.status !== statusStages[0]) {
+      return Promise.reject(new Error('Request has been published before.'));
+    }
+
+    if (
+      request.name &&
+      request.address &&
+      request.requestType &&
+      request.urgency
+    ) {
+      request.status = statusStages[1];
+      request.log.set(statusStages[1], Date.now());
+      return request.save();
+    }
+
+    return Promise.reject(
+      new Error('Request does not contain necessary information.')
+    );
   }
 }

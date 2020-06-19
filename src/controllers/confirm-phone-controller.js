@@ -8,39 +8,63 @@ const verifyMe = async (req, res) => {
 };
 
 const createNewTan = async (req, res) => {
-  let user, phone;
-  if (req.body.user) {
-    user = req.body.user;
-    phone = await UserService.findUserById(req.body.user).phone;
+  let userId, phone;
+  if (req.body.userId) {
+    userId = req.body.userId;
+    const user = await UserService.findUserById(req.body.userId);
+    phone = user.phone;
   } else {
     phone = req.body.phone;
-    user = await UserService.findUserByPhone(req.body.phone)._id;
+    const user = await UserService.findUserByPhone(req.body.phone);
+    userId = user._id;
   }
-  ConfirmPhoneService.create(user, phone, req.body.sms)
+  if (!userId || !phone) {
+    res.status(404).send('No user with given id or phone number.');
+    return;
+  }
+  ConfirmPhoneService.create(userId, phone, req.body.sms)
     .then((request) => {
-      res.status(200).json(request);
+      res.status(201).send();
+      return;
     })
     .catch((error) => {
       res.status(500).send();
       console.log(error);
+      return;
     });
+  return;
 };
 
 const confirmTan = async (req, res) => {
   let userId;
-  if (req.body.user) {
-    userId = req.body.user;
+  if (req.body.userId) {
+    userId = req.body.userId;
   } else {
-    userId = await UserService.findUserByPhone(req.body.phone)._id;
+    const user = await UserService.findUserByPhone(req.body.phone);
+    userId = user._id;
   }
   ConfirmPhoneService.confirm(req.body.tan, userId)
     .then((request) => {
       res.status(200).json(request);
+      return;
     })
     .catch((error) => {
+      if (error.message === 'There was no tan generated for the given user.') {
+        res.status(404).send(error.message);
+        return;
+      }
+      if (
+        error.message === 'This tan is expired.' ||
+        error.message === 'The tan is incorrect.'
+      ) {
+        res.status(400).send(error.message);
+        return;
+      }
       res.status(500).send();
       console.log(error);
+      return;
     });
+  return;
 };
 
 module.exports = { verifyMe, createNewTan, confirmTan };
