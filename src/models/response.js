@@ -22,6 +22,7 @@ const responseSchema = new mongoose.Schema(
     log: {
       type: Map,
       of: Date,
+      default: {},
     },
   },
   { timestamps: true }

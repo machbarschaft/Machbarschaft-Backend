@@ -24,6 +24,10 @@ const addressSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  city: {
+    type: String,
+    required: true,
+  },
   country: {
     type: String,
     required: true,
@@ -36,6 +40,18 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  requests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Request',
+    },
+  ],
+  userPreferences: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'UserPreferences',
+    },
+  ],
 });
 
 const Address = mongoose.model('Address', addressSchema);
