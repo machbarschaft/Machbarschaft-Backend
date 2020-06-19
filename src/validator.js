@@ -31,11 +31,8 @@ const idValidationRules = (fieldName) => {
   return [
     check(
       fieldName,
-      'Die ID muss aus 24 Kleinbuchstaben und Zahlen bestehen.'
+      "Die '" + fieldName + "' muss aus 24 Kleinbuchstaben und Zahlen bestehen."
     ).isMongoId(),
-    /*.isLength({ min: 24, max: 24 })
-      .isLowercase()
-      .isAlphanumeric(),*/
   ];
 };
 
@@ -71,16 +68,12 @@ const requestValidationRules = () => {
       .optional()
       .isBoolean(),
   ]
-    .concat(nameValidationRules())
+    .concat(nameValidationRules('name'))
     .concat(idValidationRules('addressId'));
 };
 
 const addressValidationRules = () => {
   return [
-    check(
-      'address.street',
-      'Der Straßenname darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen.'
-    ).matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
     check(
       'address.houseNumber',
       'Die Hausnummer muss eine Zahl mit maximal 10 Ziffern sein.'
@@ -91,10 +84,6 @@ const addressValidationRules = () => {
       'address.zipCode',
       'Es muss eine in Deutschland gültige Postleitzahl sein.'
     ).isPostalCode('DE'),
-    check(
-      'address.country',
-      'Das Land darf nur aus Buchstaben bestehen.'
-    ).isAlpha(),
     check(
       'address.geoLocation.longitude',
       'Der Längengrad wird durch eine Dezimalzahl dargestellt.'
@@ -107,14 +96,18 @@ const addressValidationRules = () => {
       'address.geoHash',
       'Der GeoHash besteht aus Buchstaben und Zahlen.'
     ).isAlphanumeric(),
-  ];
+  ]
+    .concat(nameValidationRules('street'))
+    .concat(nameValidationRules('country'));
 };
 
-const nameValidationRules = () => {
+const nameValidationRules = (fieldName) => {
   return [
     check(
-      'name',
-      'Der Name darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen.'
+      fieldName,
+      "Das Feld '" +
+        fieldName +
+        "' darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen."
     )
       .optional()
       .matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
