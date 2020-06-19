@@ -3,6 +3,7 @@ import request from './request-route';
 import auth from './auth';
 import docs from './docs';
 import confirmPhone from './confirm-phone-route';
+import example from './example-route';
 
 export default {
   landingPage,
@@ -10,4 +11,5 @@ export default {
   auth,
   docs,
   confirmPhone,
+  example,
 };
