@@ -42,6 +42,10 @@ const updateLoggedIn = async (req, res) => {
         res.status(404).send(error.message);
         return;
       }
+      if (error.message === 'Request is already published.') {
+        res.status(400).send(error.message);
+        return;
+      }
       if (error.message === 'Not your request.') {
         res.status(401).send(error.message);
         return;
@@ -71,6 +75,10 @@ const updateLoggedOut = async (req, res) => {
         error.message === 'No request with given id.'
       ) {
         res.status(404).send(error.message);
+        return;
+      }
+      if (error.message === 'Request is already published.') {
+        res.status(400).send(error.message);
         return;
       }
       if (error.message === 'Not your request.') {
