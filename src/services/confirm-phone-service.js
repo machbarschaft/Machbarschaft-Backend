@@ -9,7 +9,16 @@ export default class ConfirmPhoneService {
     if (!user) {
       return Promise.reject('No user found with the given id.');
     }
-    const tan = Math.floor(Math.random() * 9999);
+
+    const recentConfirmPhone = await ConfirmPhoneService.getMostRecentConfirmPhone(
+      userId
+    );
+    let tan;
+    if (recentConfirmPhone.successful === false) {
+      tan = recentConfirmPhone.tan;
+    } else {
+      tan = Math.floor(Math.random() * 9999);
+    }
     const confirmPhone = new models.ConfirmPhone({
       user: userId,
       phone: phone,
@@ -24,6 +33,25 @@ export default class ConfirmPhoneService {
   }
 
   static async confirm(tan, userId) {
+    return ConfirmPhoneService.getMostRecentConfirmPhone(userId).then(
+      async (confirmPhone) => {
+        if (confirmPhone.expiresAt.getTime() < Date.now()) {
+          return Promise.reject(new Error('This tan is expired.'));
+        }
+        if (confirmPhone.tan !== tan) {
+          return Promise.reject(new Error('The tan is incorrect.'));
+        }
+        confirmPhone.successful = true;
+        confirmPhone.save();
+        let user = await models.User.findOne({ _id: userId });
+        user.phoneVerified = true;
+        user.save();
+        return; //ToDo return cookie
+      }
+    );
+  }
+
+  static async getMostRecentConfirmPhone(userId) {
     let sortedEntries = await models.ConfirmPhone.find({ user: userId }).sort({
       createdAt: -1,
     });
@@ -32,17 +60,6 @@ export default class ConfirmPhoneService {
         new Error('There was no tan generated for the given user.')
       );
     }
-    if (sortedEntries[0].expiresAt.getTime() < Date.now()) {
-      return Promise.reject(new Error('This tan is expired.'));
-    }
-    if (sortedEntries[0].tan !== tan) {
-      return Promise.reject(new Error('The tan is incorrect.'));
-    }
-    sortedEntries[0].successful = true;
-    sortedEntries[0].save();
-    let user = await models.User.findOne({ _id: userId });
-    user.phoneVerified = true;
-    user.save();
-    return; //ToDo return cookie
+    return sortedEntries[0];
   }
 }
