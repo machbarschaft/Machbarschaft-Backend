@@ -31,7 +31,13 @@ router.get('/', ConfirmPhoneController.verifyMe);
 router.put(
   '/',
   Validator.requireUserIdOrPhoneNumber(),
-  [body('tan').exists().isNumeric().isLength({ min: 4, max: 4 })],
+  [
+    body('tan', 'Der Tan besteht aus vier Ziffern und muss angegeben werden.')
+      .exists()
+      .isNumeric()
+      .isLength({ min: 4, max: 4 })
+      .toInt(),
+  ],
   Validator.validate,
   ConfirmPhoneController.confirmTan
 );
@@ -58,7 +64,14 @@ router.put(
 router.post(
   '/',
   Validator.requireUserIdOrPhoneNumber(),
-  [body('sms').exists().isBoolean()],
+  [
+    body(
+      'sms',
+      "Specify whether you prefer to receive the tan per sms with 'true' or 'false'."
+    )
+      .exists()
+      .isBoolean(),
+  ],
   Validator.validate,
   ConfirmPhoneController.createNewTan
 );

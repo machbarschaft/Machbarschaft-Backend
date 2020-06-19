@@ -1,8 +1,9 @@
 import Router from 'express';
+import models from '../models/bundle';
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   //ToDo: landing page logic
   res.send('Hello World!');
 });
