@@ -137,13 +137,7 @@ router.post(
  */
 router.put(
   '/',
-  [
-    body('_id')
-      .exists()
-      .isLength({ min: 24, max: 24 })
-      .isLowercase()
-      .isAlphanumeric(),
-  ],
+  Validator.idValidationRules('_id'),
   Validator.exampleValidationRules(),
   Validator.validate,
   ExampleController.update
