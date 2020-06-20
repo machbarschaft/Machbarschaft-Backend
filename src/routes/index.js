@@ -1,6 +1,6 @@
 import landingPage from './landing-page-route';
 import request from './request-route';
-import auth from './auth';
+import auth from './auth-route';
 import docs from './docs';
 import confirmPhone from './confirm-phone-route';
 

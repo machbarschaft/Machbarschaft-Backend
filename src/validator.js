@@ -1,4 +1,4 @@
-import { requestTypes, urgencyCategories } from './models/request';
+import { requestTypes, urgencyCategories } from './models/request-model';
 
 const {
   check,

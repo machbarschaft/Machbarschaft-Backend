@@ -8,7 +8,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import accessModel from './models/access';
+import accessModel from './models/access-model';
 import JwtCookieComboStrategy from 'passport-jwt-cookiecombo';
 import JWTConfig from './jwt_config';
 
