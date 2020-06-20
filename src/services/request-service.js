@@ -1,7 +1,7 @@
 'use strict';
 
 import models from '../models/bundle';
-import { statusStages } from '../models/request';
+import { statusStages } from '../models/request-model';
 import UserService from './user-service';
 
 export default class RequestService {
