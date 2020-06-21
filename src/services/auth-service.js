@@ -3,22 +3,42 @@
 import models from '../models/bundle';
 import JWTConfig from '../jwt_config';
 import jwt from 'jsonwebtoken';
+import UserService from './user-service';
 
 export default class AuthService {
-  static async register(email, password) {
-    const access = await models.Access.findOne({
+  static async register(email, password, phone) {
+    console.log(phone);
+    let user = await UserService.findUserByPhone(phone);
+    let access = await models.Access.findOne({
       email: email,
     });
     if (access) {
-      return Promise.reject(new Error('user already exists'));
+      return Promise.reject(
+        new Error('this email address is already assigned to an account')
+      );
+    }
+    console.log(user);
+    if (user) {
+      if (user.access) {
+        return Promise.reject(
+          new Error('for this phone number exists a registered account')
+        );
+      }
+    } else {
+      user = await UserService.createUser(phone);
     }
 
-    return models.Access.register(
-      new models.Access({
-        email: email,
-      }),
-      password
-    );
+    access = new models.Access({
+      user: user._id,
+      email: email,
+    });
+
+    return models.Access.register(access, password).then((result) => {
+      console.log(result);
+      user.access = result._id;
+      user.save();
+      return Promise.resolve();
+    });
   }
 
   static async login(userId) {
@@ -35,7 +55,7 @@ export default class AuthService {
   }
 
   static async logout(userId) {
-    const access = await models.Access.findOne({ _id: userId });
+    const access = await models.Access.findOne({ user: userId });
     if (access) {
       return jwt.sign(
         {
@@ -52,10 +72,10 @@ export default class AuthService {
   }
 
   static async authenticate(userId) {
-    const access = await models.Access.findOne({ _id: userId });
+    const access = await models.Access.findOne({ user: userId });
     if (access) {
       return Promise.resolve({
-        uid: access._id,
+        uid: access.user,
         email: access.email,
       });
     } else {

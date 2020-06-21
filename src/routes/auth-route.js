@@ -3,11 +3,7 @@
 import Router from 'express';
 import AuthController from './../controllers/auth-controller';
 import passport from 'passport';
-import {
-  userValidationRules,
-  cookieValidationRules,
-  validate,
-} from '../validator.js';
+import Validator from '../validator.js';
 const router = Router();
 
 /**
@@ -37,7 +33,7 @@ const router = Router();
  *             errors:
  *               type: array
  *       401:
- *         description: error occured while registration, checking if user already exists or user already exists
+ *         description: error occured while registration, check if phone or email is already assigned to an account.
  *         schema:
  *           type: object
  *           properties:
@@ -51,8 +47,9 @@ const router = Router();
 
 router.post(
   '/register',
-  userValidationRules(),
-  validate,
+  Validator.phoneValidationRules(),
+  Validator.userValidationRules(),
+  Validator.validate,
   AuthController.register
 );
 
@@ -75,6 +72,8 @@ router.post(
  *               password:
  *                 type: string
  *     responses:
+ *       403:
+ *         description: The phone number must be verified before logging in.
  *       422:
  *         description: request is not valid
  *         schema:
@@ -95,8 +94,8 @@ router.post(
 
 router.put(
   '/login',
-  userValidationRules(),
-  validate,
+  Validator.userValidationRules(),
+  Validator.validate,
   passport.authenticate('local', {
     session: false,
   }),
@@ -127,8 +126,8 @@ router.put(
 
 router.get(
   '/authenticate',
-  cookieValidationRules(),
-  validate,
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),

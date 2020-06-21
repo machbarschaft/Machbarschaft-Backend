@@ -5,6 +5,7 @@ import AuthService from '../services/auth-service';
 import { validationResult } from 'express-validator';
 import JWTConfig from '../jwt_config';
 import jwt from 'jsonwebtoken';
+import UserService from '../services/user-service';
 
 const register = async (req, res) => {
   const errors = validationResult(req);
@@ -12,13 +13,17 @@ const register = async (req, res) => {
     res.status(422).json({ errors: errors.array() });
     return;
   }
-  AuthService.register(req.body.email, req.body.password)
+  AuthService.register(req.body.email, req.body.password, req.body.phone)
     .then((result) => {
       res.status(201).send();
       return;
     })
     .catch((error) => {
-      if (error.message === 'user already exists') {
+      if (
+        error.message ===
+          'this email address is already assigned to an account' ||
+        error.message === 'for this phone number exists a registered account'
+      ) {
         res.status(401).send({ errors: error.message });
         return;
       }
@@ -34,7 +39,12 @@ const login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  AuthService.login(req.user._id)
+  const verifiedUser = await UserService.isVerified(req.user.user);
+  if (verifiedUser === false) {
+    res.status(403).send('Please verify phone number before login.');
+    return;
+  }
+  AuthService.login(req.user.user)
     .then((token) => {
       // Send the Set-Cookie header with the jwt to the client
       res.cookie(
