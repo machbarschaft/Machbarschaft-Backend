@@ -1,6 +1,5 @@
-
 import { requestTypes, urgencyCategories } from './models/request-model';
-import { colors } from './models/example';
+import { colors } from './models/example-model';
 
 const {
   check,
