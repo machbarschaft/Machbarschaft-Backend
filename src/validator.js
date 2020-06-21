@@ -68,9 +68,13 @@ const requestValidationRules = () => {
     body('prescriptionRequired', "Darf nur 'true' oder 'false' sein.")
       .optional()
       .isBoolean(),
-  ]
-    .concat(nameValidationRules('name'))
-    .concat(idValidationRules('addressId'));
+    body(
+      'addressId',
+      'Die ID der Adresse ist eine 24-stellige Zeichenkette aus Kleinbuchstaben und Zahlen.'
+    )
+      .optional()
+      .isMongoId(),
+  ].concat(nameValidationRules('name'));
 };
 
 const addressValidationRules = () => {
