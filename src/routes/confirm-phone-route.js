@@ -17,7 +17,7 @@ router.get('/', ConfirmPhoneController.verifyMe);
  *      description: Verify your phone by entering the tan send by Twilio to your phone.
  *      tags:
  *          - phone-verification
- *       requestBody:
+ *      requestBody:
  *        content:
  *          application/x-www-form-urlencoded:
  *              schema:
@@ -50,7 +50,7 @@ router.put(
  *      description: Generate a new tan and initiate Twilio call/sms.
  *      tags:
  *          - phone-verification
- *       requestBody:
+ *      requestBody:
  *        content:
  *          application/json:
  *              schema:

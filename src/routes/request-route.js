@@ -74,10 +74,10 @@ router.post(
  *        required: true
  *     requestBody:
  *      content:
- *          application/x-www-form-urlencoded
+ *          application/x-www-form-urlencoded:
  *              schema:
  *                  type: object
- *                      properties:
+ *                  properties:
  *                          name:
  *                              type: String
  *                              required: false
@@ -150,10 +150,10 @@ router.put(
  *        required: true
  *     requestBody:
  *      content:
- *          application/x-www-form-urlencoded
+ *          application/x-www-form-urlencoded:
  *              schema:
  *                  type: object
- *                      properties:
+ *                  properties:
  *                          name:
  *                              type: String
  *                              required: false
@@ -191,9 +191,7 @@ router.put(
  *       401:
  *          description: Not your request.
  *       404:
- *          description: No user with given phone number.
- *       404:
- *          description: No request with given id.
+ *          description: No user with given phone number. OR No request with given id.
  *       500:
  *          description: Internal server error
  */
@@ -208,7 +206,7 @@ router.put(
 
 /**
  * @swagger
- * /request/publish/{reqId}:
+ * /request/{reqId}/publish:
  *   put:
  *     summary: Publish request
  *     description: Publish the request with 'reqId' as id. This is only successful if all necessary information has been added to the request.
@@ -223,9 +221,7 @@ router.put(
  *       200:
  *         description: Successfully published the request.
  *       400:
- *          description: Request does not contain necessary information.
- *       400:
- *          description: Request has been published before.
+ *          description: Request does not contain necessary information. OR Request has been published before.
  *       401:
  *          description: Not your request.
  *       404:
@@ -234,7 +230,7 @@ router.put(
  *          description: Internal server error
  */
 router.put(
-  '/publish/:reqId',
+  '/:reqId/publish',
   Validator.idValidationRules('reqId'),
   Validator.cookieValidationRules(),
   Validator.validate,
@@ -246,7 +242,7 @@ router.put(
 
 /**
  * @swagger
- * /request/guest/publish/{reqId}:
+ * /request/guest/{reqId}/publish:
  *   put:
  *     summary: Publish request as guest
  *     description: Publish the request with 'reqId' as a guest. This is only successful if all necessary information has been added to the request.
@@ -265,20 +261,16 @@ router.put(
  *       200:
  *         description: Successfully published the request.
  *       400:
- *          description: Request does not contain necessary information.
- *       400:
- *          description: Request has been published before.
+ *          description: Request does not contain necessary information. OR Request has been published before.
  *       401:
  *          description: Not your request.
  *       404:
- *          description: No user with given phone number.
- *       404:
- *          description: No request with given id.
+ *          description: No user with given phone number. OR No request with given id.
  *       500:
  *          description: Internal server error
  */
 router.put(
-  '/guest/publish/:reqId',
+  '/guest/:reqId/publish',
   Validator.idValidationRules('reqId'),
   Validator.validate,
   RequestController.publishLoggedOut
