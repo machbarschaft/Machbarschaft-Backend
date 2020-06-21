@@ -8,10 +8,13 @@ const accessSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false,
+    required: true,
   },
-  email: String,
-  password: String,
+  email: {
+    type: String,
+    required: true,
+  },
+  //password: String,
   emailVerified: {
     type: Boolean,
     default: false,
