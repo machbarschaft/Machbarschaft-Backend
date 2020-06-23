@@ -3,12 +3,12 @@
 import cors from 'cors';
 import helmet from 'helmet';
 import express from 'express';
-import routes from './routes';
+import routes from './routes/index';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import accessModel from './models/access';
+import accessModel from './models/access-model';
 import JwtCookieComboStrategy from 'passport-jwt-cookiecombo';
 import JWTConfig from './jwt_config';
 
@@ -54,8 +54,11 @@ passport.use(
 
 //all routes
 app.use('/', routes.landingPage);
+app.use('/request', routes.request);
 app.use('/auth', routes.auth);
 app.use('/docs', routes.docs);
 app.use('/process', routes.process);
+app.use('/confirm-phone', routes.confirmPhone);
+app.use('/example', routes.example);
 
 module.exports = app;

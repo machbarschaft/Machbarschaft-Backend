@@ -11,6 +11,11 @@ const statusStages = [
 
 const responseSchema = new mongoose.Schema(
   {
+    process: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Process',
+      required: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -24,6 +29,7 @@ const responseSchema = new mongoose.Schema(
     log: {
       type: Map,
       of: Date,
+      default: {},
     },
   },
   { timestamps: true }
@@ -31,4 +37,4 @@ const responseSchema = new mongoose.Schema(
 
 const Response = mongoose.model('Response', responseSchema);
 
-export default Response;
+export { Response, statusStages };
