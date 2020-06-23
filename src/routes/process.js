@@ -1,9 +1,5 @@
 import express from 'express';
-import {
-  processValidationRules,
-  cookieValidationRules,
-  validate,
-} from '../validator.js';
+import Validator from '../validator.js';
 import ProcessModel from '../models/process';
 import ResponseModel from '../models/response';
 import RequestModel from '../models/request';
@@ -32,15 +28,14 @@ const router = express.Router();
  *     responses:
  *       401:
  *         description: error occured
- *       200:
- *         description: status change was successful
+ *       200: *         description: status change was successful
  */
 
 router.post(
   '/:processId/response',
-  processValidationRules(),
-  cookieValidationRules(),
-  validate,
+  Validator.processValidationRules(),
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
@@ -213,8 +208,9 @@ router.post(
 
 router.post(
   '/:processId/request/details',
-  processValidationRules(),
-  cookieValidationRules(),
+  Validator.processValidationRules(),
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
@@ -268,12 +264,17 @@ router.post(
 
 router.post(
   '/:processId/request/done',
-  processValidationRules(),
-  cookieValidationRules(),
+  Validator.processValidationRules(),
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
   (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(401).json({ errors: errors.array() });
+    }
     ProcessModel.findById(req.params.processId, function (err, process) {
       // if not already marked as done!
       var date = Date.now();
@@ -325,12 +326,17 @@ router.post(
 
 router.post(
   '/:processId/request/release',
-  processValidationRules(),
-  cookieValidationRules(),
+  Validator.processValidationRules(),
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
   (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(401).json({ errors: errors.array() });
+    }
     ProcessModel.findById(req.params.processId, function (err, process) {
       var date = Date.now();
       if (err) return res.status(401).send({ error: err });
@@ -387,12 +393,17 @@ router.post(
 
 router.post(
   '/:processId/request/abort',
-  processValidationRules(),
-  cookieValidationRules(),
+  Validator.processValidationRules(),
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
   (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(401).json({ errors: errors.array() });
+    }
     ProcessModel.findById(req.params.processId, function (err, process) {
       if (err) return res.status(401).send({ error: err });
       RequestModel.findById(
@@ -439,12 +450,17 @@ router.post(
 
 router.post(
   '/:processId/response/abort',
-  processValidationRules(),
-  cookieValidationRules(),
+  Validator.processValidationRules(),
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
   (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(401).json({ errors: errors.array() });
+    }
     ProcessModel.findById(req.params.processId, function (err, process) {
       if (err) return res.status(401).send({ error: err });
 
