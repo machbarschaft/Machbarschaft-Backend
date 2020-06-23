@@ -35,4 +35,12 @@ export default class UserService {
   static async findUserById(userId) {
     return models.User.findOne({ _id: userId });
   }
+
+  static async isVerified(userId) {
+    const user = await this.findUserById(userId);
+    if (user && user.phoneVerified === true) {
+      return true;
+    }
+    return false;
+  }
 }
