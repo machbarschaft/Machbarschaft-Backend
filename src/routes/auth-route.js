@@ -11,7 +11,7 @@ const router = Router();
  * /auth/register:
  *   post:
  *     summary: Register user account
- *     description: Register user account with identifier email and password after checking if user exists
+ *     description: Register user account with identifier phone, email and password after checking if user exists
  *     tags:
  *       - auth
  *     requestBody:
@@ -24,6 +24,8 @@ const router = Router();
  *                 type: string
  *               password:
  *                 type: string
+ *               phone:
+ *                 type: Number
  *     responses:
  *       422:
  *         description: request is not valid
