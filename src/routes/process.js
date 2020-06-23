@@ -1,8 +1,6 @@
 import express from 'express';
 import Validator from '../validator.js';
-import ProcessModel from '../models/process';
-import ResponseModel from '../models/response';
-import RequestModel from '../models/request';
+import models from '../models/bundle';
 import passport from 'passport';
 import mongoose from 'mongoose';
 const { validationResult } = require('express-validator');
@@ -33,7 +31,7 @@ const router = express.Router();
 
 router.post(
   '/:processId/response',
-  Validator.processValidationRules(),
+  Validator.idValidationRules(),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -44,19 +42,20 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    ProcessModel.findById(req.params.processId, function (err, process) {
+    models.ProcessModel.findById(req.params.processId, function (err, process) {
       if (process.response.length) {
         // get details for latest response in Array
-        ResponseModel.findById(
+        models.ResponseModel.findById(
           process.response[process.response.length - 1],
           function (err, response) {
             var date = Date.now();
             // if the response is from the current user and not already done, change status
-            if (response.user == req.user.uid && response.status != 'done') {
-              console.log('response.user === req.user._id && status != done');
+            if (
+              response.user.toString() === req.user.uid.toString() &&
+              response.status !== 'done'
+            ) {
               if (response.status === 'accepted') {
                 var status = 'called';
-                console.log(status);
               } else if (response.status === 'called') {
                 var status = 'on-the-way';
               } else if (response.status === 'on-the-way') {
@@ -76,14 +75,14 @@ router.post(
             else if (response.status === 'aborted') {
               var date = Date.now();
               // create new response and add to process
-              ResponseModel.create(
+              models.ResponseModel.create(
                 {
                   user: { _id: req.user.uid },
                   status: 'accepted',
                   log: { accepted: date },
                 },
                 function (err, response) {
-                  RequestModel.findById(
+                  models.RequestModel.findById(
                     process.requests[process.requests.length - 1],
                     function (err, request) {
                       if (err) return res.status(401).send({ error: err });
@@ -92,7 +91,10 @@ router.post(
                       request.save();
                     }
                   );
-                  ProcessModel.findById(process._id, function (err, process) {
+                  models.ProcessModel.findById(process._id, function (
+                    err,
+                    process
+                  ) {
                     if (err) return res.status(401).send({ error: err });
                     process.response.push(response._id);
                     process.save();
@@ -113,7 +115,7 @@ router.post(
       // no response yet, create response as user accepted request
       else if (!process.response.length) {
         var date = Date.now();
-        RequestModel.findById(
+        models.RequestModel.findById(
           process.requests[process.requests.length - 1],
           function (err, request) {
             if (err) return res.status(401).send({ error: err });
@@ -122,7 +124,7 @@ router.post(
             request.save();
           }
         );
-        ResponseModel.create(
+        models.ResponseModel.create(
           {
             user: { _id: req.user.uid },
             status: 'accepted',
@@ -146,7 +148,7 @@ router.post(
 /**
  * @swagger
  * /:processId/request/details:
- *   post:
+ *   get:
  *     summary: Get details of request
  *     description: Get all information of a help request
  *     tags:
@@ -206,9 +208,9 @@ router.post(
  *            - urgency
  */
 
-router.post(
+router.get(
   '/:processId/request/details',
-  Validator.processValidationRules(),
+  Validator.idValidationRules(),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -219,10 +221,10 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    ProcessModel.findById(req.params.processId, function (err, process) {
+    models.ProcessModel.findById(req.params.processId, function (err, process) {
       if (err) return res.status(500).send({ error: err });
       else {
-        RequestModel.findById(
+        models.RequestModel.findById(
           process.requests[process.requests.length - 1],
           function (err, request) {
             if (err) {
@@ -242,7 +244,7 @@ router.post(
 /**
  * @swagger
  * /:processId/request/done:
- *   post:
+ *   put:
  *     summary: Help seeker marks request as done
  *     description: Help seeker can mark a request as successfully done
  *     tags:
@@ -262,9 +264,9 @@ router.post(
  *         description: status change was successful
  */
 
-router.post(
+router.put(
   '/:processId/request/done',
-  Validator.processValidationRules(),
+  Validator.idValidationRules(),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -275,7 +277,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    ProcessModel.findById(req.params.processId, function (err, process) {
+    models.ProcessModel.findById(req.params.processId, function (err, process) {
       // if not already marked as done!
       var date = Date.now();
       if (!process.finishedAt) {
@@ -283,7 +285,7 @@ router.post(
         process.save();
       }
       if (err) return res.status(401).send({ error: err });
-      RequestModel.findById(
+      models.RequestModel.findById(
         process.requests[process.requests.length - 1],
         function (err, request) {
           if (err) return res.status(401).send({ error: err });
@@ -304,7 +306,7 @@ router.post(
 /**
  * @swagger
  * /:processId/request/release:
- *   post:
+ *   put:
  *     summary: Help seeker releases existing request
  *     description: The help request will be marked as open again, and the response as did-not-help
  *     tags:
@@ -324,9 +326,9 @@ router.post(
  *         description: release was successful
  */
 
-router.post(
+router.put(
   '/:processId/request/release',
-  Validator.processValidationRules(),
+  Validator.idValidationRules(),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -337,24 +339,24 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    ProcessModel.findById(req.params.processId, function (err, process) {
+    models.ProcessModel.findById(req.params.processId, function (err, process) {
       var date = Date.now();
       if (err) return res.status(401).send({ error: err });
       process.finishedAt = undefined;
       process.save();
       // set request to open
-      RequestModel.findById(
+      models.RequestModel.findById(
         process.requests[process.requests.length - 1],
         function (err, request) {
           if (err) return res.status(401).send({ error: err });
-          if (req.user.uid == request.user) {
+          if (req.user.uid.toString() === request.user.toString()) {
             request.status = 'open';
             request.log.set('open', date);
             request.save();
           } else return res.status(401).send('not authorized');
         }
       );
-      ResponseModel.findById(
+      models.ResponseModel.findById(
         process.response[process.response.length - 1],
         function (err, response) {
           if (err) return res.status(401).send({ error: err });
@@ -371,7 +373,7 @@ router.post(
 /**
  * @swagger
  * /:processId/request/abort:
- *   post:
+ *   put:
  *     summary: Help seeker aborts a request
  *     description: The help request will be marked as aborted in its status
  *     tags:
@@ -391,9 +393,9 @@ router.post(
  *         description: abortion was successful
  */
 
-router.post(
+router.put(
   '/:processId/request/abort',
-  Validator.processValidationRules(),
+  Validator.idValidationRules(),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -404,13 +406,16 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    ProcessModel.findById(req.params.processId, function (err, process) {
+    models.ProcessModel.findById(req.params.processId, function (err, process) {
       if (err) return res.status(401).send({ error: err });
-      RequestModel.findById(
+      models.RequestModel.findById(
         process.requests[process.requests.length - 1],
         function (err, request) {
           if (err) return res.status(401).send({ error: err });
-          if (req.user.uid == request.user && !process.response.length) {
+          if (
+            req.user.uid.toString() === request.user.toString() &&
+            !process.response.length
+          ) {
             var date = Date.now();
             request.status = 'aborted';
             request.log.set('aborted', date);
@@ -428,9 +433,9 @@ router.post(
 /**
  * @swagger
  * /:processId/response/abort:
- *   post:
+ *   put:
  *     summary: Helper aborts a response
- *     description: The help request will be marked as aborted in its status
+ *     description: The response will be marked as aborted in its status
  *     tags:
  *       - process
  *     requestBody:
@@ -448,9 +453,9 @@ router.post(
  *         description: abortion was successful
  */
 
-router.post(
+router.put(
   '/:processId/response/abort',
-  Validator.processValidationRules(),
+  Validator.idValidationRules(),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -461,14 +466,14 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    ProcessModel.findById(req.params.processId, function (err, process) {
+    models.ProcessModel.findById(req.params.processId, function (err, process) {
       if (err) return res.status(401).send({ error: err });
 
-      ResponseModel.findById(
+      models.ResponseModel.findById(
         process.response[process.response.length - 1],
         function (err, response) {
           if (err) return res.status(401).send({ error: err });
-          if (req.user.uid == response.user) {
+          if (req.user.uid.toString() === response.user.toString()) {
             var date = Date.now();
             response.status = 'aborted';
             response.log.set('aborted', date);

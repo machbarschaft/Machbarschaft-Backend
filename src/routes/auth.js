@@ -6,7 +6,7 @@ import JWTConfig from '../jwt_config';
 import AccessModel from '../models/access';
 import jwt from 'jsonwebtoken';
 import {
-  userValidationRules,
+  loginValidationRules,
   cookieValidationRules,
   validate,
 } from '../validator.js';
@@ -50,7 +50,7 @@ const { validationResult } = require('express-validator');
  *         description: registration was successful
  */
 
-router.post('/register', userValidationRules(), validate, (req, res) => {
+router.post('/register', loginValidationRules(), validate, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -128,7 +128,7 @@ router.post('/register', userValidationRules(), validate, (req, res) => {
 
 router.post(
   '/login',
-  userValidationRules(),
+  loginValidationRules(),
   validate,
   passport.authenticate('local', {
     session: false,
