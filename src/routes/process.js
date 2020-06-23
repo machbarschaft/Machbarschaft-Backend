@@ -42,10 +42,10 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    models.ProcessModel.findById(req.params.processId, function (err, process) {
+    models.Process.findById(req.params.processId, function (err, process) {
       if (process.response.length) {
         // get details for latest response in Array
-        models.ResponseModel.findById(
+        models.Response.findById(
           process.response[process.response.length - 1],
           function (err, response) {
             var date = Date.now();
@@ -75,14 +75,14 @@ router.post(
             else if (response.status === 'aborted') {
               var date = Date.now();
               // create new response and add to process
-              models.ResponseModel.create(
+              models.Response.create(
                 {
                   user: { _id: req.user.uid },
                   status: 'accepted',
                   log: { accepted: date },
                 },
                 function (err, response) {
-                  models.RequestModel.findById(
+                  models.Request.findById(
                     process.requests[process.requests.length - 1],
                     function (err, request) {
                       if (err) return res.status(401).send({ error: err });
@@ -91,10 +91,7 @@ router.post(
                       request.save();
                     }
                   );
-                  models.ProcessModel.findById(process._id, function (
-                    err,
-                    process
-                  ) {
+                  models.Process.findById(process._id, function (err, process) {
                     if (err) return res.status(401).send({ error: err });
                     process.response.push(response._id);
                     process.save();
@@ -115,7 +112,7 @@ router.post(
       // no response yet, create response as user accepted request
       else if (!process.response.length) {
         var date = Date.now();
-        models.RequestModel.findById(
+        models.Request.findById(
           process.requests[process.requests.length - 1],
           function (err, request) {
             if (err) return res.status(401).send({ error: err });
@@ -124,7 +121,7 @@ router.post(
             request.save();
           }
         );
-        models.ResponseModel.create(
+        models.Response.create(
           {
             user: { _id: req.user.uid },
             status: 'accepted',
@@ -221,10 +218,10 @@ router.get(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    models.ProcessModel.findById(req.params.processId, function (err, process) {
+    models.Process.findById(req.params.processId, function (err, process) {
       if (err) return res.status(500).send({ error: err });
       else {
-        models.RequestModel.findById(
+        models.Request.findById(
           process.requests[process.requests.length - 1],
           function (err, request) {
             if (err) {
@@ -277,7 +274,7 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    models.ProcessModel.findById(req.params.processId, function (err, process) {
+    models.Process.findById(req.params.processId, function (err, process) {
       // if not already marked as done!
       var date = Date.now();
       if (!process.finishedAt) {
@@ -285,7 +282,7 @@ router.put(
         process.save();
       }
       if (err) return res.status(401).send({ error: err });
-      models.RequestModel.findById(
+      models.Request.findById(
         process.requests[process.requests.length - 1],
         function (err, request) {
           if (err) return res.status(401).send({ error: err });
@@ -339,24 +336,25 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    models.ProcessModel.findById(req.params.processId, function (err, process) {
+    models.Process.findById(req.params.processId, function (err, process) {
       var date = Date.now();
       if (err) return res.status(401).send({ error: err });
       process.finishedAt = undefined;
       process.save();
       // set request to open
-      models.RequestModel.findById(
+      models.Request.findById(
         process.requests[process.requests.length - 1],
         function (err, request) {
           if (err) return res.status(401).send({ error: err });
-          if (req.user.uid.toString() === request.user.toString()) {
+          if (req.user.uid === request.user) {
             request.status = 'open';
             request.log.set('open', date);
             request.save();
+            return res.status(200).send();
           } else return res.status(401).send('not authorized');
         }
       );
-      models.ResponseModel.findById(
+      models.Response.findById(
         process.response[process.response.length - 1],
         function (err, response) {
           if (err) return res.status(401).send({ error: err });
@@ -406,15 +404,17 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    models.ProcessModel.findById(req.params.processId, function (err, process) {
+    models.Process.findById(req.params.processId, function (err, process) {
       if (err) return res.status(401).send({ error: err });
-      models.RequestModel.findById(
+      models.Request.findById(
         process.requests[process.requests.length - 1],
         function (err, request) {
+          console.log(req.user.uid);
           if (err) return res.status(401).send({ error: err });
           if (
             req.user.uid.toString() === request.user.toString() &&
-            !process.response.length
+            !process.response.length &&
+            request.status.toString() === 'open'
           ) {
             var date = Date.now();
             request.status = 'aborted';
@@ -466,10 +466,10 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(401).json({ errors: errors.array() });
     }
-    models.ProcessModel.findById(req.params.processId, function (err, process) {
+    models.Process.findById(req.params.processId, function (err, process) {
       if (err) return res.status(401).send({ error: err });
 
-      models.ResponseModel.findById(
+      models.Response.findById(
         process.response[process.response.length - 1],
         function (err, response) {
           if (err) return res.status(401).send({ error: err });

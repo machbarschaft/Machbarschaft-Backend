@@ -8,6 +8,7 @@ import ConfirmEmail from './confirm-email';
 import ConfirmPhone from './confirm-phone';
 import ContactForm from './contact-form';
 import { ProcessFeedback, AudioFeedback, FormFeedback } from './feedback';
+import Process from './process';
 import MobileToken from './mobile-token';
 import Request from './request';
 import ResetPassword from './reset-password';
@@ -26,6 +27,7 @@ const models = {
   ConfirmPhone,
   ContactForm,
   ProcessFeedback,
+  Process,
   AudioFeedback,
   FormFeedback,
   MobileToken,
