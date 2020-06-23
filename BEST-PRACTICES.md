@@ -4,7 +4,7 @@ Best practices:
 - use import rather than require()
 - set 'use strict'; in the first line of your js file
 - use arrow function expression (example () => {}) except for mongoose context
-- don't use mongoose methods like findOneAndUpdate, instead use findOne + save
+- don't use mongoose methods like findOneAndUpdate, instead use findOne + save, because save() executes MongoDB validation. Methods like findById are okay to use.
 - start curly braces ({}) in same line
 - use const and let, do not use var
 - use === instead of == operator
