@@ -14,10 +14,10 @@ export default class ConfirmPhoneService {
       userId
     );
     let tan;
-    if (recentConfirmPhone.successful === false) {
-      tan = recentConfirmPhone.tan;
-    } else {
+    if (!recentConfirmPhone || recentConfirmPhone.successful === true) {
       tan = Math.floor(Math.random() * 9999);
+    } else {
+      tan = recentConfirmPhone.tan;
     }
     const confirmPhone = new models.ConfirmPhone({
       user: userId,
@@ -25,6 +25,11 @@ export default class ConfirmPhoneService {
       tan: tan,
       sms: sms,
     });
+    /*if (!user.confirmPhone) {
+      user.confirmPhone = [confirmPhone._id];
+    } else {
+      user.confirmPhone.push(confirmPhone._id);
+    }*/
     user.confirmPhone.push(confirmPhone._id);
     user.save();
     confirmPhone.save();

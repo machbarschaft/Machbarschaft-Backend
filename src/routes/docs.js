@@ -8,7 +8,7 @@ const router = Router();
 const options = {
   definition,
   apis: [
-    path.resolve(__dirname, 'auth.js'),
+    path.resolve(__dirname, 'auth-route.js'),
     path.resolve(__dirname, 'confirm-phone-route.js'),
     path.resolve(__dirname, 'request-route.js'),
   ],

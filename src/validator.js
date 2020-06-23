@@ -1,5 +1,5 @@
-import { colors } from './models/example';
-import { requestTypes, urgencyCategories } from './models/request';
+import { requestTypes, urgencyCategories } from './models/request-model';
+import { colors } from './models/example-model';
 
 const {
   check,
@@ -41,7 +41,7 @@ const phoneValidationRules = () => {
   return [
     check(
       'phone',
-      'Die Telefonnummer muss eine gültige deutsche Telefonnummer sein.'
+      'Die Telefonnummer muss eine gültige deutsche Mobiltelefonnummer sein.'
     ).isMobilePhone('de-DE'),
   ];
 };
