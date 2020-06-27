@@ -219,7 +219,7 @@ router.put(
  *        required: true
  *     responses:
  *       200:
- *         description: Successfully published the request.
+ *         description: Successfully reopened the request.
  *       400:
  *          description: Request can only be reopened after giving feedback to this process and asking for contact. The request's' status must be "done".
  *       401:
