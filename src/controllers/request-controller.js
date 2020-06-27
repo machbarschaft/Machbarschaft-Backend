@@ -156,6 +156,36 @@ const publishLoggedOut = async (req, res) => {
   return;
 };
 
+const reopenRequest = async (req, res) => {
+  RequestService.reopenRequest(req.user.uid, req.params.reqId)
+    .then(() => {
+      res.status(200).send();
+      return;
+    })
+    .catch((error) => {
+      if (error.message === 'No request with given id.') {
+        res.status(404).send(error.message);
+        return;
+      }
+      if (error.message === 'Not your request.') {
+        res.status(401).send(error.message);
+        return;
+      }
+      if (
+        error.message === 'Only requests with status "done" can reopen.' ||
+        error.message ===
+          'Request can only be reopened after giving feedback to this process and asking for contact.'
+      ) {
+        res.status(400).send(error.message);
+        return;
+      }
+      console.log(error);
+      res.status(500).send();
+      return;
+    });
+  return;
+};
+
 module.exports = {
   createLoggedIn,
   createLoggedOut,
@@ -163,4 +193,5 @@ module.exports = {
   updateLoggedOut,
   publishLoggedIn,
   publishLoggedOut,
+  reopenRequest,
 };
