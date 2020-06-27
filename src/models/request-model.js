@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const requestTypes = ['groceries', 'medication', 'other'];
 const urgencyCategories = ['now', 'today', 'tomorrow', 'this-week'];
-const statusStages = ['open', 'accepted', 'done'];
+const statusStages = ['creating', 'open', 'accepted', 'done'];
 
 const requestExtrasSchema = new mongoose.Schema({
   carNecessary: {
@@ -17,6 +17,11 @@ const requestExtrasSchema = new mongoose.Schema({
 
 const requestSchema = new mongoose.Schema(
   {
+    process: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Process',
+      required: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -25,17 +30,20 @@ const requestSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: statusStages,
-      required: true,
+      default: statusStages[0],
+    },
+    name: String,
+    address: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Address',
     },
     requestType: {
       type: String,
       enum: requestTypes,
-      required: true,
     },
     urgency: {
       type: String,
       enum: urgencyCategories,
-      required: true,
     },
     extras: requestExtrasSchema,
     privacyAgreed: Boolean,
@@ -44,11 +52,19 @@ const requestSchema = new mongoose.Schema(
     log: {
       type: Map,
       of: Date,
+      default: {},
     },
   },
   { timestamps: true }
 );
 
+const RequestExtras = mongoose.model('RequestExtras', requestExtrasSchema);
 const Request = mongoose.model('Request', requestSchema);
 
-export default Request;
+export {
+  Request,
+  RequestExtras,
+  statusStages,
+  urgencyCategories,
+  requestTypes,
+};
