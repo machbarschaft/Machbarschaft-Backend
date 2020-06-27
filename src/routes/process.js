@@ -2,7 +2,6 @@ import express from 'express';
 import Validator from '../validator.js';
 import models from '../models/bundle';
 import passport from 'passport';
-import mongoose from 'mongoose';
 const { validationResult } = require('express-validator');
 
 const router = express.Router();
