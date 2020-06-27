@@ -159,7 +159,6 @@ const validate = (req, res, next) => {
 
 module.exports = {
   addressValidationRules,
-  loginValidationRules,
   phoneValidationRules,
   idValidationRules,
   nameValidationRules,
