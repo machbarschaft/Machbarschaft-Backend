@@ -7,6 +7,7 @@ const {
   validationResult,
   header,
   oneOf,
+  param,
 } = require('express-validator');
 
 const userValidationRules = () => {
@@ -43,6 +44,20 @@ const phoneValidationRules = () => {
       'phone',
       'Die Telefonnummer muss eine gültige deutsche Mobiltelefonnummer sein.'
     ).isMobilePhone('de-DE'),
+  ];
+};
+
+const processFeedbackValidationRules = () => {
+  return [
+    param(
+      'type',
+      'Der Typ muss einen der folgenden Werte haben: request, response'
+    ).isIn(['request', 'response']),
+    body(
+      'needContact',
+      'Gib an ob eine Rückmeldung vom Machbarschaft-Team erwünscht ist (true, false)'
+    ).isBoolean(),
+    body('comment', 'Die Nachricht des Feedbacks als Zeichenkette.').isString(),
   ];
 };
 
@@ -162,6 +177,7 @@ module.exports = {
   phoneValidationRules,
   idValidationRules,
   nameValidationRules,
+  processFeedbackValidationRules,
   requestValidationRules,
   userValidationRules,
   requireUserIdOrPhoneNumber,
