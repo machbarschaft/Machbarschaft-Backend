@@ -32,10 +32,8 @@ export default class ProcessService {
     return process;
   }
 
-  static async createProcess(requestId) {
+  static async createProcess() {
     const process = new models.Process();
-    process.requests = [requestId];
-    process.save();
-    return process;
+    return process.save();
   }
 }

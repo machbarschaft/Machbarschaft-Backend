@@ -7,7 +7,6 @@ import UserService from './user-service';
 
 export default class AuthService {
   static async register(email, password, phone) {
-    console.log(phone);
     let user = await UserService.findUserByPhone(phone);
     let access = await models.Access.findOne({
       email: email,
@@ -17,7 +16,6 @@ export default class AuthService {
         new Error('this email address is already assigned to an account')
       );
     }
-    console.log(user);
     if (user) {
       if (user.access) {
         return Promise.reject(
@@ -34,7 +32,6 @@ export default class AuthService {
     });
 
     return models.Access.register(access, password).then((result) => {
-      console.log(result);
       user.access = result._id;
       user.save();
       return Promise.resolve();

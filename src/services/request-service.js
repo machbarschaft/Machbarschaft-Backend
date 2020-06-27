@@ -15,9 +15,10 @@ export default class RequestService {
       return request;
     }
 
+    const process = await ProcessService.createProcess();
     request = new models.Request({ process: process._id, user: userId });
-    const process = ProcessService.createProcess(request._id);
     request.save();
+    process.request = request._id;
     process.save();
 
     return request;
