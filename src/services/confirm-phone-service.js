@@ -25,11 +25,6 @@ export default class ConfirmPhoneService {
       tan: tan,
       sms: sms,
     });
-    /*if (!user.confirmPhone) {
-      user.confirmPhone = [confirmPhone._id];
-    } else {
-      user.confirmPhone.push(confirmPhone._id);
-    }*/
     user.confirmPhone.push(confirmPhone._id);
     user.save();
     confirmPhone.save();

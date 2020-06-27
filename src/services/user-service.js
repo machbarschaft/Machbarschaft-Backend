@@ -18,13 +18,8 @@ export default class UserService {
       preferences: new models.UserPreferences(),
     });
     return user.save().then((user) => {
-      ConfirmPhoneService.create(user._id, user.phone, false).then(
-        (confirmPhoneId) => {
-          user.confirmPhone = [confirmPhoneId];
-          user.save();
-        }
-      );
-      return user;
+      ConfirmPhoneService.create(user._id, user.phone, false);
+      return Promise.resolve(user);
     });
   }
 
