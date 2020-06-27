@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const processFeedbackSchema = new mongoose.Schema(
   {
+    process: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Process',
+      required: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -14,6 +19,7 @@ const processFeedbackSchema = new mongoose.Schema(
     log: {
       type: Map,
       of: Date,
+      default: {},
     },
   },
   { timestamps: true, discriminatorKey: 'kind' }

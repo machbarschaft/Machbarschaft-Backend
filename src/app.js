@@ -3,12 +3,12 @@
 import cors from 'cors';
 import helmet from 'helmet';
 import express from 'express';
-import routes from './routes';
+import routes from './routes/index';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import accessModel from './models/access';
+import accessModel from './models/access-model';
 import JwtCookieComboStrategy from 'passport-jwt-cookiecombo';
 import JWTConfig from './jwt_config';
 
@@ -18,11 +18,13 @@ const app = express();
 
 //all application-wide middlewares
 app.use(helmet()); //enforcing some security best practices, e.g. https connection, prevent clickjacking ..
-app.use(cors({
+app.use(
+  cors({
     origin: 'http://localhost:8080',
     credentials: true,
-    optionsSuccessStatus: 200
-})); //Cross-Origin Resource Sharing, restrict access between web applications
+    optionsSuccessStatus: 200,
+  })
+); //Cross-Origin Resource Sharing, restrict access between web applications
 
 app.use(cookieParser(JWTConfig.jwtSecret()));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -52,7 +54,10 @@ passport.use(
 
 //all routes
 app.use('/', routes.landingPage);
+app.use('/request', routes.request);
 app.use('/auth', routes.auth);
 app.use('/docs', routes.docs);
+app.use('/confirm-phone', routes.confirmPhone);
+app.use('/example', routes.example);
 
 module.exports = app;

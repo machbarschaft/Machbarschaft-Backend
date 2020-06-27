@@ -2,15 +2,19 @@
 
 import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
+import Address from './address-model';
 
 const accessSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false,
+    required: true,
   },
-  email: String,
-  password: String,
+  email: {
+    type: String,
+    required: true,
+  },
+  //password: String,
   emailVerified: {
     type: Boolean,
     default: false,
@@ -38,4 +42,5 @@ accessSchema.plugin(passportLocalMongoose, {
   passwordField: 'password',
 });
 
-module.exports = mongoose.model('accessModel', accessSchema, 'Access');
+const Access = mongoose.model('Access', accessSchema);
+export default Access;
