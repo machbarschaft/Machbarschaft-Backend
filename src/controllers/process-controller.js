@@ -44,17 +44,15 @@ const changeRequestToDone = async (req, res) => {
       );
     })
     .then((request) => {
-      if (req.user.uid.toString() === request.user.toString()) {
-        if (request.status === 'done')
-          return Promise.reject(new Error('Request is already done.'));
-        else {
-          RequestService.updateRequest(request._id, {
-            status: 'done',
-          });
-          res.status(200).send();
-          return;
-        }
-      } else return Promise.reject(new Error('Not your request.'));
+      if (request.status === 'done')
+        return Promise.reject(new Error('Request is already done.'));
+      else {
+        RequestService.updateRequest(req.user.uid, request._id, {
+          status: 'done',
+        });
+        res.status(200).send();
+        return;
+      }
     })
     .catch((error) => {
       if (
@@ -88,9 +86,7 @@ const abortResponse = async (req, res) => {
     })
     .then((response) => {
       if (req.user.uid.toString() === response.user.toString()) {
-        ResponseService.updateResponse(response._id, {
-          status: 'aborted',
-        });
+        ResponseService.updateResponse(response._id, 'aborted');
         res.status(200).send();
         return;
       } else {
@@ -119,17 +115,20 @@ const abortResponse = async (req, res) => {
 const abortRequest = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
-      return RequestService.getRequest(
-        process.requests[process.requests.length - 1]
-      );
+      if (!process.response.length) {
+        return RequestService.getRequest(
+          process.requests[process.requests.length - 1]
+        );
+      } else {
+        return Promise.reject(new Error('Not allowed.'));
+      }
     })
     .then((request) => {
       if (
-        req.user.uid.toString() === request.user.toString() &&
-        !process.response.length &&
-        request.status.toString() === 'open'
+        request.status.toString() === 'open' ||
+        request.status.toString() === 'creating'
       ) {
-        RequestService.updateRequest(request._id, {
+        RequestService.updateRequest(req.user.uid, request._id, {
           status: 'aborted',
         });
         res.status(200).send();
@@ -161,26 +160,19 @@ const releaseRequest = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
       ProcessService.updateProcess(process._id, { finishedAt: undefined });
-      return RequestService.getRequest(
-        process.requests[process.requests.length - 1]
+      ResponseService.updateResponse(
+        process.response[process.response.length - 1],
+        {
+          status: 'did-not-help',
+        }
       );
-    })
-    .then((request) => {
-      if (req.user.uid.toString() === request.user.toString()) {
-        RequestService.updateRequest(request._id, {
+      RequestService.updateRequest(
+        req.user.uid,
+        process.requests[process.requests.length - 1],
+        {
           status: 'open',
-        });
-        return ResponseService.getResponse(
-          process.response[process.response.length - 1]
-        );
-      } else {
-        return Promise.reject(new Error('Not your response.'));
-      }
-    })
-    .then((response) => {
-      ResponseService.updateResponse(response._id, {
-        status: 'did-not-help',
-      });
+        }
+      );
       res.status(200).send();
       return;
     })
@@ -223,15 +215,14 @@ const changeResponse = async (req, res) => {
           var status = 'on-the-way';
         } else if (response.status === 'on-the-way') {
           var status = 'done';
+          console.log(process);
           if (!process.finishedAt) {
             ProcessService.updateProcess(process._id, {
               finishedAt: Date.now(),
             });
           }
         }
-        ResponseService.updateResponse(response._id, {
-          status: status,
-        });
+        ResponseService.updateResponse(response._id, status);
         res.status(200).send();
         return;
       } else {
@@ -260,7 +251,7 @@ const changeResponse = async (req, res) => {
 const createResponse = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
-      if (!process.response.length) {
+      if (process.response.length) {
         var response = ResponseService.getResponse(
           process.response[process.response.length - 1]
         );
@@ -272,7 +263,7 @@ const createResponse = async (req, res) => {
           return Promise.reject(new Error('Response is already there.'));
         }
       }
-      if (process.response.length) {
+      if (!process.response.length) {
         ResponseService.createResponse(process._id, req.user.uid);
         res.status(200).send();
         return;

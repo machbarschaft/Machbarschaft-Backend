@@ -7,7 +7,7 @@ const router = Router();
 
 /**
  * @swagger
- * /{processId}/request/done:
+ * /process/{processId}/request/done:
  *   put:
  *     summary: Help seeker marks request as done
  *     description: Help seeker can mark a request as successfully done
@@ -30,7 +30,7 @@ const router = Router();
 
 router.put(
   '/:processId/request/done',
-  Validator.idValidationRules(),
+  Validator.idValidationRules('processId'),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -41,12 +41,12 @@ router.put(
 
 /**
  * @swagger
- * /{processId}/request/details:
+ * /process/{processId}/request/details:
  *   get:
  *     summary: Get details of request
  *     description: Get all information of a help request
  *     tags:
- *       - request
+ *       - process
  *     requestBody:
  *       content:
  *         application/x-www-form-urlencoded:
@@ -102,9 +102,9 @@ router.put(
  *            - urgency
  */
 
-router.put(
-  '/:processId/request/done',
-  Validator.idValidationRules(),
+router.get(
+  '/:processId/request/details',
+  Validator.idValidationRules('processId'),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -115,7 +115,7 @@ router.put(
 
 /**
  * @swagger
- * /{processId}/response/abort:
+ * /process/{processId}/response/abort:
  *   put:
  *     summary: Helper aborts a response
  *     description: The response will be marked as aborted in its status
@@ -138,7 +138,7 @@ router.put(
 
 router.put(
   '/:processId/response/abort',
-  Validator.idValidationRules(),
+  Validator.idValidationRules('processId'),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -149,7 +149,7 @@ router.put(
 
 /**
  * @swagger
- * /{processId}/request/abort:
+ * /process/{processId}/request/abort:
  *   put:
  *     summary: Help seeker aborts a request
  *     description: The help request will be marked as aborted in its status
@@ -172,7 +172,7 @@ router.put(
 
 router.put(
   '/:processId/request/abort',
-  Validator.idValidationRules(),
+  Validator.idValidationRules('processId'),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -183,7 +183,7 @@ router.put(
 
 /**
  * @swagger
- * /{processId}/request/release:
+ * /process/{processId}/request/release:
  *   put:
  *     summary: Help seeker releases existing request
  *     description: The help request will be marked as open again, and the response as did-not-help
@@ -206,7 +206,7 @@ router.put(
 
 router.put(
   '/:processId/request/release',
-  Validator.idValidationRules(),
+  Validator.idValidationRules('processId'),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -217,12 +217,12 @@ router.put(
 
 /**
  * @swagger
- * /{processId}/response/create:
+ * /process/{processId}/response/create:
  *   post:
  *     summary: Create a new response to request/process
  *     description: Helper can accept a help request
  *     tags:
- *       - request
+ *       - process
  *     requestBody:
  *       content:
  *         application/x-www-form-urlencoded:
@@ -234,12 +234,13 @@ router.put(
  *     responses:
  *       401:
  *         description: error occured
- *       200: *         description: status change was successful
+ *       200:
+ *         description: status change was successful
  */
 
 router.post(
   '/:processId/response/create',
-  Validator.idValidationRules(),
+  Validator.idValidationRules('processId'),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -250,12 +251,12 @@ router.post(
 
 /**
  * @swagger
- * /{processId}/response/change:
+ * /process/{processId}/response/change:
  *   post:
  *     summary: Respond to request/process
  *     description: Helper can change status of help request to accepted, called, on-the-way and done
  *     tags:
- *       - request
+ *       - process
  *     requestBody:
  *       content:
  *         application/x-www-form-urlencoded:
@@ -267,12 +268,13 @@ router.post(
  *     responses:
  *       401:
  *         description: error occured
- *       200: *         description: status change was successful
+ *       200:
+ *         description: status change was successful
  */
 
 router.put(
-  '/:processId/response/create',
-  Validator.idValidationRules(),
+  '/:processId/response/change',
+  Validator.idValidationRules('processId'),
   Validator.cookieValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -280,3 +282,5 @@ router.put(
   }),
   ProcessController.changeResponse
 );
+
+export default router;

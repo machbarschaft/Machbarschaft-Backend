@@ -25,7 +25,8 @@ const router = express.Router();
  *     responses:
  *       401:
  *         description: error occured
- *       200: *         description: status change was successful
+ *       200:
+ *         description: status change was successful
  */
 
 router.post(
@@ -486,5 +487,3 @@ router.put(
     });
   }
 );
-
-export default router;

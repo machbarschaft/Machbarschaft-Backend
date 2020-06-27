@@ -18,7 +18,7 @@ export default class RequestService {
     const process = await ProcessService.createProcess();
     request = new models.Request({ process: process._id, user: userId });
     request.save();
-    process.request = request._id;
+    process.requests.push(request._id);
     process.save();
 
     return request;
@@ -57,6 +57,10 @@ export default class RequestService {
 
     if (requestBody.requestType) {
       request.requestType = requestBody.requestType;
+    }
+    if (requestBody.status) {
+      request.status = requestBody.status;
+      request.log.set(requestBody.status, Date.now());
     }
     if (requestBody.urgency) {
       request.urgency = requestBody.urgency;
