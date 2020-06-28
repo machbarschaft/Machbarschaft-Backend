@@ -48,7 +48,7 @@ export default class ConfirmPhoneService {
         .create({
           body:
             TwilioConfig.twilio.message_1 + tan + TwilioConfig.twilio.message_2,
-          from: TwilioConfig.twilio.from,
+          from: TwilioConfig.twilio.phone_number_sms,
           to: TwilioConfig.twilio.country + phone.toString().substring(1),
         })
         .then((message) => console.log(message.sid));
@@ -71,7 +71,7 @@ export default class ConfirmPhoneService {
         .create({
           twiml: response.toString(),
           to: TwilioConfig.twilio.country + phone.toString().substring(1),
-          from: TwilioConfig.twilio.from,
+          from: TwilioConfig.twilio.phone_number_call,
         })
         .then((call) => console.log(call.sid));
     }
