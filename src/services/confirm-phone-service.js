@@ -71,7 +71,7 @@ export default class ConfirmPhoneService {
         .create({
           twiml: response.toString(),
           to: TwilioConfig.twilio.country + phone.toString().substring(1),
-          from: process.env.TWILIO_PHONE_NUMBER,
+          from: TwilioConfig.twilio.from,
         })
         .then((call) => console.log(call.sid));
     }
