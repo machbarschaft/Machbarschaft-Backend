@@ -1,8 +1,9 @@
+'use strict';
 import mongoose from 'mongoose';
 
 const requestTypes = ['groceries', 'medication', 'other'];
 const urgencyCategories = ['now', 'today', 'tomorrow', 'this-week'];
-const statusStages = ['creating', 'open', 'accepted', 'done'];
+const statusStages = ['creating', 'open', 'accepted', 'done', 'replaced', 'aborted'];
 
 const requestExtrasSchema = new mongoose.Schema({
   carNecessary: {

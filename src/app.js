@@ -57,7 +57,8 @@ app.use('/', routes.landingPage);
 app.use('/request', routes.request);
 app.use('/auth', routes.auth);
 app.use('/docs', routes.docs);
-app.use('/confirm-phone', routes.confirmPhone);
+app.use('/phone', routes.phone);
+app.use('/process', routes.process);
 app.use('/example', routes.example);
 
 module.exports = app;

@@ -9,8 +9,9 @@ const options = {
   definition,
   apis: [
     path.resolve(__dirname, 'auth-route.js'),
-    path.resolve(__dirname, 'confirm-phone-route.js'),
+    path.resolve(__dirname, 'phone-route.js'),
     path.resolve(__dirname, 'request-route.js'),
+    path.resolve(__dirname, 'process-route.js'),
   ],
 };
 

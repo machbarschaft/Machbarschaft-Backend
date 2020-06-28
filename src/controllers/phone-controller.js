@@ -1,0 +1,121 @@
+'use strict';
+
+import PhoneService from '../services/phone-service';
+import UserService from '../services/user-service';
+import RequestService from '../services/request-service';
+import ProcessService from '../services/process-service';
+import ResponseService from '../services/response-service';
+
+import Process from '../models/process-model';
+
+const verifyMe = async (req, res) => {
+  //ToDo check whether sender has cookie
+};
+
+const createNewTan = async (req, res) => {
+  let userId, phone;
+  if (req.body.userId) {
+    userId = req.body.userId;
+    const user = await UserService.findUserById(req.body.userId);
+    phone = user.phone;
+  } else {
+    phone = req.body.phone;
+    const user = await UserService.findUserByPhone(req.body.phone);
+    userId = user._id;
+  }
+  if (!userId || !phone) {
+    res.status(404).send('No user with given id or phone number.');
+    return;
+  }
+  PhoneService.create(userId, phone, req.body.sms)
+    .then((request) => {
+      res.status(201).send();
+      return;
+    })
+    .catch((error) => {
+      res.status(500).send();
+      console.log(error);
+      return;
+    });
+  return;
+};
+
+const confirmTan = async (req, res) => {
+  let userId;
+  if (req.body.userId) {
+    userId = req.body.userId;
+  } else {
+    const user = await UserService.findUserByPhone(req.body.phone);
+    userId = user._id;
+  }
+  PhoneService.confirm(req.body.tan, userId)
+    .then((request) => {
+      res.status(200).json(request);
+      return;
+    })
+    .catch((error) => {
+      if (error.message === 'There was no tan generated for the given user.') {
+        res.status(404).send(error.message);
+        return;
+      }
+      if (
+        error.message === 'This tan is expired.' ||
+        error.message === 'The tan is incorrect.'
+      ) {
+        res.status(400).send(error.message);
+        return;
+      }
+      res.status(500).send();
+      console.log(error);
+      return;
+    });
+  return;
+};
+
+const findNumber = async (req, res) => {
+  console.log(req.body.phone);
+  req.body.phone = req.body.phone.toString().substring(3);
+  UserService.findUserByPhone(req.body.phone)
+    .then((user) => {
+      console.log(user);
+      return ResponseService.findResponseByUserId(user._id);
+    })
+    .then((response) => {
+      console.log(response);
+      return ProcessService.getProcess(response.process);
+    })
+    .then((process) => {
+      return RequestService.getRequest(
+        process.requests[process.requests.length - 1]
+      );
+    })
+    .then((request) => {
+      return UserService.findUserById(request.user);
+    })
+    .then((user) => {
+      res
+        .status(200)
+
+        .json({ phone: '+49' + user.phone });
+      return;
+    })
+    .catch((error) => {
+      if (error.message === 'Not allowed.') {
+        res.status(404).send(error.message);
+        return;
+      }
+      if (
+        error.message === 'This tan is expired.' ||
+        error.message === 'The tan is incorrect.'
+      ) {
+        res.status(400).send(error.message);
+        return;
+      }
+      res.status(500).send();
+      console.log(error);
+      return;
+    });
+  return;
+};
+
+module.exports = { verifyMe, createNewTan, confirmTan, findNumber };
