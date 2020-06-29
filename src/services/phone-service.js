@@ -12,7 +12,6 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 export default class PhoneService {
   static async create(userId, phone, sms) {
-    console.log(sms);
     const user = await UserService.findUserById(userId);
     if (!user) {
       return Promise.reject('No user found with the given id.');
@@ -36,25 +35,15 @@ export default class PhoneService {
     user.confirmPhone.push(confirmPhone._id);
     user.save();
     confirmPhone.save();
-    console.log(sms);
     if (sms === 'true') {
-      console.log(TwilioConfig.twilio.from);
-      console.log(
-        TwilioConfig.twilio.message_1 + tan + TwilioConfig.twilio.message_2
-      );
-      console.log(TwilioConfig.twilio.country + phone.toString().substring(1));
-
-      twilio.messages
-        .create({
-          body:
-            TwilioConfig.twilio.message_1 + tan + TwilioConfig.twilio.message_2,
-          from: TwilioConfig.twilio.phone_number_sms,
-          to: TwilioConfig.twilio.country + phone.toString().substring(1),
-        })
-        .then((message) => console.log(message.sid));
+      twilio.messages.create({
+        body:
+          TwilioConfig.twilio.message_1 + tan + TwilioConfig.twilio.message_2,
+        from: TwilioConfig.twilio.phone_number_sms,
+        to: TwilioConfig.twilio.country + phone.toString().substring(1),
+      });
     } else {
       var string = TwilioConfig.twilio.message_1;
-      console.log(tan);
       for (var i = 0; i < tan.toString().length; i++) {
         string += tan.toString()[i] + ', ';
       }
@@ -67,13 +56,11 @@ export default class PhoneService {
         },
         string
       );
-      twilio.calls
-        .create({
-          twiml: response.toString(),
-          to: TwilioConfig.twilio.country + phone.toString().substring(1),
-          from: TwilioConfig.twilio.phone_number_call,
-        })
-        .then((call) => console.log(call.sid));
+      twilio.calls.create({
+        twiml: response.toString(),
+        to: TwilioConfig.twilio.country + phone.toString().substring(1),
+        from: TwilioConfig.twilio.phone_number_call,
+      });
     }
     return;
   }
