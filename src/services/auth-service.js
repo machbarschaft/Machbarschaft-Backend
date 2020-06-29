@@ -79,29 +79,4 @@ export default class AuthService {
       return Promise.reject(new Error('Could not find user with given id.'));
     }
   }
-
-  static async sendVerificationEmail(user, req, res) {
-    try {
-      const confirmEmail = await models.ConfirmEmail.token.save();
-      // token = crypto.randomBytes(20).toString('hex')
-      const token = user.generateVerificationToken();
-
-      // Save the verification token
-
-      let subject = 'Account Verification Token';
-      let to = user.email;
-      let from = process.env.FROM_EMAIL;
-      let link =
-        'http://' + req.headers.host + '/api/auth/verify/' + token.token;
-      let html = `<p>Hi ${user.username}<p><br><p>Please click on the following <a href="${link}">link</a> to verify your account.</p> 
-                  <br><p>If you did not request this, please ignore this email.</p>`;
-
-      await sendEmail({ to, from, subject, html });
-      res.status(200).json({
-        message: 'A verification email has been sent to ' + user.email + '.',
-      });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
 }
