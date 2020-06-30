@@ -120,7 +120,7 @@ const verify = async (req, res) => {
 };
 
 const resendEmail = async (req, res) => {
-  AuthService.sendVerificationEmail(req.user.uid)
+  AuthService.sendVerificationEmail(req.body.email)
     .then((result) => {
       res.status(200).send();
       return;
@@ -133,4 +133,62 @@ const resendEmail = async (req, res) => {
   return;
 };
 
-module.exports = { register, login, logout, authenticate, resendEmail, verify };
+// trigger email to generate token and send email with password reset link to user
+
+const sendResetPassword = async (req, res) => {
+  AuthService.sendResetPasswordEmail(req.body.email)
+    .then((result) => {
+      res.status(200).send();
+      return;
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send();
+      return;
+    });
+  return;
+};
+
+// change password itself
+
+const resetPassword = async (req, res) => {
+  AuthService.resetPasswordInAccess(req.params.token, req.body.password)
+    .then((result) => {
+      res.status(200).send();
+      return;
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send();
+      return;
+    });
+  return;
+};
+
+// verify if password reset token is correct
+
+const verifyResetPassword = async (req, res) => {
+  AuthService.verifyPasswordToken(req.params.token)
+    .then((result) => {
+      res.status(200).send();
+      return;
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(401).send();
+      return;
+    });
+  return;
+};
+
+module.exports = {
+  register,
+  login,
+  logout,
+  authenticate,
+  resendEmail,
+  verify,
+  verifyResetPassword,
+  sendResetPassword,
+  resetPassword,
+};

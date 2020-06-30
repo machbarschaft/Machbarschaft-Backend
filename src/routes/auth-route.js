@@ -4,6 +4,8 @@ import Router from 'express';
 import AuthController from './../controllers/auth-controller';
 import passport from 'passport';
 import Validator from '../validator.js';
+import { body } from 'express-validator';
+
 const router = Router();
 
 /**
@@ -157,6 +159,8 @@ router.get(
  */
 router.put(
   '/logout',
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
@@ -179,6 +183,8 @@ router.put(
  */
 router.get(
   '/resendEmail',
+  Validator.cookieValidationRules(),
+  Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
@@ -200,6 +206,93 @@ router.get(
  *         description: Verification successful
  */
 
-router.get('/verify/:token', AuthController.verify);
+router.put('/verify/:token', AuthController.verify);
+
+/**
+ * @swagger
+ * /auth/sendResetPassword/
+ *   get:
+ *     summary: Send reset password email
+ *     description: Send reset password email for user
+ *     tags:
+ *       - auth
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       500:
+ *         description: Email sending failed
+ *       200:
+ *         description: Successful
+ */
+
+router.get(
+  '/sendResetPassword/',
+  [
+    body(
+      'email',
+      'Die E-Mail-Adresse muss im E-Mail-Format angegeben werden.'
+    ).isEmail(),
+  ],
+  Validator.validate,
+  AuthController.sendResetPassword
+);
+
+/**
+ * @swagger
+ * /auth/verifyResetPassword/{token}
+ *   get:
+ *     summary: Verify reset password token
+ *     description: Verify if reset password token is correct
+ *     tags:
+ *       - auth
+ *     responses:
+ *       401:
+ *         description: Wrong token
+ *       200:
+ *         description: Verification successful
+ */
+
+router.get('/verifyResetPassword/:token', AuthController.verifyResetPassword);
+
+/**
+ * @swagger
+ * /auth/resetPassword/{token}
+ *   get:
+ *     summary: Reset password
+ *     description: Change to new password of user in backend
+ *     tags:
+ *       - auth
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *     responses:
+ *       401:
+ *         description: Wrong token
+ *       200:
+ *         description: Passwort change successful
+ */
+
+router.get(
+  '/resetPassword/:token',
+  [
+    body(
+      'password',
+      'Das Passwort muss mindestens 5 Zeichen lang sein.'
+    ).isLength({ min: 5 }),
+  ],
+  Validator.validate,
+  AuthController.resetPassword
+);
 
 export default router;
