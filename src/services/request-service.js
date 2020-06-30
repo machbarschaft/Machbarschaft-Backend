@@ -163,7 +163,7 @@ export default class RequestService {
     });
     newRequest.log = { open: Date.now() };
     if (request.extras) {
-      newRequest.extras = request.requestType;
+      newRequest.extras = request.extras;
     }
 
     const process = await models.Process.findOne({ _id: request.process });
