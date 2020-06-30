@@ -92,6 +92,8 @@ router.post(
  *                  properties:
  *                      phone:
  *                          type: Number
+ *                      secret:
+ *                          type: string
  */
 router.post(
   '/findNumber',

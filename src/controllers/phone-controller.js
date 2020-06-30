@@ -73,46 +73,49 @@ const confirmTan = async (req, res) => {
 };
 
 const findNumber = async (req, res) => {
-  req.body.phone = req.body.phone.toString().substring(3);
-  UserService.findUserByPhone(req.body.phone)
-    .then((user) => {
-      return ResponseService.findResponseByUserId(user._id);
-    })
-    .then((response) => {
-      return ProcessService.getProcess(response.process);
-    })
-    .then((process) => {
-      return RequestService.getRequest(
-        process.requests[process.requests.length - 1]
-      );
-    })
-    .then((request) => {
-      return UserService.findUserById(request.user);
-    })
-    .then((user) => {
-      res
-        .status(200)
+  if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
+    req.body.phone = req.body.phone.toString().substring(3);
+    UserService.findUserByPhone(req.body.phone);
+  } else
+    return Promise.reject(new Error('No user with given phone number.'))
+      .then((user) => {
+        return ResponseService.findResponseByUserId(user._id);
+      })
+      .then((response) => {
+        return ProcessService.getProcess(response.process);
+      })
+      .then((process) => {
+        return RequestService.getRequest(
+          process.requests[process.requests.length - 1]
+        );
+      })
+      .then((request) => {
+        return UserService.findUserById(request.user);
+      })
+      .then((user) => {
+        res
+          .status(200)
 
-        .json({ phone: '+49' + user.phone });
-      return;
-    })
-    .catch((error) => {
-      if (error.message === 'Not allowed.') {
-        res.status(403).send(error.message);
+          .json({ phone: '+49' + user.phone });
         return;
-      }
-      if (
-        error.message === 'No process with given id.' ||
-        error.message === 'No response with given id.' ||
-        error.message === 'No request with given id.'
-      ) {
-        res.status(404).send(error.message);
+      })
+      .catch((error) => {
+        if (error.message === 'Not allowed.') {
+          res.status(403).send(error.message);
+          return;
+        }
+        if (
+          error.message === 'No process with given id.' ||
+          error.message === 'No response with given id.' ||
+          error.message === 'No request with given id.'
+        ) {
+          res.status(404).send(error.message);
+          return;
+        }
+        res.status(500).send();
+        console.log(error);
         return;
-      }
-      res.status(500).send();
-      console.log(error);
-      return;
-    });
+      });
   return;
 };
 
