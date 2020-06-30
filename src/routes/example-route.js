@@ -3,7 +3,6 @@
 import Router from 'express';
 import ExampleController from './../controllers/example-controller';
 import Validator from './../validator';
-import { body } from 'express-validator';
 
 const router = Router();
 

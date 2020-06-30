@@ -1,3 +1,5 @@
+'use strict';
+
 import Router from 'express';
 import RequestController from './../controllers/request-controller';
 import Validator from '../validator';
@@ -202,6 +204,42 @@ router.put(
   Validator.requestValidationRules(),
   Validator.validate,
   RequestController.updateLoggedOut
+);
+
+/**
+ * @swagger
+ * /request/{reqId}/reopen:
+ *   put:
+ *     summary: Reopen request
+ *     description: Reopen the request with 'reqId' as id. This is only successful as a follow-up action after a feedback for this request, where contact is requested.
+ *     tags:
+ *       - request
+ *     parameters:
+ *      - in: path
+ *        name: reqId
+ *        type: ObjectId
+ *        required: true
+ *     responses:
+ *       200:
+ *         description: Successfully reopened the request.
+ *       400:
+ *          description: Request can only be reopened after giving feedback to this process and asking for contact. The request's' status must be "done".
+ *       401:
+ *          description: Not your request.
+ *       404:
+ *          description: No request with given id.
+ *       500:
+ *          description: Internal server error
+ */
+router.put(
+  '/:reqId/reopen',
+  Validator.idValidationRules('reqId'),
+  Validator.cookieValidationRules(),
+  Validator.validate,
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  RequestController.reopenRequest
 );
 
 /**
