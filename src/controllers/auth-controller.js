@@ -44,6 +44,11 @@ const login = async (req, res) => {
     res.status(403).send('Please verify phone number before login.');
     return;
   }
+  const verifiedEmail = await UserService.emailVerfied(req.user.user);
+  if (emailVerified === false) {
+    res.status(403).send('Please verify phone number before login.');
+    return;
+  }
   AuthService.login(req.user.user)
     .then((token) => {
       // Send the Set-Cookie header with the jwt to the client
@@ -96,4 +101,36 @@ const authenticate = async (req, res) => {
   return;
 };
 
-module.exports = { register, login, logout, authenticate };
+const verify = async (req, res) => {
+  AuthService.verify(req.params.token)
+    .then((result) => {
+      res.status(200).json(result);
+      return;
+    })
+    .catch((error) => {
+      if (error.message === 'Wrong token.') {
+        res.status(401).send({ errors: error.message });
+        return;
+      }
+      console.log(error);
+      res.status(500).send();
+      return;
+    });
+  return;
+};
+
+const resendEmail = async (req, res) => {
+  AuthService.sendVerificationEmail(req.user.uid)
+    .then((result) => {
+      res.status(200).send();
+      return;
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send();
+      return;
+    });
+  return;
+};
+
+module.exports = { register, login, logout, authenticate, resendEmail, verify };

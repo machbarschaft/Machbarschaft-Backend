@@ -38,4 +38,12 @@ export default class UserService {
     }
     return false;
   }
+  static async emailVerified(userId) {
+    const user = await this.findUserById(userId);
+    const access = await models.Access.findById(user.access);
+    if (access && access.EmailVerified === true) {
+      return true;
+    }
+    return false;
+  }
 }

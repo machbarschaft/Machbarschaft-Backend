@@ -163,4 +163,43 @@ router.put(
   AuthController.logout
 );
 
+/**
+ * @swagger
+ * /auth/resendEmail:
+ *   get:
+ *     summary: Resend Email confirmation
+ *     description: Trigger to resend email confirmation
+ *     tags:
+ *       - auth
+ *     responses:
+ *       500:
+ *         description: Email sending failed
+ *       200:
+ *         description: Resend was successful
+ */
+router.get(
+  '/resendEmail',
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  AuthController.resendEmail
+);
+
+/**
+ * @swagger
+ * /auth/verify/{token}:
+ *   get:
+ *     summary: Verify Email token
+ *     description: Verify email token and set user to verified if true
+ *     tags:
+ *       - auth
+ *     responses:
+ *       401:
+ *         description: Wrong token
+ *       200:
+ *         description: Verification successful
+ */
+
+router.get('/verify/:token', AuthController.verify);
+
 export default router;
