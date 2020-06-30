@@ -73,15 +73,12 @@ const confirmTan = async (req, res) => {
 };
 
 const findNumber = async (req, res) => {
-  console.log(req.body.phone);
   req.body.phone = req.body.phone.toString().substring(3);
   UserService.findUserByPhone(req.body.phone)
     .then((user) => {
-      console.log(user);
       return ResponseService.findResponseByUserId(user._id);
     })
     .then((response) => {
-      console.log(response);
       return ProcessService.getProcess(response.process);
     })
     .then((process) => {
@@ -101,14 +98,15 @@ const findNumber = async (req, res) => {
     })
     .catch((error) => {
       if (error.message === 'Not allowed.') {
-        res.status(404).send(error.message);
+        res.status(403).send(error.message);
         return;
       }
       if (
-        error.message === 'This tan is expired.' ||
-        error.message === 'The tan is incorrect.'
+        error.message === 'No process with given id.' ||
+        error.message === 'No response with given id.' ||
+        error.message === 'No request with given id.'
       ) {
-        res.status(400).send(error.message);
+        res.status(404).send(error.message);
         return;
       }
       res.status(500).send();

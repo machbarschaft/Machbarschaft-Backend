@@ -40,10 +40,6 @@ const login = async (req, res) => {
     return res.status(422).json({ errors: errors.array() });
   }
   const verifiedUser = await UserService.isVerified(req.user.user);
-  if (verifiedUser === false) {
-    res.status(403).send('Please verify phone number before login.');
-    return;
-  }
   AuthService.login(req.user.user)
     .then((token) => {
       // Send the Set-Cookie header with the jwt to the client

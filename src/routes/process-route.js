@@ -13,19 +13,22 @@ const router = Router();
  *     description: Help seeker can mark a request as successfully done
  *     tags:
  *       - process
- *     requestBody:
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               processId:
- *                 type: string
+ *       - request
+ *     parameters:
+ *       - in: path
+ *         name: processId
+ *         required: true
  *     responses:
- *       401:
- *         description: error occured
  *       200:
  *         description: status change was successful
+ *       400:
+ *         description: request already done
+ *       401:
+ *         description: not authorized
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.put(
@@ -47,17 +50,12 @@ router.put(
  *     description: Get all information of a help request
  *     tags:
  *       - process
- *     requestBody:
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               processId:
- *                 type: string
+ *       - request
+ *     parameters:
+ *       - in: path
+ *         name: processId
+ *         required: true
  *     responses:
- *       401:
- *         description: could not find request
  *       200:
  *         description: giving request details
  *         schema:
@@ -67,7 +65,7 @@ router.put(
  *              type: objectid
  *            status:
  *              type: string
- *              enum: [open, accepted, done]
+ *              enum: [creating, open, accepted, done, replaced, aborted]
  *            requestType:
  *              type: string
  *              enum: [groceries, medication, other]
@@ -95,11 +93,10 @@ router.put(
  *              type: date
  *            updatedAt:
  *              type: date
- *          required:
- *            - user
- *            - status
- *            - requestType
- *            - urgency
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.get(
@@ -121,19 +118,20 @@ router.get(
  *     description: The response will be marked as aborted in its status
  *     tags:
  *       - process
- *     requestBody:
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               processId:
- *                 type: string
+ *       - response
+ *     parameters:
+ *       - in: path
+ *         name: processId
+ *         required: true
  *     responses:
- *       401:
- *         description: error occured
  *       200:
  *         description: abortion was successful
+ *       401:
+ *         description: not authorized
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.put(
@@ -155,19 +153,20 @@ router.put(
  *     description: The help request will be marked as aborted in its status
  *     tags:
  *       - process
- *     requestBody:
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               processId:
- *                 type: string
+ *       - request
+ *     parameters:
+ *       - in: path
+ *         name: processId
+ *         required: true
  *     responses:
- *       401:
- *         description: error occured
  *       200:
  *         description: abortion was successful
+ *       401:
+ *         description: not authorized
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.put(
@@ -189,19 +188,20 @@ router.put(
  *     description: The help request will be marked as open again, and the response as did-not-help
  *     tags:
  *       - process
- *     requestBody:
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               processId:
- *                 type: string
+ *       - request
+ *     parameters:
+ *       - in: path
+ *         name: processId
+ *         required: true
  *     responses:
- *       401:
- *         description: error occured
  *       200:
  *         description: release was successful
+ *       401:
+ *         description: not authorized
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.put(
@@ -223,19 +223,20 @@ router.put(
  *     description: Helper can accept a help request
  *     tags:
  *       - process
- *     requestBody:
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               processId:
- *                 type: string
+ *       - request
+ *     parameters:
+ *       - in: path
+ *         name: processId
+ *         required: true
  *     responses:
- *       401:
- *         description: error occured
  *       200:
  *         description: status change was successful
+ *       401:
+ *         description: not authorized
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.post(
@@ -257,19 +258,20 @@ router.post(
  *     description: Helper can change status of help request to accepted, called, on-the-way and done
  *     tags:
  *       - process
- *     requestBody:
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               processId:
- *                 type: string
+ *       - response
+ *     parameters:
+ *       - in: path
+ *         name: processId
+ *         required: true
  *     responses:
- *       401:
- *         description: error occured
  *       200:
  *         description: status change was successful
+ *       401:
+ *         description: not authorized
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.put(

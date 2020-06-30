@@ -71,7 +71,6 @@ const changeRequestToDone = async (req, res) => {
         return;
       }
       res.status(500).send();
-      console.log(error);
       return;
     });
   return;
@@ -80,28 +79,29 @@ const changeRequestToDone = async (req, res) => {
 const abortResponse = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
-      return ResponseService.getResponse(
-        process.response[process.response.length - 1]
+      return ResponseService.abortResponse(
+        req.user.uid,
+        process.response[process.response.length - 1],
+        process.requests[process.requests.length - 1]
       );
     })
     .then((response) => {
-      if (req.user.uid.toString() === response.user.toString()) {
-        ResponseService.updateResponse(response._id, 'aborted');
-        res.status(200).send();
-        return;
-      } else {
-        return Promise.reject(new Error('Not your response.'));
-      }
+      res.status(200).send();
+      return;
     })
     .catch((error) => {
       if (
         error.message === 'No process with given id.' ||
-        error.message === 'No response with given id.'
+        error.message === 'No response with given id.' ||
+        error.message === 'No request with given id.'
       ) {
         res.status(404).send(error.message);
         return;
       }
-      if (error.message === 'Not your response.') {
+      if (
+        error.message === 'Not your response.' ||
+        error.message === 'Already aborted.'
+      ) {
         res.status(401).send(error.message);
         return;
       }
@@ -162,9 +162,7 @@ const releaseRequest = async (req, res) => {
       ProcessService.updateProcess(process._id, { finishedAt: undefined });
       ResponseService.updateResponse(
         process.response[process.response.length - 1],
-        {
-          status: 'did-not-help',
-        }
+        'did-not-help'
       );
       RequestService.updateRequest(
         req.user.uid,
@@ -215,7 +213,6 @@ const changeResponse = async (req, res) => {
           var status = 'on-the-way';
         } else if (response.status === 'on-the-way') {
           var status = 'done';
-          console.log(process);
           if (!process.finishedAt) {
             ProcessService.updateProcess(process._id, {
               finishedAt: Date.now(),
