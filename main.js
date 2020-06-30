@@ -1,7 +1,6 @@
 'use strict';
 
 import 'dotenv/config';
-import models from './src/models/bundle';
 import app from './src/app';
 import mongoose from 'mongoose';
 const http = require('http');
