@@ -4,6 +4,7 @@ import auth from './auth-route';
 import docs from './docs';
 import phone from './phone-route';
 import process from './process-route';
+import feedback from './feedback-route';
 import example from './example-route';
 
 export default {
@@ -13,5 +14,6 @@ export default {
   docs,
   phone,
   process,
+  feedback,
   example,
 };

@@ -127,4 +127,61 @@ export default class RequestService {
       new Error('Request does not contain necessary information.')
     );
   }
+
+  static async reopenRequest(userId, requestId) {
+    const request = await models.Request.findOne({ _id: requestId });
+    if (!request) {
+      return Promise.reject(new Error('No request with given id.'));
+    }
+    if (request.user.toString() !== userId) {
+      return Promise.reject(new Error('Not your request.'));
+    }
+
+    if (request.status !== 'done') {
+      return Promise.reject(
+        new Error('Only requests with status "done" can reopen.')
+      );
+    }
+
+    const feedbacks = await models.ProcessFeedback.find({
+      process: request.process,
+      user: userId,
+      needContact: true,
+    }).sort({
+      createdAt: -1,
+    });
+    if (
+      feedbacks.length === 0 ||
+      feedbacks[0].createdAt.getTime() < Date.now() - 30 * 60 * 1000
+    ) {
+      return Promise.reject(
+        new Error(
+          'Request can only be reopened after giving feedback to this process and asking for contact.'
+        )
+      );
+    }
+    request.status = 'reopened';
+    request.log.set(request.status, Date.now());
+    request.save();
+
+    const newRequest = new models.Request({
+      process: request.process,
+      user: userId,
+      status: 'open',
+      name: request.name,
+      address: request.address,
+      requestType: request.requestType,
+      urgency: request.urgency,
+    });
+    newRequest.log = { open: Date.now() };
+    if (request.extras) {
+      newRequest.extras = request.extras;
+    }
+
+    const process = await models.Process.findOne({ _id: request.process });
+    process.requests.push(newRequest._id);
+    process.save();
+
+    return newRequest.save();
+  }
 }

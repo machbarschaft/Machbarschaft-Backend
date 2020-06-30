@@ -12,6 +12,7 @@ const options = {
     path.resolve(__dirname, 'phone-route.js'),
     path.resolve(__dirname, 'request-route.js'),
     path.resolve(__dirname, 'process-route.js'),
+    path.resolve(__dirname, 'feedback-route.js'),
   ],
 };
 
