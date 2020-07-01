@@ -28,6 +28,7 @@ const models = {
   ConfirmPhone,
   ContactForm,
   ProcessFeedback,
+  Process,
   AudioFeedback,
   FormFeedback,
   MobileToken,

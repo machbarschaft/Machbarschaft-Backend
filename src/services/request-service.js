@@ -3,6 +3,7 @@
 import models from '../models/bundle';
 import { statusStages } from '../models/request-model';
 import UserService from './user-service';
+import ProcessService from './process-service';
 
 export default class RequestService {
   static async createRequestWithUserId(userId) {
@@ -14,13 +15,20 @@ export default class RequestService {
       return request;
     }
 
-    const process = new models.Process();
+    const process = await ProcessService.createProcess();
     request = new models.Request({ process: process._id, user: userId });
-    process.requests = [request._id];
-
     request.save();
+    process.requests.push(request._id);
     process.save();
 
+    return request;
+  }
+
+  static async getRequest(requestId) {
+    const request = await models.Request.findById(requestId);
+    if (!request) {
+      return Promise.reject(new Error('No request with given id.'));
+    }
     return request;
   }
 
@@ -49,6 +57,10 @@ export default class RequestService {
 
     if (requestBody.requestType) {
       request.requestType = requestBody.requestType;
+    }
+    if (requestBody.status) {
+      request.status = requestBody.status;
+      request.log.set(requestBody.status, Date.now());
     }
     if (requestBody.urgency) {
       request.urgency = requestBody.urgency;
