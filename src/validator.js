@@ -84,9 +84,7 @@ const requestValidationRules = () => {
     body('carNecessary', "Darf nur 'true' oder 'false' sein.")
       .optional()
       .isBoolean(),
-    body('status', 'Der Status darf nicht gesetzt werden.')
-      .optional()
-      .isIn(statusStages),
+    body('status', 'Der Status darf nicht gesetzt werden.').optional().isIn([]),
     body('prescriptionRequired', "Darf nur 'true' oder 'false' sein.")
       .optional()
       .isBoolean(),

@@ -178,7 +178,8 @@ const releaseRequest = async (req, res) => {
       if (
         error.message === 'No process with given id.' ||
         error.message === 'No response with given id.' ||
-        error.message === 'No request with given id.'
+        error.message === 'No request with given id.' ||
+        error.message === 'Status already existed.'
       ) {
         res.status(404).send(error.message);
         return;
@@ -229,7 +230,8 @@ const changeResponse = async (req, res) => {
     .catch((error) => {
       if (
         error.message === 'No process with given id.' ||
-        error.message === 'No response with given id.'
+        error.message === 'No response with given id.' ||
+        error.message === 'Status already existed.'
       ) {
         res.status(404).send(error.message);
         return;

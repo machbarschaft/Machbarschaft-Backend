@@ -8,7 +8,7 @@ const statusStages = [
   'open',
   'accepted',
   'done',
-  'replaced',
+  'reopened',
   'aborted',
 ];
 

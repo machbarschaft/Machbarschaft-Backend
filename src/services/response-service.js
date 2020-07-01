@@ -12,6 +12,9 @@ export default class ResponseService {
       return Promise.reject(new Error('No process with given id.'));
     }
     response.status = status;
+    if (response.log.includes(status)) {
+      return Promise.reject(new Error('Status already existed.'));
+    }
     response.log.set(status, Date.now());
 
     return response.save();
