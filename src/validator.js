@@ -1,4 +1,8 @@
-import { requestTypes, urgencyCategories } from './models/request-model';
+import {
+  requestTypes,
+  urgencyCategories,
+  statusStages,
+} from './models/request-model';
 import { colors } from './models/example-model';
 
 const {
@@ -80,6 +84,7 @@ const requestValidationRules = () => {
     body('carNecessary', "Darf nur 'true' oder 'false' sein.")
       .optional()
       .isBoolean(),
+    body('status', 'Der Status darf nicht gesetzt werden.').optional().isIn([]),
     body('prescriptionRequired', "Darf nur 'true' oder 'false' sein.")
       .optional()
       .isBoolean(),

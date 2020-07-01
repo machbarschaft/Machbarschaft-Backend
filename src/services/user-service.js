@@ -1,7 +1,7 @@
 'use strict';
 
 import models from '../models/bundle';
-import ConfirmPhoneService from './confirm-phone-service';
+import PhoneService from './phone-service';
 
 export default class UserService {
   static async createUser(phone) {
@@ -18,7 +18,7 @@ export default class UserService {
       preferences: new models.UserPreferences(),
     });
     return user.save().then((user) => {
-      ConfirmPhoneService.create(user._id, user.phone, false);
+      PhoneService.create(user._id, user.phone, false);
       return Promise.resolve(user);
     });
   }

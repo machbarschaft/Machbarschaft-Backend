@@ -1,22 +1,22 @@
 'use strict';
 
 import Router from 'express';
-import ConfirmPhoneController from './../controllers/confirm-phone-controller';
-import Validator from './../validator';
+import PhoneController from '../controllers/phone-controller';
+import Validator from '../validator';
 import { body } from 'express-validator';
 
 const router = Router();
 
-router.get('/', ConfirmPhoneController.verifyMe);
+router.get('/', PhoneController.verifyMe);
 
 /**
  * @swagger
- * /confirm-phone:
+ * /phone:
  *  put:
  *      summary: Confirm phone with tan
  *      description: Verify your phone by entering the tan send by Twilio to your phone.
  *      tags:
- *          - phone-verification
+ *          - phone
  *      requestBody:
  *        content:
  *          application/x-www-form-urlencoded:
@@ -39,17 +39,17 @@ router.put(
       .toInt(),
   ],
   Validator.validate,
-  ConfirmPhoneController.confirmTan
+  PhoneController.confirmTan
 );
 
 /**
  * @swagger
- * /confirm-phone:
+ * /phone:
  *  post:
  *      summary: Generate new tan.
  *      description: Generate a new tan and initiate Twilio call/sms.
  *      tags:
- *          - phone-verification
+ *          - phone
  *      requestBody:
  *        content:
  *          application/json:
@@ -73,7 +73,33 @@ router.post(
       .isBoolean(),
   ],
   Validator.validate,
-  ConfirmPhoneController.createNewTan
+  PhoneController.createNewTan
+);
+
+/**
+ * @swagger
+ * /phone/findNumber:
+ *  get:
+ *      summary: Get number of help seeker.
+ *      description: Twilio endpoint to get number of help seeker to redirect call at hotline.
+ *      tags:
+ *          - phone
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      phone:
+ *                          type: Number
+ *                      secret:
+ *                          type: string
+ */
+router.get(
+  '/findNumber',
+  Validator.requireUserIdOrPhoneNumber(),
+  Validator.validate,
+  PhoneController.findNumber
 );
 
 export default router;

@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 
-const statusStages = ['accepted', 'called', 'on-the-way', 'done'];
+const statusStages = [
+  'accepted',
+  'called',
+  'on-the-way',
+  'done',
+  'aborted',
+  'did-not-help',
+];
 
 const responseSchema = new mongoose.Schema(
   {
