@@ -171,8 +171,8 @@ router.put(
  * @swagger
  * /auth/resendEmail:
  *   get:
- *     summary: Resend Email confirmation
- *     description: Trigger to resend email confirmation
+ *     summary: Resend Email confirmation, change email address
+ *     description: Trigger to resend email confirmation or change email address itself
  *     tags:
  *       - auth
  *     responses:
@@ -293,6 +293,55 @@ router.get(
   ],
   Validator.validate,
   AuthController.resetPassword
+);
+
+/**
+ * @swagger
+ * /auth/changePassword/
+ *   get:
+ *     summary: Change password
+ *     description: Change to new password of user in backend
+ *     tags:
+ *       - auth
+ *     requestBody:
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: password change was successful
+ *       401:
+ *         description: wrong password
+ *       404:
+ *         description: not found
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get(
+  '/changePassword/',
+  Validator.cookieValidationRules(),
+  [
+    body(
+      'oldPassword',
+      'Das Passwort muss mindestens 5 Zeichen lang sein.'
+    ).isLength({ min: 5 }),
+    body(
+      'newPassword',
+      'Das Passwort muss mindestens 5 Zeichen lang sein.'
+    ).isLength({ min: 5 }),
+  ],
+  Validator.validate,
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  AuthController.changePassword
 );
 
 export default router;

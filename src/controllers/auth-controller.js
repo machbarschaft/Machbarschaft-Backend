@@ -171,6 +171,38 @@ const verifyResetPassword = async (req, res) => {
   return;
 };
 
+const changePassword = async (req, res) => {
+  UserService.findUserById(req.user.uid)
+    .then((user) => {
+      return AuthService.changePassword(
+        user.access,
+        req.body.oldPassword,
+        req.body.newPassword
+      );
+    })
+    .then((result) => {
+      res.status(200).send();
+      return;
+    })
+    .catch((error) => {
+      if (error.message === 'Password or username is incorrect') {
+        res.status(401).send(error.message);
+        return;
+      }
+      if (
+        error.message === 'User not found.' ||
+        error.message === 'Access not found.'
+      ) {
+        res.status(404).send(error.message);
+        return;
+      }
+      res.status(500).send();
+      console.log(error);
+      return;
+    });
+  return;
+};
+
 module.exports = {
   register,
   login,
@@ -181,4 +213,5 @@ module.exports = {
   verifyResetPassword,
   sendResetPassword,
   resetPassword,
+  changePassword,
 };

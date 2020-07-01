@@ -120,6 +120,13 @@ export default class AuthService {
     } else return Promise.reject(new Error('Wrong token or already done.'));
   }
 
+  static async changePassword(accessId, oldPassword, newPassword) {
+    const access = await models.Access.findById(accessId);
+    if (!access) return Promise.reject(new Error('Access not found.'));
+    await access.changePassword(oldPassword, newPassword);
+    return Promise.resolve();
+  }
+
   static async verifyPasswordToken(token) {
     const resetPassword = await models.ResetPassword.findOne({ token: token });
     if (!resetPassword) {
@@ -133,6 +140,9 @@ export default class AuthService {
     if (!confirmEmail) return Promise.reject(new Error('Wrong token.'));
     const access = await models.Access.findById(confirmEmail.access);
     access.emailVerified = true;
+    if (confirmEmail.email !== access.email) {
+      access.email = confirmEmail.email;
+    }
     access.save();
     return Promise.resolve();
   }
