@@ -17,6 +17,7 @@
   "license": "GPL-3.0",
   "homepage": "https://github.com/Leenert/Machbarschaft-Backend#readme",
   "dependencies": {
+    "@sendgrid/mail": "7.2.1",
     "body-parser": "1.19.0",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",

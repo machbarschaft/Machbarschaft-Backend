@@ -47,7 +47,7 @@ router.put(
  * /phone:
  *  post:
  *      summary: Generate new tan.
- *      description: Generate a new tan and initiate Twilio call/sms.
+ *      description: Generate a new tan and initiate Twilio call/sms. Can also be used for phone number change.
  *      tags:
  *          - phone
  *      requestBody:

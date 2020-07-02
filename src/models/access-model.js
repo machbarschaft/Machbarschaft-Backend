@@ -14,7 +14,6 @@ const accessSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  //password: String,
   emailVerified: {
     type: Boolean,
     default: false,

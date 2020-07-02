@@ -79,6 +79,9 @@ export default class PhoneService {
         confirmPhone.save();
         let user = await models.User.findOne({ _id: userId });
         user.phoneVerified = true;
+        if (user.phone.toString() !== confirmPhone.phone.toString()) {
+          user.phone = confirmPhone.phone;
+        }
         user.save();
         return; //ToDo return cookie
       }
