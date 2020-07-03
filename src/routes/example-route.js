@@ -147,7 +147,7 @@ router.put(
  */
 router.get(
   '/cookie-required',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   ExampleController.dummy
 );

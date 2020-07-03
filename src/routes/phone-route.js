@@ -7,8 +7,6 @@ import { body } from 'express-validator';
 
 const router = Router();
 
-router.get('/', PhoneController.verifyMe);
-
 /**
  * @swagger
  * /phone:
