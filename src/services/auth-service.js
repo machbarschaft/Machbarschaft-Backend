@@ -37,10 +37,9 @@ export default class AuthService {
 
     return models.Access.register(access, password).then((result) => {
       user.access = result._id;
-      user.save();
-      console.log(user._id);
-      AuthService.sendVerificationEmail(user._id);
-      return Promise.resolve();
+      return user.save().then((user) => {
+        return AuthService.sendVerificationEmail(user._id);
+      });
     });
   }
 
@@ -151,7 +150,15 @@ export default class AuthService {
     const user = await models.User.findById(userId);
     if (user.access) {
       const access = await models.Access.findById(user.access);
-      if (access.confirmEmail.length) {
+      console.log(access);
+      let token;
+      if (!access.confirmEmail.length) {
+        const confirmEmailCreated = await this.createConfirmEmail(
+          access._id,
+          access.email
+        );
+        token = confirmEmailCreated.token;
+      } else {
         const confirmEmail = await models.ConfirmEmail.findById(
           access.confirmEmail[access.confirmEmail.length - 1]
         );
@@ -160,18 +167,12 @@ export default class AuthService {
             access._id,
             access.email
           );
-          var token = confirmEmailCreated.token;
+          token = confirmEmailCreated.token;
         } else {
-          var token = confirmEmail.token;
+          token = confirmEmail.token;
         }
       }
-      if (!access.confirmEmail.length) {
-        const confirmEmailCreated = await this.createConfirmEmail(
-          access._id,
-          access.email
-        );
-        var token = confirmEmailCreated.token;
-      }
+
       let subject = 'Bitte bestätige dein Konto';
       let to = access.email;
       let from = process.env.FROM_EMAIL;
