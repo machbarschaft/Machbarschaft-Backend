@@ -8,7 +8,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "dev": "nodemon --exec babel-node main.js"
+    "start:dev": "nodemon --exec babel-node main.js"
   },
   "repository": {
     "type": "git",
