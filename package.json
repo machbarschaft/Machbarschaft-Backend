@@ -34,7 +34,7 @@
     "passport-local": "1.0.0",
     "passport-local-mongoose": "6.0.1",
     "swagger-jsdoc": "4.0.0",
-    "twilio": "3.47.0",
+    "twilio": "3.47.0"
   },
   "devDependencies": {
     "@babel/core": "7.10.2",
