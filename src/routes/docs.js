@@ -13,6 +13,7 @@ const options = {
     path.resolve(__dirname, 'request-route.js'),
     path.resolve(__dirname, 'process-route.js'),
     path.resolve(__dirname, 'feedback-route.js'),
+    path.resolve(__dirname, 'address-route.js'),
   ],
 };
 

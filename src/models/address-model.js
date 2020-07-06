@@ -38,7 +38,6 @@ const addressSchema = new mongoose.Schema({
   },
   geoHash: {
     type: String,
-    required: true,
   },
   requests: [
     {
