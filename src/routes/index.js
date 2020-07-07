@@ -5,6 +5,7 @@ import docs from './docs';
 import phone from './phone-route';
 import process from './process-route';
 import feedback from './feedback-route';
+import address from './address-route';
 import example from './example-route';
 
 export default {
@@ -15,5 +16,6 @@ export default {
   phone,
   process,
   feedback,
+  address,
   example,
 };

@@ -210,7 +210,7 @@ router.put('/verify/:token', AuthController.verify);
 
 /**
  * @swagger
- * /auth/sendResetPassword/
+ * /auth/sendResetPassword:
  *   get:
  *     summary: Send reset password email
  *     description: Send reset password email for user
@@ -245,7 +245,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/verifyResetPassword/{token}
+ * /auth/verifyResetPassword/{token}:
  *   get:
  *     summary: Verify reset password token
  *     description: Verify if reset password token is correct
@@ -262,7 +262,7 @@ router.get('/verifyResetPassword/:token', AuthController.verifyResetPassword);
 
 /**
  * @swagger
- * /auth/resetPassword/{token}
+ * /auth/resetPassword/{token}:
  *   get:
  *     summary: Reset password
  *     description: Change to new password of user in backend
@@ -297,7 +297,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/changePassword/
+ * /auth/changePassword:
  *   get:
  *     summary: Change password
  *     description: Change to new password of user in backend
