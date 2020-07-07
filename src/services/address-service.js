@@ -13,7 +13,6 @@ export default class AddressService {
       country
     );
     if (address) {
-      console.log('Found first');
       return this.prepareAddressResponse(address);
     }
     return GoogleService.translateLocation(
@@ -31,7 +30,6 @@ export default class AddressService {
         newAddress.country
       );
       if (existingAddress) {
-        console.log('Found second');
         return this.prepareAddressResponse(existingAddress);
       }
       existingAddress = new models.Address(newAddress);

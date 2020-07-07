@@ -150,7 +150,6 @@ export default class AuthService {
     const user = await models.User.findById(userId);
     if (user.access) {
       const access = await models.Access.findById(user.access);
-      console.log(access);
       let token;
       if (!access.confirmEmail.length) {
         const confirmEmailCreated = await this.createConfirmEmail(
