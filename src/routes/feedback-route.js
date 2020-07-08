@@ -37,7 +37,7 @@ const router = Router();
 router.post(
   '/:type/:id',
   Validator.idValidationRules('id'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.processFeedbackValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {

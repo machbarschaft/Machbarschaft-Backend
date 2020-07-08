@@ -83,7 +83,7 @@ export default class PhoneService {
           user.phone = confirmPhone.phone;
         }
         user.save();
-        return; //ToDo return cookie
+        return Promise.resolve(user.phone.toString());
       }
     );
   }

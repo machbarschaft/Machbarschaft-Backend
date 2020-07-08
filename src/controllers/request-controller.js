@@ -20,6 +20,9 @@ const createLoggedIn = async (req, res) => {
 const createLoggedOut = async (req, res) => {
   RequestService.createRequestWithPhone(req.query.phone)
     .then((request) => {
+      request['_doc']['phoneVerifiedCookieMatch'] =
+        req.cookies.machbarschaft_phoneVerified !== undefined &&
+        req.cookies.machbarschaft_phoneVerified === req.query.phone;
       res.status(200).json(request);
       return;
     })
@@ -93,6 +96,11 @@ const updateLoggedOut = async (req, res) => {
 };
 
 const publishLoggedIn = async (req, res) => {
+  if (req.cookies.machbarschaft_phoneVerified !== req.query.phone) {
+    res.status(401).send('Phone not verified');
+    return;
+  }
+
   RequestService.publishRequest(req.user.uid, req.params.reqId)
     .then(() => {
       res.status(200).send();
@@ -109,6 +117,10 @@ const publishLoggedIn = async (req, res) => {
       }
       if (error.message === 'Request does not contain necessary information.') {
         res.status(400).send(error.message);
+        return;
+      }
+      if (error.message === 'Phone not validated') {
+        res.status(401).send(error.message);
         return;
       }
       res.status(500).send();

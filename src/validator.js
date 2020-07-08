@@ -138,8 +138,8 @@ const nameValidationRules = (fieldName, optional = false) => {
   ];
 };
 
-const cookieValidationRules = () => {
-  return [header('cookie').contains('jwt')];
+const cookieValidationRules = (cookieName) => {
+  return [header('cookie').contains(cookieName)];
 };
 
 const exampleValidationRules = () => {

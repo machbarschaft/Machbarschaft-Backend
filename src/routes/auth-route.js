@@ -130,7 +130,7 @@ router.put(
 
 router.get(
   '/authenticate',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -159,7 +159,7 @@ router.get(
  */
 router.put(
   '/logout',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -183,7 +183,7 @@ router.put(
  */
 router.get(
   '/resendEmail',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -326,7 +326,7 @@ router.get(
 
 router.get(
   '/changePassword/',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   [
     body(
       'oldPassword',
