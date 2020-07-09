@@ -162,6 +162,24 @@ const exampleValidationRules = () => {
   ];
 };
 
+const preferencesValidationRules = () => {
+  return [
+    body(
+      'radius',
+      'Der Radius muss eine positive Zahl sein'
+    ).isInt({min: 1}),
+    body(
+      'notifyNearbyRequests',
+      'Gib an, ob du über neue Aufträge in deiner Nähe informiert werden willst (true, false)'
+    ).isBoolean(),
+    body(
+      'useGps',
+      'Gib an, ob du GPS zur Bestimmung deines Standorts verwenden willst (true, false)'
+    ).isBoolean(),
+  ].concat(addressValidationRules());
+};
+
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -188,5 +206,6 @@ module.exports = {
   requireUserIdOrPhoneNumber,
   validate,
   cookieValidationRules,
+  preferencesValidationRules,
   exampleValidationRules,
 };

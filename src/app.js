@@ -60,6 +60,7 @@ app.use('/docs', routes.docs);
 app.use('/phone', routes.phone);
 app.use('/process', routes.process);
 app.use('/feedback', routes.feedback);
+app.use('/preference', routes.preference);
 app.use('/example', routes.example);
 
 module.exports = app;
