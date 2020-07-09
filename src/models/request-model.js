@@ -40,7 +40,8 @@ const requestSchema = new mongoose.Schema(
       enum: statusStages,
       default: statusStages[0],
     },
-    name: String,
+    forename: String,
+    surname: String,
     address: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Address',

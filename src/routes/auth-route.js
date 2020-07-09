@@ -28,6 +28,13 @@ const router = Router();
  *                 type: string
  *               phone:
  *                 type: Number
+ *               profile:
+ *                 type: object
+ *                 properties:
+ *                   forename:
+ *                      type: String
+ *                   surname:
+ *                      type: String
  *     responses:
  *       422:
  *         description: request is not valid
@@ -53,6 +60,8 @@ router.post(
   '/register',
   Validator.phoneValidationRules(),
   Validator.userValidationRules(),
+  Validator.nameValidationRules('forename'),
+  Validator.nameValidationRules('surname'),
   Validator.validate,
   AuthController.register
 );
@@ -110,8 +119,8 @@ router.put(
  * @swagger
  * /auth/authenticate:
  *   get:
- *     summary: authenticate user
- *     description: identify user by by providing his jwt cookie
+ *     summary: Authenticate user
+ *     description: Identify user by by providing his jwt cookie
  *     tags:
  *       - auth
  *     responses:
@@ -123,9 +132,36 @@ router.put(
  *           type: object
  *           properties:
  *             uid:
- *               type: string
+ *               type: String
  *             email:
- *               type: string
+ *               type: String
+ *             phoneNumber:
+ *               type: Number
+ *             emailVerified:
+ *               type: Boolean
+ *             phoneVerified:
+ *               type: Boolean
+ *             profile:
+ *               type: object
+ *               properties:
+ *                  forename:
+ *                      type: String
+ *                  surname:
+ *                      type: String
+ *             address:
+ *               type: object
+ *               properties:
+ *                  street:
+ *                      type: String
+ *                  houseNumber:
+ *                      type: Number
+ *                  zipCode:
+ *                      type: Number
+ *                  city:
+ *                      type: String
+ *                  country:
+ *                      type: String
+ *
  */
 
 router.get(
