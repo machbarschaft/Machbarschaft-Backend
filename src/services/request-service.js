@@ -101,6 +101,11 @@ export default class RequestService {
   }
 
   static async publishRequest(userId, requestId) {
+    const user = await models.User.findOne({ _id: userId });
+    if (!user.phoneVerified) {
+      return Promise.reject(new Error('Phone not validated'));
+    }
+
     const request = await models.Request.findOne({ _id: requestId });
     if (!request) {
       return Promise.reject(new Error('No request with given id.'));

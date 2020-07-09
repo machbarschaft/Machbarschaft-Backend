@@ -8,10 +8,6 @@ import ResponseService from '../services/response-service';
 
 import Process from '../models/process-model';
 
-const verifyMe = async (req, res) => {
-  //ToDo check whether sender has cookie
-};
-
 const createNewTan = async (req, res) => {
   let userId, phone;
   if (req.body.userId) {
@@ -49,8 +45,16 @@ const confirmTan = async (req, res) => {
     userId = user._id;
   }
   PhoneService.confirm(req.body.tan, userId)
-    .then((request) => {
-      res.status(200).json(request);
+    .then((phoneNumber) => {
+      let options = {
+        maxAge: 60 * 60 * 24 * 30,
+        httpOnly: true,
+        secure: process.env.CORS_ENV === 'development' ? false : true
+      };
+
+      res.cookie('machbarschaft_phoneVerified', phoneNumber, options);
+
+      res.status(200).json(phoneNumber);
       return;
     })
     .catch((error) => {
@@ -119,4 +123,4 @@ const findNumber = async (req, res) => {
   return;
 };
 
-module.exports = { verifyMe, createNewTan, confirmTan, findNumber };
+module.exports = { createNewTan, confirmTan, findNumber };

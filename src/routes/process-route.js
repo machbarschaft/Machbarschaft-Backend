@@ -34,7 +34,7 @@ const router = Router();
 router.put(
   '/:processId/request/done',
   Validator.idValidationRules('processId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -102,7 +102,7 @@ router.put(
 router.get(
   '/:processId/request/details',
   Validator.idValidationRules('processId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -137,7 +137,7 @@ router.get(
 router.put(
   '/:processId/response/abort',
   Validator.idValidationRules('processId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -172,7 +172,7 @@ router.put(
 router.put(
   '/:processId/request/abort',
   Validator.idValidationRules('processId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -207,7 +207,7 @@ router.put(
 router.put(
   '/:processId/request/release',
   Validator.idValidationRules('processId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -242,7 +242,7 @@ router.put(
 router.post(
   '/:processId/response/create',
   Validator.idValidationRules('processId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -277,7 +277,7 @@ router.post(
 router.put(
   '/:processId/response/change',
   Validator.idValidationRules('processId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,

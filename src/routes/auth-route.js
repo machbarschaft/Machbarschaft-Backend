@@ -110,8 +110,8 @@ router.put(
  * @swagger
  * /auth/authenticate:
  *   get:
- *     summary: authenticate user
- *     description: identify user by by providing his jwt cookie
+ *     summary: Authenticate user
+ *     description: Identify user by by providing his jwt cookie
  *     tags:
  *       - auth
  *     responses:
@@ -123,14 +123,41 @@ router.put(
  *           type: object
  *           properties:
  *             uid:
- *               type: string
+ *               type: String
  *             email:
- *               type: string
+ *               type: String
+ *             phoneNumber:
+ *               type: Number
+ *             emailVerified:
+ *               type: Boolean
+ *             phoneVerified:
+ *               type: Boolean
+ *             profile:
+ *               type: object
+ *               properties:
+ *                  forename:
+ *                      type: String
+ *                  surname:
+ *                      type: String
+ *             address:
+ *               type: object
+ *               properties:
+ *                  street:
+ *                      type: String
+ *                  houseNumber:
+ *                      type: Number
+ *                  zipCode:
+ *                      type: Number
+ *                  city:
+ *                      type: String
+ *                  country:
+ *                      type: String
+ *
  */
 
 router.get(
   '/authenticate',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -159,7 +186,7 @@ router.get(
  */
 router.put(
   '/logout',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -183,7 +210,7 @@ router.put(
  */
 router.get(
   '/resendEmail',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -210,7 +237,7 @@ router.put('/verify/:token', AuthController.verify);
 
 /**
  * @swagger
- * /auth/sendResetPassword/
+ * /auth/sendResetPassword:
  *   get:
  *     summary: Send reset password email
  *     description: Send reset password email for user
@@ -245,7 +272,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/verifyResetPassword/{token}
+ * /auth/verifyResetPassword/{token}:
  *   get:
  *     summary: Verify reset password token
  *     description: Verify if reset password token is correct
@@ -262,7 +289,7 @@ router.get('/verifyResetPassword/:token', AuthController.verifyResetPassword);
 
 /**
  * @swagger
- * /auth/resetPassword/{token}
+ * /auth/resetPassword/{token}:
  *   get:
  *     summary: Reset password
  *     description: Change to new password of user in backend
@@ -297,7 +324,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/changePassword/
+ * /auth/changePassword:
  *   get:
  *     summary: Change password
  *     description: Change to new password of user in backend
@@ -326,7 +353,7 @@ router.get(
 
 router.get(
   '/changePassword/',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   [
     body(
       'oldPassword',

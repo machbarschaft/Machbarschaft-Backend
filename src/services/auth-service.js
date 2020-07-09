@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import UserService from './user-service';
 import crypto from 'crypto';
 import sgMail from '@sendgrid/mail';
+import AddressService from './address-service';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -75,10 +76,25 @@ export default class AuthService {
 
   static async authenticate(userId) {
     const access = await models.Access.findOne({ user: userId });
-    if (access) {
+    const user = await models.User.findOne({ _id: userId });
+    console.log(user);
+    console.log(access);
+    if (access && user) {
+      let addressResponse = null;
+      if (user.preferences.staticPosition) {
+        const fullAddress = models.Address.findOne({
+          _id: user.preferences.staticPosition,
+        });
+        addressResponse = AddressService.prepareAddressResponse(fullAddress);
+      }
       return Promise.resolve({
         uid: access.user,
         email: access.email,
+        phone: user.phone,
+        emailVerified: access.emailVerified,
+        phoneVerified: user.phoneVerified,
+        profile: user.profile ? user.profile : null,
+        address: addressResponse,
       });
     } else {
       return Promise.reject(new Error('Could not find user with given id.'));
@@ -150,7 +166,6 @@ export default class AuthService {
     const user = await models.User.findById(userId);
     if (user.access) {
       const access = await models.Access.findById(user.access);
-      console.log(access);
       let token;
       if (!access.confirmEmail.length) {
         const confirmEmailCreated = await this.createConfirmEmail(
@@ -176,7 +191,7 @@ export default class AuthService {
       let subject = 'Bitte bestätige dein Konto';
       let to = access.email;
       let from = process.env.FROM_EMAIL;
-      let link = 'http://' + process.env.URL + '/auth/verify/' + token;
+      let link = process.env.URL + '/auth/verify/' + token;
       let html = `<p>Lieber User, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Konto zu verifizieren.</p> 
                     <br><p>Deine Machbarschaft.</p>`;
 
@@ -222,8 +237,7 @@ export default class AuthService {
       let subject = 'Passwort zurücksetzen';
       let to = access.email;
       let from = process.env.FROM_EMAIL;
-      let link =
-        'http://' + process.env.URL + '/auth/verifyResetPassword/' + token;
+      let link = process.env.URL + '/auth/verifyResetPassword/' + token;
       let html = `<p>Lieber User, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen.</p> 
                     <br><p>Deine Machbarschaft.</p>`;
 

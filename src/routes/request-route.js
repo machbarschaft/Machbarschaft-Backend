@@ -53,7 +53,7 @@ router.post(
  */
 router.post(
   '/',
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -124,7 +124,7 @@ router.post(
 router.put(
   '/:reqId',
   Validator.idValidationRules('reqId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.requestValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
@@ -234,7 +234,7 @@ router.put(
 router.put(
   '/:reqId/reopen',
   Validator.idValidationRules('reqId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -270,7 +270,7 @@ router.put(
 router.put(
   '/:reqId/publish',
   Validator.idValidationRules('reqId'),
-  Validator.cookieValidationRules(),
+  Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
@@ -310,8 +310,9 @@ router.put(
 router.put(
   '/guest/:reqId/publish',
   Validator.idValidationRules('reqId'),
+  Validator.cookieValidationRules('machbarschaft_phoneVerified'),
   Validator.validate,
   RequestController.publishLoggedOut
-); //ToDo: validate VerifiedPhone cookie
+);
 
 export default router;

@@ -40,7 +40,7 @@ export default class PhoneService {
         body:
           TwilioConfig.twilio.message_1 + tan + TwilioConfig.twilio.message_2,
         from: TwilioConfig.twilio.phone_number_sms,
-        to: TwilioConfig.twilio.country + phone.toString().substring(1),
+        to: TwilioConfig.twilio.country + phone.toString(),
       });
     } else {
       var string = TwilioConfig.twilio.message_1;
@@ -58,7 +58,7 @@ export default class PhoneService {
       );
       twilio.calls.create({
         twiml: response.toString(),
-        to: TwilioConfig.twilio.country + phone.toString().substring(1),
+        to: TwilioConfig.twilio.country + phone.toString(),
         from: TwilioConfig.twilio.phone_number_call,
       });
     }
@@ -83,7 +83,7 @@ export default class PhoneService {
           user.phone = confirmPhone.phone;
         }
         user.save();
-        return; //ToDo return cookie
+        return Promise.resolve(user.phone.toString());
       }
     );
   }

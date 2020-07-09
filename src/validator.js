@@ -94,53 +94,52 @@ const requestValidationRules = () => {
     )
       .optional()
       .isMongoId(),
-  ].concat(nameValidationRules('name'));
+  ].concat(nameValidationRules('name', true));
 };
 
 const addressValidationRules = () => {
   return [
-    check(
-      'address.houseNumber',
-      'Die Hausnummer muss eine Zahl mit maximal 10 Ziffern sein.'
+    body(
+      'houseNumber',
+      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein.'
     )
       .isNumeric()
       .isLength({ max: 10 }),
-    check(
-      'address.zipCode',
-      'Es muss eine in Deutschland gültige Postleitzahl sein.'
+    body(
+      'zipCode',
+      'Es muss eine in Deutschland gültige Postleitzahl angegeben werden.'
     ).isPostalCode('DE'),
-    check(
-      'address.geoLocation.longitude',
-      'Der Längengrad wird durch eine Dezimalzahl dargestellt.'
-    ).isNumeric(),
-    check(
-      'address.geoLocation.latitude',
-      'Der Breitengrad wird durch eine Dezimalzahl dargestellt.'
-    ).isNumeric(),
-    check(
-      'address.geoHash',
-      'Der GeoHash besteht aus Buchstaben und Zahlen.'
-    ).isAlphanumeric(),
   ]
     .concat(nameValidationRules('street'))
+    .concat(nameValidationRules('city'))
     .concat(nameValidationRules('country'));
 };
 
-const nameValidationRules = (fieldName) => {
+const nameValidationRules = (fieldName, optional = false) => {
+  if (optional === true) {
+    return [
+      check(
+        fieldName,
+        "Das Feld '" +
+          fieldName +
+          "' darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen."
+      )
+        .optional()
+        .matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
+    ];
+  }
   return [
     check(
       fieldName,
       "Das Feld '" +
         fieldName +
-        "' darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen."
-    )
-      .optional()
-      .matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
+        "' muss angegeben werden und darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen."
+    ).matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
   ];
 };
 
-const cookieValidationRules = () => {
-  return [header('cookie').contains('jwt')];
+const cookieValidationRules = (cookieName) => {
+  return [header('cookie').contains(cookieName)];
 };
 
 const exampleValidationRules = () => {
