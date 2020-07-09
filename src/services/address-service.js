@@ -13,7 +13,7 @@ export default class AddressService {
       country
     );
     if (address) {
-      return this.prepareAddressResponse(address);
+      return address;
     }
     return GoogleService.translateLocation(
       street,
@@ -30,11 +30,11 @@ export default class AddressService {
         newAddress.country
       );
       if (existingAddress) {
-        return this.prepareAddressResponse(existingAddress);
+        return existingAddress;
       }
       existingAddress = new models.Address(newAddress);
       existingAddress.save();
-      return this.prepareAddressResponse(existingAddress);
+      return existingAddress;
     });
   }
 

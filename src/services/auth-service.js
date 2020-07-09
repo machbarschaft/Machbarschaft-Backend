@@ -27,6 +27,7 @@ export default class AuthService {
           new Error('for this phone number exists a registered account')
         );
       }
+      user.profile = profile;
     } else {
       user = await UserService.createUser(phone, profile);
     }
@@ -80,7 +81,7 @@ export default class AuthService {
     if (access && user) {
       let addressResponse = null;
       if (user.preferences.staticPosition) {
-        const fullAddress = models.Address.findOne({
+        const fullAddress = await models.Address.findOne({
           _id: user.preferences.staticPosition,
         });
         addressResponse = AddressService.prepareAddressResponse(fullAddress);

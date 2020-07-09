@@ -11,7 +11,10 @@ const createAddress = (req, res) => {
     req.body.country
   )
     .then((address) => {
-      res.status(200).json(address);
+      return AddressService.prepareAddressResponse(address);
+    })
+    .then((addressResponse) => {
+      res.status(200).json(addressResponse);
       return;
     })
     .catch((error) => {

@@ -161,6 +161,37 @@ const exampleValidationRules = () => {
   ];
 };
 
+const preferencesValidationRules = () => {
+  return [
+    body(
+      'radius',
+      'Der Radius muss eine positive Zahl sein'
+    ).optional().isInt({min: 1}),
+    body(
+      'notifyNearbyRequests',
+      'Gib an, ob du über neue Aufträge in deiner Nähe informiert werden willst (true, false)'
+    ).optional().isBoolean(),
+    body(
+      'useGps',
+      'Gib an, ob du GPS zur Bestimmung deines Standorts verwenden willst (true, false)'
+    ).optional().isBoolean(),
+    body(
+      'houseNumber',
+      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein.'
+    )
+      .optional()
+      .isNumeric()
+      .isLength({ max: 10 }),
+    body(
+      'zipCode',
+      'Es muss eine in Deutschland gültige Postleitzahl angegeben werden.'
+    ).optional().isPostalCode('DE'),
+  ].concat(nameValidationRules('street', true))
+    .concat(nameValidationRules('city', true))
+    .concat(nameValidationRules('country', true));
+};
+
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -187,5 +218,6 @@ module.exports = {
   requireUserIdOrPhoneNumber,
   validate,
   cookieValidationRules,
+  preferencesValidationRules,
   exampleValidationRules,
 };
