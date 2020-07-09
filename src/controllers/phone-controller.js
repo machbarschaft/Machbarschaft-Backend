@@ -97,10 +97,10 @@ const findNumber = async (req, res) => {
         return UserService.findUserById(request.user);
       })
       .then((user) => {
-        res
-          .status(200)
-
-          .json({ phone: '+49' + user.phone });
+        res.status(200).json({
+          phone: '+49' + user.phone,
+          name: user.profile.name,
+        });
         return;
       })
       .catch((error) => {

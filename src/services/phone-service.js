@@ -38,16 +38,27 @@ export default class PhoneService {
     if (sms === 'true') {
       twilio.messages.create({
         body:
-          TwilioConfig.twilio.message_1 + tan + TwilioConfig.twilio.message_2,
+          TwilioConfig.twilio.message_1 +
+          user.profile.name +
+          TwilioConfig.twilio.message_2 +
+          tan +
+          TwilioConfig.twilio.message_3,
         from: TwilioConfig.twilio.phone_number_sms,
         to: TwilioConfig.twilio.country + phone.toString(),
       });
     } else {
-      var string = TwilioConfig.twilio.message_1;
+      var string =
+        TwilioConfig.twilio.message_1 +
+        user.profile.name +
+        TwilioConfig.twilio.message_2;
+      var code;
       for (var i = 0; i < tan.toString().length; i++) {
-        string += tan.toString()[i] + ', ';
+        code += tan.toString()[i] + ', ';
       }
-      string += TwilioConfig.twilio.message_2;
+      string += code;
+      string += TwilioConfig.twilio.message_3;
+      string += code;
+      string += TwilioConfig.twilio.message_4;
       const response = new VoiceResponse();
       response.say(
         {
