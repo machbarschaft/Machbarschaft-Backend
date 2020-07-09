@@ -60,7 +60,6 @@ export default class PhoneService {
       string += TwilioConfig.twilio.message_3;
       string += code;
       string += TwilioConfig.twilio.message_4;
-      console.log(string);
       const response = new VoiceResponse();
       response.say(
         {
@@ -69,7 +68,6 @@ export default class PhoneService {
         },
         string
       );
-      console.log(response);
       twilio.calls.create({
         twiml: response.toString(),
         to: TwilioConfig.twilio.country + phone.toString(),
