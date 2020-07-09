@@ -28,6 +28,13 @@ const router = Router();
  *                 type: string
  *               phone:
  *                 type: Number
+ *               profile:
+ *                 type: object
+ *                 properties:
+ *                   forename:
+ *                      type: String
+ *                   surname:
+ *                      type: String
  *     responses:
  *       422:
  *         description: request is not valid
@@ -53,6 +60,8 @@ router.post(
   '/register',
   Validator.phoneValidationRules(),
   Validator.userValidationRules(),
+  Validator.nameValidationRules('forename'),
+  Validator.nameValidationRules('surname'),
   Validator.validate,
   AuthController.register
 );

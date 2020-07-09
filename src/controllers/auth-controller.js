@@ -13,7 +13,13 @@ const register = async (req, res) => {
     res.status(422).json({ errors: errors.array() });
     return;
   }
-  AuthService.register(req.body.email, req.body.password, req.body.phone)
+  const profile = { forename: req.body.forename, surname: req.body.surname };
+  AuthService.register(
+    req.body.email,
+    req.body.password,
+    req.body.phone,
+    profile
+  )
     .then((result) => {
       res.status(201).send();
       return;
@@ -86,6 +92,7 @@ const authenticate = async (req, res) => {
     .catch((error) => {
       if (error.message === 'Could not find user with given id.') {
         res.status(404).send(error.message);
+        return;
       }
       console.log(error);
       res.status(500).send();

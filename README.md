@@ -37,7 +37,8 @@ TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
 SENDGRID_API_KEY=
 FROM_EMAIL=
-TWILIO_SECRET =
+TWILIO_SECRET=
+CORS_ENV=production|development
 ```
 
 ## Start the project
