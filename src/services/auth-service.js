@@ -164,7 +164,6 @@ export default class AuthService {
     const user = await models.User.findById(userId);
     if (user.access) {
       const access = await models.Access.findById(user.access);
-      console.log(access);
       let token;
       if (!access.confirmEmail.length) {
         const confirmEmailCreated = await this.createConfirmEmail(
@@ -244,9 +243,9 @@ export default class AuthService {
       let html =
         `<p>Hallo ` +
         user.profile.name +
-        `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen.</p> 
-                    <br><p>Deine Machbarschaft.</p>`;
-
+        `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
+                  <br><p><a href="${link}">${link}</a></p><br>
+                  <p>Deine Machbarschaft.</p>`;
       await AuthService.sendEmail({ to, from, subject, html });
 
       return Promise.resolve();
