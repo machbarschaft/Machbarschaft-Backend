@@ -166,16 +166,29 @@ const preferencesValidationRules = () => {
     body(
       'radius',
       'Der Radius muss eine positive Zahl sein'
-    ).isInt({min: 1}),
+    ).optional().isInt({min: 1}),
     body(
       'notifyNearbyRequests',
       'Gib an, ob du über neue Aufträge in deiner Nähe informiert werden willst (true, false)'
-    ).isBoolean(),
+    ).optional().isBoolean(),
     body(
       'useGps',
       'Gib an, ob du GPS zur Bestimmung deines Standorts verwenden willst (true, false)'
-    ).isBoolean(),
-  ].concat(addressValidationRules());
+    ).optional().isBoolean(),
+    body(
+      'houseNumber',
+      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein.'
+    )
+      .optional()
+      .isNumeric()
+      .isLength({ max: 10 }),
+    body(
+      'zipCode',
+      'Es muss eine in Deutschland gültige Postleitzahl angegeben werden.'
+    ).optional().isPostalCode('DE'),
+  ].concat(nameValidationRules('street', true))
+    .concat(nameValidationRules('city', true))
+    .concat(nameValidationRules('country', true));
 };
 
 

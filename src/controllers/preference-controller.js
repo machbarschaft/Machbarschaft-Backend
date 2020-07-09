@@ -17,12 +17,13 @@ const getPreferences = async (req, res) => {
 };
 
 const setPreferences = async (req, res) => {
-  PreferenceService.setPreferences(req)
+  PreferenceService.setPreferences(req.user.uid, req.body)
     .then(() => {
       res.status(200).send();
       return;
     })
     .catch((error) => {
+      console.log(error);
       res.status(500).send();
       return;
     });
