@@ -49,7 +49,7 @@ const confirmTan = async (req, res) => {
       let options = {
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
-        //secure: true
+        secure: process.env.CORS_ENV === 'development' ? false : true
       };
 
       res.cookie('machbarschaft_phoneVerified', phoneNumber, options);

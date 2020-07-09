@@ -24,7 +24,7 @@ const jwtCookie = (authenticationType = AuthenticationType.none) => {
         httpOnly: true,
         sameSite: true,
         signed: true,
-        secure: false,
+        secure: process.env.CORS_ENV === 'development' ? false : true,
         expires: authenticationType === AuthenticationType.login ? new Date(new Date().setDate(new Date().getDate() + 30)) : new Date(),
     };
 }
