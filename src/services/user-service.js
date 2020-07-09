@@ -4,7 +4,7 @@ import models from '../models/bundle';
 import PhoneService from './phone-service';
 
 export default class UserService {
-  static async createUser(phone) {
+  static async createUser(phone, profile) {
     let user = await models.User.findOne({
       phone: phone,
     });
@@ -16,6 +16,7 @@ export default class UserService {
     user = new models.User({
       phone: phone,
       preferences: new models.UserPreferences(),
+      profile: profile,
     });
     return user.save().then((user) => {
       PhoneService.create(user._id, user.phone, false);
@@ -45,5 +46,14 @@ export default class UserService {
       return true;
     }
     return false;
+  }
+
+  static async updateProfile(userId, forename, surname) {
+    const user = await this.findUserById(userId);
+    if (!user) {
+      return Promise.reject('Could not find user with given id.');
+    }
+    user.profile = { forename: forename, surname: surname };
+    return user.save();
   }
 }

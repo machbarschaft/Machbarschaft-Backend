@@ -53,7 +53,9 @@ const userSchema = new mongoose.Schema({
     type: userPreferencesSchema,
     required: true,
   },
-  profile: userProfileSchema,
+  profile: {
+    type: userProfileSchema,
+  },
   access: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Access',
