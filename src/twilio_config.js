@@ -9,6 +9,7 @@ const twilio = {
   message_2: ', dein Code lautet: ',
   message_3: '. Ich wiederhole: ',
   message_4: '. Deine Machbarschaft',
+  message_5: ' . . . . . . .',
 };
 module.exports = {
   twilio,
