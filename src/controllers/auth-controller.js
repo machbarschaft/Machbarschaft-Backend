@@ -84,6 +84,9 @@ const authenticate = async (req, res) => {
       return;
     })
     .catch((error) => {
+      if (error.message === 'Could not find user with given id.') {
+        res.status(404).send(error.message);
+      }
       console.log(error);
       res.status(500).send();
       return;
