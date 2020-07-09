@@ -20,7 +20,10 @@ const app = express();
 app.use(helmet()); //enforcing some security best practices, e.g. https connection, prevent clickjacking ..
 app.use(
   cors({
-    origin: 'http://localhost:8080',
+    origin:
+      process.env.CORS_ENV === 'development'
+        ? 'http://localhost:8080'
+        : 'https://demo.machbarschaft.jetzt',
     credentials: true,
     optionsSuccessStatus: 200,
   })
