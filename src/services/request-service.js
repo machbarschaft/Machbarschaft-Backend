@@ -35,7 +35,7 @@ export default class RequestService {
   static async createRequestWithPhone(phone) {
     let user = await models.User.findOne({ phone: phone });
     if (!user) {
-      user = await UserService.createUser(phone);
+      user = await UserService.createUser(phone, null);
     }
 
     return this.createRequestWithUserId(user._id);
@@ -65,8 +65,11 @@ export default class RequestService {
     if (requestBody.urgency) {
       request.urgency = requestBody.urgency;
     }
-    if (requestBody.name) {
-      request.name = requestBody.name;
+    if (requestBody.forename) {
+      request.forename = requestBody.forename;
+    }
+    if (requestBody.surname) {
+      request.surname = requestBody.surname;
     }
     if (requestBody.addressId) {
       const address = await models.Address.findOne({
@@ -118,7 +121,8 @@ export default class RequestService {
     }
 
     if (
-      request.name &&
+      request.forename &&
+      request.surname &&
       request.address &&
       request.requestType &&
       request.urgency

@@ -11,7 +11,7 @@ import AddressService from './address-service';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export default class AuthService {
-  static async register(email, password, phone) {
+  static async register(email, password, phone, profile) {
     let user = await UserService.findUserByPhone(phone);
     let access = await models.Access.findOne({
       email: email,
@@ -28,7 +28,7 @@ export default class AuthService {
         );
       }
     } else {
-      user = await UserService.createUser(phone);
+      user = await UserService.createUser(phone, profile);
     }
 
     access = new models.Access({
@@ -77,8 +77,6 @@ export default class AuthService {
   static async authenticate(userId) {
     const access = await models.Access.findOne({ user: userId });
     const user = await models.User.findOne({ _id: userId });
-    console.log(user);
-    console.log(access);
     if (access && user) {
       let addressResponse = null;
       if (user.preferences.staticPosition) {
