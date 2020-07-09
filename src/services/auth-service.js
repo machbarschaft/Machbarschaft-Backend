@@ -185,13 +185,16 @@ export default class AuthService {
           token = confirmEmail.token;
         }
       }
-
       let subject = 'Bitte bestätige dein Konto';
       let to = access.email;
       let from = process.env.FROM_EMAIL;
       let link = process.env.URL + '/auth/verify/' + token;
-      let html = `<p>Lieber User, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Konto zu verifizieren.</p> 
-                    <br><p>Deine Machbarschaft.</p>`;
+      let html =
+        `<p>Hallo ` +
+        user.profile.name +
+        `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Konto zu verifizieren. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
+                    <br><p><a href="${link}">${link}</a></p><br>
+                    <p>Deine Machbarschaft.</p>`;
 
       await this.sendEmail({ to, from, subject, html });
 
@@ -232,13 +235,17 @@ export default class AuthService {
         const resetPasswordCreated = await this.createResetPassword(access._id);
         var token = resetPasswordCreated.token;
       }
+      let user = await models.User.findById(access.user);
       let subject = 'Passwort zurücksetzen';
       let to = access.email;
       let from = process.env.FROM_EMAIL;
       let link = process.env.URL + '/auth/verifyResetPassword/' + token;
-      let html = `<p>Lieber User, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen.</p> 
-                    <br><p>Deine Machbarschaft.</p>`;
-
+      let html =
+        `<p>Hallo ` +
+        user.profile.name +
+        `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
+                  <br><p><a href="${link}">${link}</a></p><br>
+                  <p>Deine Machbarschaft.</p>`;
       await AuthService.sendEmail({ to, from, subject, html });
 
       return Promise.resolve();

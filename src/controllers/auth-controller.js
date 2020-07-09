@@ -120,7 +120,7 @@ const verify = async (req, res) => {
 };
 
 const resendEmail = async (req, res) => {
-  AuthService.sendVerificationEmail(req.body.email)
+  AuthService.sendVerificationEmail(req.user.uid)
     .then((result) => {
       res.status(200).send();
       return;
