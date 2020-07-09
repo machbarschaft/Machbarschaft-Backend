@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import UserService from './user-service';
 import crypto from 'crypto';
 import sgMail from '@sendgrid/mail';
+import AddressService from './address-service';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -75,10 +76,25 @@ export default class AuthService {
 
   static async authenticate(userId) {
     const access = await models.Access.findOne({ user: userId });
-    if (access) {
+    const user = await models.User.findOne({ _id: userId });
+    console.log(user);
+    console.log(access);
+    if (access && user) {
+      let addressResponse = null;
+      if (user.preferences.staticPosition) {
+        const fullAddress = models.Address.findOne({
+          _id: user.preferences.staticPosition,
+        });
+        addressResponse = AddressService.prepareAddressResponse(fullAddress);
+      }
       return Promise.resolve({
         uid: access.user,
         email: access.email,
+        phone: user.phone,
+        emailVerified: access.emailVerified,
+        phoneVerified: user.phoneVerified,
+        profile: user.profile ? user.profile : null,
+        address: addressResponse,
       });
     } else {
       return Promise.reject(new Error('Could not find user with given id.'));
