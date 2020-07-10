@@ -3,7 +3,7 @@
 import Router from 'express';
 import PhoneController from '../controllers/phone-controller';
 import Validator from '../validator';
-import {body} from 'express-validator';
+import { body } from 'express-validator';
 
 const router = Router();
 
@@ -27,17 +27,17 @@ const router = Router();
  *                          type: Number
  */
 router.put(
-    '/',
-    Validator.requireUserIdOrPhoneNumber(),
-    [
-        body('tan', 'Der Tan besteht aus vier Ziffern und muss angegeben werden.')
-            .exists()
-            .isNumeric()
-            .isLength({min: 4, max: 4})
-            .toInt(),
-    ],
-    Validator.validate,
-    PhoneController.confirmTan
+  '/',
+  Validator.requireUserIdOrPhoneNumber(),
+  [
+    body('tan', 'Der Tan besteht aus vier Ziffern und muss angegeben werden.')
+      .exists()
+      .isNumeric()
+      .isLength({ min: 4, max: 4 })
+      .toInt(),
+  ],
+  Validator.validate,
+  PhoneController.confirmTan
 );
 
 /**
@@ -60,18 +60,18 @@ router.put(
  *                          type: Boolean
  */
 router.post(
-    '/',
-    Validator.requireUserIdOrPhoneNumber(),
-    [
-        body(
-            'sms',
-            "Specify whether you prefer to receive the tan per sms with 'true' or 'false'."
-        )
-            .exists()
-            .isBoolean(),
-    ],
-    Validator.validate,
-    PhoneController.createNewTan
+  '/',
+  Validator.requireUserIdOrPhoneNumber(),
+  [
+    body(
+      'sms',
+      "Specify whether you prefer to receive the tan per sms with 'true' or 'false'."
+    )
+      .exists()
+      .isBoolean(),
+  ],
+  Validator.validate,
+  PhoneController.createNewTan
 );
 
 /**
@@ -94,10 +94,10 @@ router.post(
  *                          type: string
  */
 router.get(
-    '/findNumber',
-    Validator.requireUserIdOrPhoneNumber(),
-    Validator.validate,
-    PhoneController.findNumber
+  '/findNumber',
+  Validator.requireUserIdOrPhoneNumber(),
+  Validator.validate,
+  PhoneController.findNumber
 );
 
 /**
@@ -120,10 +120,10 @@ router.get(
  *                          type: string
  */
 router.post(
-    '/setCalled',
-    Validator.requireUserIdOrPhoneNumber(),
-    Validator.validate,
-    PhoneController.setCalled
-)
+  '/setCalled',
+  Validator.requireUserIdOrPhoneNumber(),
+  Validator.validate,
+  PhoneController.setCalled
+);
 
 export default router;
