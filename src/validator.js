@@ -191,6 +191,20 @@ const preferencesValidationRules = () => {
     .concat(nameValidationRules('country', true));
 };
 
+const contactFormValidationRules = () => {
+  return [
+    // email must be an email
+    body(
+        'email',
+        'Die E-Mail-Adresse muss im E-Mail-Format angegeben werden.'
+    ).isEmail(),
+    // text must be at max 1000 chars long
+    body(
+        'text',
+    ).isLength({ max: 1000 }).withMessage('Der Text darf nicht länger als 1000 Zeichen sein.').isLength({ min: 1 }).withMessage("Du musst einen Text übergeben."),
+  ];
+};
+
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -220,4 +234,5 @@ module.exports = {
   cookieValidationRules,
   preferencesValidationRules,
   exampleValidationRules,
+  contactFormValidationRules,
 };

@@ -16,6 +16,7 @@ const options = {
     path.resolve(__dirname, 'address-route.js'),
     path.resolve(__dirname, 'user-route.js'),
     path.resolve(__dirname, 'dashboard-route.js'),
+    path.resolve(__dirname, 'contact-route.js'),
   ],
 };
 
