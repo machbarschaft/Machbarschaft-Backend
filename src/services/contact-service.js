@@ -8,7 +8,6 @@ export default class ContactService {
             email: email,
             text: text
         })
-        contact.save();
-        return contact;
+        return contact.save();
     }
 }
