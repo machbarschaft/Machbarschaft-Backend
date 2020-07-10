@@ -7,6 +7,7 @@ import process from './process-route';
 import feedback from './feedback-route';
 import address from './address-route';
 import user from './user-route';
+import dashboard from './dashboard-route';
 import example from './example-route';
 
 export default {
@@ -19,5 +20,6 @@ export default {
   feedback,
   address,
   user,
+  dashboard,
   example,
 };
