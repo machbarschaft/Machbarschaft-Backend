@@ -9,6 +9,7 @@ import address from './address-route';
 import user from './user-route';
 import dashboard from './dashboard-route';
 import example from './example-route';
+import contact from './contact-route';
 
 export default {
   landingPage,
@@ -22,4 +23,5 @@ export default {
   user,
   dashboard,
   example,
+  contact
 };

@@ -39,7 +39,6 @@ const models = {
   User,
   UserProfile,
   UserPreferences,
-  Process,
   Example,
 };
 
