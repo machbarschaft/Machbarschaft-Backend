@@ -99,7 +99,7 @@ const findNumber = async (req, res) => {
       .then((user) => {
         res.status(200).json({
           phone: '+49' + user.phone,
-          name: user.profile.name,
+          name: user.profile.forename,
         });
         return;
       })
