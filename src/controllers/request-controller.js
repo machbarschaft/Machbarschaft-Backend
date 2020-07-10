@@ -41,7 +41,10 @@ const updateLoggedIn = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'No request with given id.') {
+      if (
+        error.message === 'No request with given id.' ||
+        error.message === 'No address with given id.'
+      ) {
         res.status(404).send(error.message);
         return;
       }
@@ -75,7 +78,8 @@ const updateLoggedOut = async (req, res) => {
     .catch((error) => {
       if (
         error.message === 'No user with given phone number.' ||
-        error.message === 'No request with given id.'
+        error.message === 'No request with given id.' ||
+        error.message === 'No address with given id.'
       ) {
         res.status(404).send(error.message);
         return;
