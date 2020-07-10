@@ -83,15 +83,9 @@ const setCalled = async (req, res) => {
             return ResponseService.findResponseByUserId(user._id);
         })
             .then((response) => {
-                return ProcessService.getProcess(response.process);
-            })
-            .then((process) => {
-                return ResponseService.getResponse(process.responses[process.requests.length - 1]);
-            })
-            .then((processResponse) => {
-                processResponse.status = 'called';
-                processResponse.log.set('called', Date.now());
-                processResponse.save();
+              response.status = 'called';
+              response.log.set('called', Date.now());
+              response.save();
                 res.status(200);
                 return;
             }).catch((error) => {
