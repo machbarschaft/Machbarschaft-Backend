@@ -201,7 +201,6 @@ const contactFormValidationRules = () => {
     // text must be at max 1000 chars long
     body(
         'text',
-        'Der Text darf nicht länger als 1000 Zeichen sein.'
     ).isLength({ max: 1000 }).withMessage('Der Text darf nicht länger als 1000 Zeichen sein.').isLength({ min: 1 }).withMessage("Du musst einen Text übergeben."),
   ];
 };
