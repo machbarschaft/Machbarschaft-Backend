@@ -24,8 +24,8 @@ export default class UserService {
     });
   }
 
-  static async findUserByPhone(phone) {
-    return models.User.findOne({ phone: phone });
+  static async findUserByPhone(countryCode, phone) {
+    return models.User.findOne({ countryCode: countryCode, phone: phone });
   }
 
   static async findUserById(userId) {

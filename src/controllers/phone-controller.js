@@ -9,21 +9,25 @@ import ResponseService from '../services/response-service';
 import Process from '../models/process-model';
 
 const createNewTan = async (req, res) => {
-  let userId, phone;
+  let userId, phone, countryCode;
   if (req.body.userId) {
     userId = req.body.userId;
     const user = await UserService.findUserById(req.body.userId);
     phone = user.phone;
   } else {
+    countryCode = req.body.countryCode;
     phone = req.body.phone;
-    const user = await UserService.findUserByPhone(req.body.phone);
+    const user = await UserService.findUserByPhone(
+      req.body.countryCode,
+      req.body.phone
+    );
     userId = user._id;
   }
-  if (!userId || !phone) {
+  if (!userId || !phone || !countryCode) {
     res.status(404).send('No user with given id or phone number.');
     return;
   }
-  PhoneService.create(userId, phone, req.body.sms)
+  PhoneService.create(userId, countryCode, phone, req.body.sms)
     .then((request) => {
       res.status(201).send();
       return;
@@ -41,7 +45,10 @@ const confirmTan = async (req, res) => {
   if (req.body.userId) {
     userId = req.body.userId;
   } else {
-    const user = await UserService.findUserByPhone(req.body.phone);
+    const user = await UserService.findUserByPhone(
+      req.body.countryCode,
+      req.body.phone
+    );
     userId = user._id;
   }
   PhoneService.confirm(req.body.tan, userId)
@@ -49,7 +56,7 @@ const confirmTan = async (req, res) => {
       let options = {
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
-        secure: process.env.CORS_ENV === 'development' ? false : true
+        secure: process.env.CORS_ENV === 'development' ? false : true,
       };
 
       res.cookie('machbarschaft_phoneVerified', phoneNumber, options);
@@ -78,8 +85,9 @@ const confirmTan = async (req, res) => {
 
 const findNumber = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
-    req.body.phone = req.body.phone.toString().substring(3);
-    UserService.findUserByPhone(req.body.phone);
+    var phone = req.body.phone.toString().substring(3);
+    var countryCode = req.body.phone.toString().substring(1, 3);
+    UserService.findUserByPhone(countryCode, phone);
   } else
     return Promise.reject(new Error('No user with given phone number.'))
       .then((user) => {
@@ -98,7 +106,7 @@ const findNumber = async (req, res) => {
       })
       .then((user) => {
         res.status(200).json({
-          phone: '+49' + user.phone,
+          phone: '+' + user.countryCode.toString() + user.phone.toString(),
           name: user.profile.name,
         });
         return;

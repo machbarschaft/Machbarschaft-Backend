@@ -11,7 +11,7 @@ const twilio = require('twilio')(
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 export default class PhoneService {
-  static async create(userId, phone, sms) {
+  static async create(userId, countryCode, phone, sms) {
     const user = await UserService.findUserById(userId);
     if (!user) {
       return Promise.reject('No user found with the given id.');
@@ -28,6 +28,7 @@ export default class PhoneService {
     }
     const confirmPhone = new models.ConfirmPhone({
       user: userId,
+      countryCode: countryCode,
       phone: phone,
       tan: tan,
       sms: sms,
@@ -44,7 +45,7 @@ export default class PhoneService {
           tan +
           TwilioConfig.twilio.message_4,
         from: TwilioConfig.twilio.phone_number_sms,
-        to: TwilioConfig.twilio.country + phone.toString(),
+        to: '+' + countryCode.toString() + phone.toString(),
       });
     } else {
       var string =
@@ -70,7 +71,7 @@ export default class PhoneService {
       );
       twilio.calls.create({
         twiml: response.toString(),
-        to: TwilioConfig.twilio.country + phone.toString(),
+        to: '+' + countryCode.toString() + phone.toString(),
         from: TwilioConfig.twilio.phone_number_call,
       });
     }
