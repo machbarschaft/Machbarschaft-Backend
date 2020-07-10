@@ -7,9 +7,7 @@ const createContact = (req, res) => {
         req.body.email,
         req.body.text
     ).then((contact) => {
-        return contact._id;
-    }).then((contactResponse) => {
-        res.status(200).json(contactResponse);
+        res.status(200).json(contact._id);
         return;
     }).catch((error) => {
         console.log(error);
