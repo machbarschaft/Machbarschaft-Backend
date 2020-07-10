@@ -21,6 +21,8 @@ const router = Router();
  *              schema:
  *                  type: object
  *                  properties:
+ *                      countryCode:
+ *                          type: Number
  *                      phone:
  *                          type: Number
  *                      tan:
@@ -54,6 +56,8 @@ router.put(
  *              schema:
  *                  type: object
  *                  properties:
+ *                      countryCode:
+ *                          type: Number
  *                      phone:
  *                          type: Number
  *                      sms:
@@ -88,6 +92,8 @@ router.post(
  *              schema:
  *                  type: object
  *                  properties:
+ *                      countryCode:
+ *                          type: Number
  *                      phone:
  *                          type: Number
  *                      secret:
