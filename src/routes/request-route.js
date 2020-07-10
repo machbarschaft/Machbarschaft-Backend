@@ -315,4 +315,42 @@ router.put(
   RequestController.publishLoggedOut
 );
 
+/**
+ * @swagger
+ * /request/open-requests:
+ *   get:
+ *     summary:  Get open requests
+ *     description: Returns all open requests within the specified radius of the user's location.
+ *     tags:
+ *       - request
+ *     parameters:
+ *      - in: query
+ *        name: latitude
+ *        type: Number
+ *        required: false
+ *      - in: query
+ *        name: longitude
+ *        type: Number
+ *        required: false
+ *     responses:
+ *       200:
+ *         description: successfully returned open requests in area
+ *       400:
+ *         description: The user's location is not provided. Either set staticPosition in user-preferences or enable gps tracking.
+ *       401:
+ *         description: not authorized
+ *       500:
+ *         description: Internal server error
+ */
+router.get(
+  '/open-requests',
+  Validator.cookieValidationRules('jwt'),
+  Validator.positionValidationRules(),
+  Validator.validate,
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  RequestController.getOpenRequestsNearby
+);
+
 export default router;

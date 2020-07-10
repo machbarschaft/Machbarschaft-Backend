@@ -4,6 +4,7 @@ import models from '../models/bundle';
 import { statusStages } from '../models/request-model';
 import UserService from './user-service';
 import ProcessService from './process-service';
+import { User } from '../models/user-model';
 
 export default class RequestService {
   static async createRequestWithUserId(userId) {
@@ -192,5 +193,59 @@ export default class RequestService {
     process.save();
 
     return newRequest.save();
+  }
+
+  static async getOpenRequestsNearby(userId, currentLat, currentLng) {
+    const user = await UserService.findUserById(userId);
+    if (!currentLat || !currentLng) {
+      if (!user.preferences.staticPosition) {
+        return Promise.reject(new Error('Current position not provided.'));
+      }
+      const address = await models.Address.findOne({
+        _id: user.preferences.staticPosition,
+      });
+      currentLng = address.geoLocation.longitude;
+      currentLat = address.geoLocation.latitude;
+    }
+    const openRequests = await models.Request.find({ status: 'open' });
+    let result = [];
+    for (const request of openRequests) {
+      const requestAddress = await models.Address.findOne({
+        _id: request.address,
+      });
+      if (
+        this.calculateDistance(
+          currentLat,
+          currentLng,
+          requestAddress.geoLocation.latitude,
+          requestAddress.geoLocation.longitude
+        ) < user.preferences.radius
+      ) {
+        console.log(request);
+        result.push(request);
+      }
+    }
+    return Promise.resolve(result);
+  }
+
+  /*
+  Measures the distance in metres between two positions (defined by latitude and longitude).
+  Formula provided by: https://www.movable-type.co.uk/scripts/latlong.html
+   */
+  static calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371e3; // metres
+    const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lng2 - lng1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const d = R * c; // in metres
+    console.log(d);
+    return d;
   }
 }
