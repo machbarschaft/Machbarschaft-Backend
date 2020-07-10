@@ -49,7 +49,7 @@ const confirmTan = async (req, res) => {
       let options = {
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
-        secure: process.env.CORS_ENV === 'development' ? false : true
+        secure: process.env.CORS_ENV === 'development' ? false : true,
       };
 
       res.cookie('machbarschaft_phoneVerified', phoneNumber, options);
@@ -76,12 +76,45 @@ const confirmTan = async (req, res) => {
   return;
 };
 
+const setCalled = async (req, res) => {
+  if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
+    req.body.phone = req.body.phone.toString().substring(3);
+    UserService.findUserByPhone(req.body.phone)
+      .then((user) => {
+        return ResponseService.findResponseByUserId(user._id);
+      })
+      .then((response) => {
+        response.status = 'called';
+        response.log.set('called', Date.now());
+        response.save();
+        res.status(200);
+        return;
+      })
+      .catch((error) => {
+        if (error.message === 'Not allowed.') {
+          res.status(403).send(error.message);
+          return;
+        }
+        if (
+          error.message === 'No process with given id.' ||
+          error.message === 'No response with given id.' ||
+          error.message === 'No request with given id.'
+        ) {
+          res.status(404).send(error.message);
+          return;
+        }
+        res.status(500).send();
+        console.log(error);
+        return;
+      });
+  } else return Promise.reject(new Error('No user with given phone number.'));
+  return;
+};
+
 const findNumber = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
     req.body.phone = req.body.phone.toString().substring(3);
-    UserService.findUserByPhone(req.body.phone);
-  } else
-    return Promise.reject(new Error('No user with given phone number.'))
+    UserService.findUserByPhone(req.body.phone)
       .then((user) => {
         return ResponseService.findResponseByUserId(user._id);
       })
@@ -120,7 +153,8 @@ const findNumber = async (req, res) => {
         console.log(error);
         return;
       });
+  } else return Promise.reject(new Error('No user with given phone number.'));
   return;
 };
 
-module.exports = { createNewTan, confirmTan, findNumber };
+module.exports = { createNewTan, confirmTan, findNumber, setCalled };

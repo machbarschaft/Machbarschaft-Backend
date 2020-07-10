@@ -100,4 +100,30 @@ router.get(
   PhoneController.findNumber
 );
 
+/**
+ * @swagger
+ * /phone/setCalled:
+ *  post:
+ *      summary: Update status of response as soon as helper has called.
+ *      description: Twilio endpoint to update status of response as soon as helper has called.
+ *      tags:
+ *          - phone
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      phone:
+ *                          type: Number
+ *                      secret:
+ *                          type: string
+ */
+router.post(
+  '/setCalled',
+  Validator.requireUserIdOrPhoneNumber(),
+  Validator.validate,
+  PhoneController.setCalled
+);
+
 export default router;
