@@ -2,13 +2,7 @@
 
 import models from '../models/bundle';
 import UserService from './user-service';
-import TwilioConfig from '../twilio_config';
-
-const twilio = require('twilio')(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
-const VoiceResponse = require('twilio').twiml.VoiceResponse;
+import TwilioService from '../external-parties/twilio-service';
 
 export default class PhoneService {
   static async create(userId, phone, sms) {
@@ -35,46 +29,7 @@ export default class PhoneService {
     user.confirmPhone.push(confirmPhone._id);
     user.save();
     confirmPhone.save();
-    if (sms === 'true') {
-      twilio.messages.create({
-        body:
-          TwilioConfig.twilio.message_1 +
-          user.profile.forename +
-          TwilioConfig.twilio.message_2 +
-          tan +
-          TwilioConfig.twilio.message_4,
-        from: TwilioConfig.twilio.phone_number_sms,
-        to: TwilioConfig.twilio.country + phone.toString(),
-      });
-    } else {
-      var string =
-        TwilioConfig.twilio.message_5 +
-        TwilioConfig.twilio.message_1 +
-        user.profile.forename +
-        TwilioConfig.twilio.message_2;
-      var code = '';
-      for (var i = 0; i < tan.toString().length; i++) {
-        code += tan.toString()[i] + ', ';
-      }
-      string += code;
-      string += TwilioConfig.twilio.message_3;
-      string += code;
-      string += TwilioConfig.twilio.message_4;
-      const response = new VoiceResponse();
-      response.say(
-        {
-          voice: TwilioConfig.twilio.voice,
-          language: TwilioConfig.twilio.voice_language,
-        },
-        string
-      );
-      twilio.calls.create({
-        twiml: response.toString(),
-        to: TwilioConfig.twilio.country + phone.toString(),
-        from: TwilioConfig.twilio.phone_number_call,
-      });
-    }
-    return;
+    return TwilioService.sendTan(sms, tan, user, phone);
   }
 
   static async confirm(tan, userId) {
