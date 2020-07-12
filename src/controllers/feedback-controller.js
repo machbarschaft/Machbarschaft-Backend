@@ -31,6 +31,21 @@ const createFeedback = async (req, res) => {
   return;
 };
 
+const isFeedbackSubmitted = async (req, res) => {
+  FeedbackService.existsFeedbackForProcess(req.user.uid, req.query.processId)
+    .then((result) => {
+      res.status(200).send(result);
+      return;
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send();
+      return;
+    });
+  return;
+};
+
 module.exports = {
   createFeedback,
+  isFeedbackSubmitted,
 };
