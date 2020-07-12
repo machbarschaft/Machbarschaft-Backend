@@ -4,7 +4,7 @@ import models from '../models/bundle';
 import { statusStages } from '../models/request-model';
 import UserService from './user-service';
 import ProcessService from './process-service';
-import { User } from '../models/user-model';
+import AddressService from './address-service';
 
 export default class RequestService {
   static async createRequestWithUserId(userId) {
@@ -210,19 +210,33 @@ export default class RequestService {
     const openRequests = await models.Request.find({ status: 'open' });
     let result = [];
     for (const request of openRequests) {
+      if (request.user.toString() === userId) {
+        continue;
+      }
       const requestAddress = await models.Address.findOne({
         _id: request.address,
       });
-      if (
-        this.calculateDistance(
-          currentLat,
-          currentLng,
-          requestAddress.geoLocation.latitude,
-          requestAddress.geoLocation.longitude
-        ) < user.preferences.radius
-      ) {
-        console.log(request);
-        result.push(request);
+      const distance = this.calculateDistance(
+        currentLat,
+        currentLng,
+        requestAddress.geoLocation.latitude,
+        requestAddress.geoLocation.longitude
+      );
+      if (distance < user.preferences.radius) {
+        const address = await models.Address.findOne({ _id: request.address });
+        let addressResponse = await AddressService.prepareAddressResponse(
+          address
+        );
+        delete addressResponse['houseNumber'];
+        addressResponse['geoLocation'] = address.geoLocation;
+        result.push({
+          _id: request._id,
+          requestType: request.requestType,
+          urgency: request.urgency,
+          extras: request.extras,
+          distance: distance,
+          address: addressResponse,
+        });
       }
     }
     return Promise.resolve(result);
@@ -245,7 +259,6 @@ export default class RequestService {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     const d = R * c; // in metres
-    console.log(d);
     return d;
   }
 }
