@@ -23,7 +23,7 @@ const createNewTan = async (req, res) => {
     );
     userId = user._id;
   }
-  if (!userId || !phone || !countryCode) {
+  if (!userId || !phone) {
     res.status(404).send('No user with given id or phone number.');
     return;
   }
