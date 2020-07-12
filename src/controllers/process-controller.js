@@ -251,9 +251,20 @@ const createResponse = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
       if (!process.response.length) {
-        ResponseService.createResponse(req.user.uid, process._id);
-        res.status(200).send();
-        return;
+        ResponseService.createResponse(req.user.uid, process._id)
+          .then(() => {
+            res.status(200).send();
+            return;
+          })
+          .catch((error) => {
+            if (error.message === 'Unverified user') {
+              res.status(401).send(error.message);
+              return;
+            }
+            console.log(error);
+            res.status(500).send();
+            return;
+          });
       }
       return ResponseService.getResponse(
         process.response[process.response.length - 1]

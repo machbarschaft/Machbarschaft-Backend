@@ -248,4 +248,71 @@ export default class RequestService {
 
     return newRequest.save();
   }
+
+  static async getOpenRequestsNearby(userId, currentLat, currentLng) {
+    const user = await UserService.findUserById(userId);
+    if (!currentLat || !currentLng) {
+      if (!user.preferences.staticPosition) {
+        return Promise.reject(new Error('Current position not provided.'));
+      }
+      const address = await models.Address.findOne({
+        _id: user.preferences.staticPosition,
+      });
+      currentLng = address.geoLocation.longitude;
+      currentLat = address.geoLocation.latitude;
+    }
+    const openRequests = await models.Request.find({ status: 'open' });
+    let result = [];
+    for (const request of openRequests) {
+      if (request.user.toString() === userId) {
+        continue;
+      }
+      const requestAddress = await models.Address.findOne({
+        _id: request.address,
+      });
+      const distance = this.calculateDistance(
+        currentLat,
+        currentLng,
+        requestAddress.geoLocation.latitude,
+        requestAddress.geoLocation.longitude
+      );
+      if (distance < user.preferences.radius) {
+        const address = await models.Address.findOne({ _id: request.address });
+        let addressResponse = await AddressService.prepareAddressResponse(
+          address
+        );
+        delete addressResponse['houseNumber'];
+        addressResponse['geoLocation'] = address.geoLocation;
+        result.push({
+          _id: request._id,
+          requestType: request.requestType,
+          urgency: request.urgency,
+          extras: request.extras,
+          distance: distance,
+          address: addressResponse,
+        });
+      }
+    }
+    return Promise.resolve(result);
+  }
+
+  /*
+  Measures the distance in metres between two positions (defined by latitude and longitude).
+  Formula provided by: https://www.movable-type.co.uk/scripts/latlong.html
+   */
+  static calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371e3; // metres
+    const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lng2 - lng1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const d = R * c; // in metres
+    return d;
+  }
 }

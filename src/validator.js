@@ -12,6 +12,7 @@ const {
   header,
   oneOf,
   param,
+  query,
 } = require('express-validator');
 
 const userValidationRules = () => {
@@ -101,7 +102,8 @@ const addressValidationRules = () => {
   return [
     body(
       'houseNumber',
-      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein.'
+      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein. Bitte lasse Adresszusätze ' +
+        'weg (z.B. nicht Hausnummer 3a sondern nur 3)'
     )
       .isNumeric()
       .isLength({ max: 10 }),
@@ -163,21 +165,25 @@ const exampleValidationRules = () => {
 
 const preferencesValidationRules = () => {
   return [
-    body(
-      'radius',
-      'Der Radius muss eine positive Zahl sein'
-    ).optional().isInt({min: 1}),
+    body('radius', 'Der Radius muss eine positive Zahl sein')
+      .optional()
+      .isInt({ min: 1 }),
     body(
       'notifyNearbyRequests',
       'Gib an, ob du über neue Aufträge in deiner Nähe informiert werden willst (true, false)'
-    ).optional().isBoolean(),
+    )
+      .optional()
+      .isBoolean(),
     body(
       'useGps',
       'Gib an, ob du GPS zur Bestimmung deines Standorts verwenden willst (true, false)'
-    ).optional().isBoolean(),
+    )
+      .optional()
+      .isBoolean(),
     body(
       'houseNumber',
-      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein.'
+      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein. Bitte lasse Adresszusätze ' +
+        'weg (z.B. nicht Hausnummer 3a sondern nur 3)'
     )
       .optional()
       .isNumeric()
@@ -185,10 +191,24 @@ const preferencesValidationRules = () => {
     body(
       'zipCode',
       'Es muss eine in Deutschland gültige Postleitzahl angegeben werden.'
-    ).optional().isPostalCode('DE'),
-  ].concat(nameValidationRules('street', true))
+    )
+      .optional()
+      .isPostalCode('DE'),
+  ]
+    .concat(nameValidationRules('street', true))
     .concat(nameValidationRules('city', true))
     .concat(nameValidationRules('country', true));
+};
+
+const positionValidationRules = () => {
+  return [
+    query('latitude', 'Der Wert für latitude muss eine Dezimalzahl sein.')
+      .optional()
+      .isDecimal(),
+    query('longitude', 'Der Wert für longitude muss eine Dezimalzahl sein.')
+      .optional()
+      .isDecimal(),
+  ];
 };
 
 const contactFormValidationRules = () => {
@@ -204,7 +224,6 @@ const contactFormValidationRules = () => {
     ).isLength({ max: 1000 }).withMessage('Der Text darf nicht länger als 1000 Zeichen sein.').isLength({ min: 1 }).withMessage("Du musst einen Text übergeben."),
   ];
 };
-
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -233,6 +252,7 @@ module.exports = {
   validate,
   cookieValidationRules,
   preferencesValidationRules,
+  positionValidationRules,
   exampleValidationRules,
   contactFormValidationRules,
 };

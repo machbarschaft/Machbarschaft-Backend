@@ -202,6 +202,28 @@ const reopenRequest = async (req, res) => {
   return;
 };
 
+const getOpenRequestsNearby = async (req, res) => {
+  RequestService.getOpenRequestsNearby(
+    req.user.uid,
+    req.query.latitude,
+    req.query.longitude
+  )
+    .then((result) => {
+      res.status(200).json(result);
+      return;
+    })
+    .catch((error) => {
+      if (error.message === 'Current position not provided.') {
+        res.status(400).send(error.message);
+        return;
+      }
+      console.log(error);
+      res.status(500).send();
+      return;
+    });
+  return;
+};
+
 module.exports = {
   createLoggedIn,
   createLoggedOut,
@@ -210,4 +232,5 @@ module.exports = {
   publishLoggedIn,
   publishLoggedOut,
   reopenRequest,
+  getOpenRequestsNearby,
 };

@@ -67,6 +67,10 @@ export default class ResponseService {
   }
 
   static async createResponse(userId, processId) {
+    const user = await models.User.findOne({ _id: userId });
+    if (user.phoneVerified === false) {
+      return Promise.reject(new Error('Unverified user'));
+    }
     var response = new models.Response({
       status: 'accepted',
       user: userId,
@@ -80,6 +84,6 @@ export default class ResponseService {
     );
     request.status = 'accepted';
     request.save();
-    return response;
+    return Promise.resolve(response);
   }
 }
