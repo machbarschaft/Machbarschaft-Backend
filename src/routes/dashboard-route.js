@@ -9,7 +9,7 @@ const router = Router();
 
 /**
  * @swagger
- * /dashboard/helpseeker/active-requests:
+ * /dashboard/active-requests:
  *   get:
  *     summary: Get active requests
  *     description: Returns all active requests of the authenticated user.
@@ -24,18 +24,18 @@ const router = Router();
  *         description: Internal server error
  */
 router.get(
-  '/helpseeker/active-requests',
+  '/active-requests',
   Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
-  DashboardController.getActiveRequestsHelpseeker
+  DashboardController.getActiveRequests
 );
 
 /**
  * @swagger
- * /dashboard/helpseeker/finished-requests:
+ * /dashboard/finished-requests:
  *   get:
  *     summary: Get finished requests
  *     description: Returns all finished requests of the authenticated user.
@@ -50,13 +50,13 @@ router.get(
  *         description: Internal server error
  */
 router.get(
-  '/helpseeker/finished-requests',
+  '/finished-requests',
   Validator.cookieValidationRules('jwt'),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,
   }),
-  DashboardController.getFinishedRequestsHelpseeker
+  DashboardController.getFinishedRequests
 );
 
 export default router;

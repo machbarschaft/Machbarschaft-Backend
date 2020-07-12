@@ -314,4 +314,15 @@ export default class RequestService {
     const d = R * c; // in metres
     return d;
   }
+
+  static async findResponseForRequest(request) {
+    const process = await models.Process.findOne({ _id: request.process });
+    let response = undefined;
+    if (process.response && process.response.length) {
+      response = await models.Response.findOne({
+        _id: process.response[process.response.length - 1],
+      });
+    }
+    return response;
+  }
 }
