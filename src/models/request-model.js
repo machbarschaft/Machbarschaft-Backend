@@ -54,7 +54,10 @@ const requestSchema = new mongoose.Schema(
       type: String,
       enum: urgencyCategories,
     },
-    extras: requestExtrasSchema,
+    extras: {
+      type: requestExtrasSchema,
+      required: true,
+    },
     privacyAgreed: Boolean,
     raw: String,
     locale: String,
@@ -66,6 +69,9 @@ const requestSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+requestSchema.virtual('name').get(function () {
+  return this.forename + ' ' + this.surname;
+});
 
 const RequestExtras = mongoose.model('RequestExtras', requestExtrasSchema);
 const Request = mongoose.model('Request', requestSchema);

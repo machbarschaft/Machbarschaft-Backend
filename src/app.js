@@ -65,6 +65,8 @@ app.use('/process', routes.process);
 app.use('/feedback', routes.feedback);
 app.use('/address', routes.address);
 app.use('/user', routes.user);
+app.use('/dashboard', routes.dashboard);
 app.use('/example', routes.example);
+app.use('/contact', routes.contact)
 
 module.exports = app;

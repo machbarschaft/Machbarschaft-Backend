@@ -192,7 +192,7 @@ export default class AuthService {
       let link = process.env.URL + '/auth/verify/' + token;
       let html =
         `<p>Hallo ` +
-        user.profile.name +
+        user.profile.forename +
         `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Konto zu verifizieren. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
                     <br><p><a href="${link}">${link}</a></p><br>
                     <p>Deine Machbarschaft.</p>`;
@@ -243,7 +243,7 @@ export default class AuthService {
       let link = process.env.URL + '/auth/verifyResetPassword/' + token;
       let html =
         `<p>Hallo ` +
-        user.profile.name +
+        user.profile.forename +
         `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
                   <br><p><a href="${link}">${link}</a></p><br>
                   <p>Deine Machbarschaft.</p>`;

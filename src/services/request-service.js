@@ -13,16 +13,69 @@ export default class RequestService {
       status: statusStages[0],
     });
     if (request) {
-      return request;
+      return {
+        _id: request._id,
+        forename: request.forename ? request.forename : '',
+        surname: request.surname ? request.surname : '',
+        address: request.address
+          ? await AddressService.prepareAddressResponse(
+              await models.Address.findOne({ _id: request.address })
+            )
+          : { street: '', houseNumber: '', zipCode: '', city: '', country: '' },
+        requestType: request.requestType ? request.requestType : '',
+        urgency: request.urgency ? request.urgency : '',
+        extras: request.extras,
+      };
     }
 
     const process = await ProcessService.createProcess();
-    request = new models.Request({ process: process._id, user: userId });
-    request.save();
+    request = new models.Request({
+      process: process._id,
+      user: userId,
+      extras: new models.RequestExtras(),
+    });
     process.requests.push(request._id);
     process.save();
 
-    return request;
+    return this.prefillRequest(request);
+  }
+
+  static async prefillRequest(request) {
+    const previousRequests = await models.Request.find({
+      user: request.user,
+    }).sort({
+      createdAt: -1,
+    });
+    if (!previousRequests.length) {
+      request.save();
+      return Promise.resolve({
+        _id: request._id,
+        forename: '',
+        surname: '',
+        address: {
+          street: '',
+          houseNumber: '',
+          zipCode: '',
+          city: '',
+          country: '',
+        },
+        requestType: '',
+        urgency: '',
+        extras: request.extras,
+      });
+    } else {
+      request.forename = previousRequests[0].forename;
+      request.surname = previousRequests[0].surname;
+      request.address = previousRequests[0].address;
+      request.requestType = previousRequests[0].requestType;
+      request.urgency = previousRequests[0].urgency;
+      request.extras = previousRequests[0].extras;
+      await request.save();
+      request['_doc']['address'] = await AddressService.prepareAddressResponse(
+        await models.Address.findOne({ _id: request.address })
+      );
+      return Promise.resolve(request);
+    }
   }
 
   static async getRequest(requestId) {
@@ -178,7 +231,8 @@ export default class RequestService {
       process: request.process,
       user: userId,
       status: 'open',
-      name: request.name,
+      forename: request.forename,
+      surname: request.surname,
       address: request.address,
       requestType: request.requestType,
       urgency: request.urgency,

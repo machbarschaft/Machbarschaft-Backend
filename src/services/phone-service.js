@@ -39,7 +39,7 @@ export default class PhoneService {
       twilio.messages.create({
         body:
           TwilioConfig.twilio.message_1 +
-          user.profile.name +
+          user.profile.forename +
           TwilioConfig.twilio.message_2 +
           tan +
           TwilioConfig.twilio.message_4,
@@ -50,7 +50,7 @@ export default class PhoneService {
       var string =
         TwilioConfig.twilio.message_5 +
         TwilioConfig.twilio.message_1 +
-        user.profile.name +
+        user.profile.forename +
         TwilioConfig.twilio.message_2;
       var code = '';
       for (var i = 0; i < tan.toString().length; i++) {
