@@ -47,9 +47,9 @@ const phoneValidationRules = () => {
   return [
     check(
       'phone',
-      'Die Telefonnummer muss eine gültige deutsche Mobiltelefonnummer sein.'
+      'Die Telefonnummer muss eine positive Zahl zwischen 8 und 30 Ziffern sein.'
     )
-      .isInt()
+      .isInt({ gt: 0 })
       .isLength({ min: 8, max: 30 }), //isMobilePhone('de-DE'),
   ];
 };
