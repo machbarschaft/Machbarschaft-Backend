@@ -37,6 +37,9 @@ export default class TwilioService {
       string += code;
       string += TwilioConfig.twilio.message_4;
       const response = new VoiceResponse();
+      response.pause({
+        length: 3,
+      });
       response.say(
         {
           voice: TwilioConfig.twilio.voice,
