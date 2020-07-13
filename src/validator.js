@@ -206,10 +206,10 @@ const positionValidationRules = () => {
   return [
     query('latitude', 'Der Wert für latitude muss eine Dezimalzahl sein.')
       .optional()
-      .isDecimal(),
+      .isLatLong(), //.isDecimal(),
     query('longitude', 'Der Wert für longitude muss eine Dezimalzahl sein.')
       .optional()
-      .isDecimal(),
+      .isLatLong(), //.isDecimal(),
   ];
 };
 

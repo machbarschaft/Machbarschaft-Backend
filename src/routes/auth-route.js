@@ -242,7 +242,7 @@ router.get(
  *         description: Verification successful
  */
 
-router.put('/verify/:token', AuthController.verify);
+router.get('/verify/:token', AuthController.verify);
 
 /**
  * @swagger
