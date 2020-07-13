@@ -72,7 +72,9 @@ export default class DashboardService {
       startedAt: isHelper ? response.createdAt : request.log.get('open'),
     };
     if (isHelper) {
-      delete result.address.houseNumber;
+      if (response.status === 'accepted') {
+        delete result.address.houseNumber;
+      }
       result['name'] = request.name;
     }
     return result;
