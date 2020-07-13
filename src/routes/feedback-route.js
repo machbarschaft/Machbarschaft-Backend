@@ -46,4 +46,34 @@ router.post(
   FeedbackController.createFeedback
 );
 
+/**
+ * @swagger
+ * /feedback/{type}/{id}:
+ *   post:
+ *     summary: Get bool whether feedback exists
+ *     description: Returns whether the authenticated user has already submitted feedback for the process with the given processId.
+ *     tags:
+ *       - feedback
+ *     parameters:
+ *      - in: query
+ *        name: processId
+ *        type: ObjectId
+ *        required: true
+ *     responses:
+ *       200:
+ *         description: Result if authenticated user submitted feedback for process.
+ *       500:
+ *          description: Internal server error
+ */
+router.get(
+  '/exists',
+  Validator.idValidationRules('processId'),
+  Validator.cookieValidationRules('jwt'),
+  Validator.validate,
+  passport.authenticate('jwt-cookiecombo', {
+    session: false,
+  }),
+  FeedbackController.isFeedbackSubmitted
+);
+
 export default router;

@@ -44,4 +44,15 @@ export default class FeedbackService {
     process.save();
     return feedback.save();
   }
+
+  static async existsFeedbackForProcess(userId, processId) {
+    const feedback = await models.ProcessFeedback.findOne({
+      user: userId,
+      process: processId,
+    });
+    if (feedback) {
+      return true;
+    }
+    return false;
+  }
 }
