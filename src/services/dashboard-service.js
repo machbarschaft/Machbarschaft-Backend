@@ -28,11 +28,6 @@ export default class DashboardService {
         false
       );
       result['phoneHelpSeeker'] = user.phone;
-      if (response) {
-        const helper = await UserService.findUserById(response.user);
-        result['phoneHelper'] = helper.phone;
-        result['name'] = helper.profile.name;
-      }
       responseHelpSeeker.push(result);
     }
     return responseHelpSeeker;
@@ -76,6 +71,12 @@ export default class DashboardService {
         delete result.address.houseNumber;
       }
       result['name'] = request.name;
+    } else {
+      if (response) {
+        const helper = await UserService.findUserById(response.user);
+        result['phoneHelper'] = helper.phone;
+        result['name'] = helper.profile.name;
+      }
     }
     return result;
   }
@@ -95,16 +96,9 @@ export default class DashboardService {
     let responseFinishedRequests = [];
     for (const request of finishedRequests) {
       const response = await RequestService.findResponseForRequest(request);
-      let result = await this.getFinishedRequestResponseFormat(
-        request,
-        response,
-        false
+      responseFinishedRequests.push(
+        await this.getFinishedRequestResponseFormat(request, response, false)
       );
-      if (response) {
-        const helper = await UserService.findUserById(response.user);
-        result['name'] = helper.profile.name;
-      }
-      responseFinishedRequests.push(result);
     }
     return responseFinishedRequests;
   }
@@ -144,6 +138,10 @@ export default class DashboardService {
       result['address'] = await AddressService.prepareAddressResponse(
         await models.Address.findOne({ _id: request.address })
       );
+      if (response) {
+        const helper = await UserService.findUserById(response.user);
+        result['name'] = helper.profile.name;
+      }
     }
     return result;
   }
