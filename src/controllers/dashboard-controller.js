@@ -2,7 +2,7 @@
 
 import DashboardService from '../services/dashboard-service';
 
-const getActiveRequestsHelpseeker = async (req, res) => {
+const getActiveRequests = async (req, res) => {
   DashboardService.getActiveRequests(req.user.uid)
     .then((result) => {
       res.status(200).json(result);
@@ -16,7 +16,7 @@ const getActiveRequestsHelpseeker = async (req, res) => {
   return;
 };
 
-const getFinishedRequestsHelpseeker = async (req, res) => {
+const getFinishedRequests = async (req, res) => {
   DashboardService.getFinishedRequests(req.user.uid)
     .then((result) => {
       res.status(200).json(result);
@@ -31,6 +31,6 @@ const getFinishedRequestsHelpseeker = async (req, res) => {
 };
 
 module.exports = {
-  getActiveRequestsHelpseeker,
-  getFinishedRequestsHelpseeker,
+  getActiveRequests,
+  getFinishedRequests,
 };
