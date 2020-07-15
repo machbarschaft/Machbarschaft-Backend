@@ -1,6 +1,7 @@
 'use strict';
 
 import models from '../models/bundle';
+import APIError from '../errors';
 
 export default class FeedbackService {
   static async addFeedbackToProcess(
@@ -15,7 +16,9 @@ export default class FeedbackService {
         _id: requestOrResponseId,
       });
       if (!request) {
-        return Promise.reject(new Error('Request not found'));
+        return Promise.reject(
+          new APIError(404, 'Es wurde kein Auftrag gefunden.')
+        );
       }
       owner = request.user;
       processId = request.process;
@@ -24,13 +27,15 @@ export default class FeedbackService {
         _id: requestOrResponseId,
       });
       if (!response) {
-        return Promise.reject(new Error('Response not found'));
+        return Promise.reject(
+          new APIError(404, 'Es wurde keine Auftragannahme gefunden.')
+        );
       }
       owner = response.user;
       processId = response.process;
     }
     if (userId !== owner.toString()) {
-      return Promise.reject(new Error('Unauthorized'));
+      return Promise.reject(new APIError(401, 'Unauthorized'));
     }
 
     const feedback = models.FormFeedback({

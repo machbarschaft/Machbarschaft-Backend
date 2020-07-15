@@ -3,6 +3,7 @@
 import models from '../models/bundle';
 import UserService from './user-service';
 import TwilioService from '../external-parties/twilio-service';
+import APIError from '../errors';
 
 export default class PhoneService {
   static async create(userId, phone, sms) {
@@ -36,11 +37,13 @@ export default class PhoneService {
     return PhoneService.getMostRecentConfirmPhone(userId).then(
       async (confirmPhone) => {
         if (confirmPhone.expiresAt.getTime() < Date.now()) {
-          return Promise.reject(new Error('This tan is expired.'));
+          return Promise.reject(
+            new APIError(400, 'Die Gültigkeit des Tans ist abgelaufen.')
+          );
         }
 
         if (confirmPhone.tan !== tan) {
-          return Promise.reject(new Error('The tan is incorrect.'));
+          return Promise.reject(new APIError(400, 'Der Tan ist ungültig.'));
         }
         confirmPhone.successful = true;
         confirmPhone.save();
@@ -61,7 +64,7 @@ export default class PhoneService {
     });
     if (!sortedEntries) {
       return Promise.reject(
-        new Error('There was no tan generated for the given user.')
+        new APIError(404, 'Für diesen Benutzer wurde kein Tan erstellt.')
       );
     }
     return sortedEntries[0];

@@ -1,6 +1,7 @@
 'use strict';
 
 import UserService from '../services/user-service';
+import APIError from '../errors';
 
 const updateProfile = async (req, res) => {
   UserService.updateProfile(req.user.uid, req.body.forename, req.body.surname)
@@ -9,14 +10,10 @@ const updateProfile = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Could not find user with given id.') {
-        res.status(404).send(error.message);
-        return;
-      }
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
+  return;
 };
 
 const getPreferences = async (req, res) => {
@@ -26,8 +23,7 @@ const getPreferences = async (req, res) => {
       return;
     })
     .catch((error) => {
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -40,12 +36,7 @@ const setPreferences = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Unable to validate exact address.') {
-        res.status(400).send(error.message);
-        return;
-      }
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;

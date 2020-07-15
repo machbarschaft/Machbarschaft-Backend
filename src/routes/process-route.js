@@ -217,13 +217,13 @@ router.put(
 
 /**
  * @swagger
- * /process/{processId}/response/create:
+ * /process/{processId}/response:
  *   post:
  *     summary: Create a new response to request/process
  *     description: Helper can accept a help request
  *     tags:
  *       - process
- *       - request
+ *       - response
  *     parameters:
  *       - in: path
  *         name: processId
@@ -240,7 +240,7 @@ router.put(
  */
 
 router.post(
-  '/:processId/response/create',
+  '/:processId/response',
   Validator.idValidationRules('processId'),
   Validator.cookieValidationRules('jwt'),
   Validator.validate,
@@ -252,8 +252,8 @@ router.post(
 
 /**
  * @swagger
- * /process/{processId}/response/change:
- *   post:
+ * /process/{processId}/response:
+ *   put:
  *     summary: Respond to request/process
  *     description: Helper can change status of help request to accepted, called, on-the-way and done
  *     tags:
@@ -275,7 +275,7 @@ router.post(
  */
 
 router.put(
-  '/:processId/response/change',
+  '/:processId/response',
   Validator.idValidationRules('processId'),
   Validator.cookieValidationRules('jwt'),
   Validator.validate,

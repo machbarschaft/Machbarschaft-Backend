@@ -6,6 +6,7 @@ import { validationResult } from 'express-validator';
 import JWTConfig from '../jwt_config';
 import jwt from 'jsonwebtoken';
 import UserService from '../services/user-service';
+import APIError from '../errors';
 
 const register = async (req, res) => {
   const errors = validationResult(req);
@@ -20,21 +21,12 @@ const register = async (req, res) => {
     req.body.phone,
     profile
   )
-    .then((result) => {
+    .then(() => {
       res.status(201).send();
       return;
     })
     .catch((error) => {
-      if (
-        error.message ===
-          'this email address is already assigned to an account' ||
-        error.message === 'for this phone number exists a registered account'
-      ) {
-        res.status(401).send({ errors: error.message });
-        return;
-      }
-      console.log(error);
-      res.status(500).send({ errors: 'internal server error' });
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -57,10 +49,10 @@ const login = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
+  return;
 };
 
 const logout = async (req, res) => {
@@ -76,8 +68,7 @@ const logout = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -90,12 +81,7 @@ const authenticate = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Could not find user with given id.') {
-        res.status(404).send(error.message);
-        return;
-      }
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -108,12 +94,7 @@ const verify = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Wrong token.') {
-        res.status(401).send({ errors: error.message });
-        return;
-      }
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -126,8 +107,7 @@ const resendEmail = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -142,8 +122,7 @@ const sendResetPassword = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -158,8 +137,7 @@ const resetPassword = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -174,8 +152,7 @@ const verifyResetPassword = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(401).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -195,19 +172,7 @@ const changePassword = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Password or username is incorrect') {
-        res.status(401).send(error.message);
-        return;
-      }
-      if (
-        error.message === 'User not found.' ||
-        error.message === 'Access not found.'
-      ) {
-        res.status(404).send(error.message);
-        return;
-      }
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;

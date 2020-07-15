@@ -2,6 +2,7 @@
 
 import RequestService from '../services/request-service';
 import UserService from '../services/user-service';
+import APIError from '../errors';
 
 const createLoggedIn = async (req, res) => {
   RequestService.createRequestWithUserId(req.user.uid)
@@ -10,8 +11,7 @@ const createLoggedIn = async (req, res) => {
       return;
     })
     .catch((error) => {
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -27,8 +27,7 @@ const createLoggedOut = async (req, res) => {
       return;
     })
     .catch((error) => {
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -41,23 +40,7 @@ const updateLoggedIn = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (
-        error.message === 'No request with given id.' ||
-        error.message === 'No address with given id.'
-      ) {
-        res.status(404).send(error.message);
-        return;
-      }
-      if (error.message === 'Request is already published.') {
-        res.status(400).send(error.message);
-        return;
-      }
-      if (error.message === 'Not your request.') {
-        res.status(401).send(error.message);
-        return;
-      }
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -67,7 +50,12 @@ const updateLoggedOut = async (req, res) => {
   UserService.findUserByPhone(req.query.phone)
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('No user with given phone number.'));
+        return Promise.reject(
+          new APIError(
+            404,
+            'Es gibt keinen Benutzer mit der gegebenen Telefonnummer.'
+          )
+        );
       }
       return RequestService.updateRequest(user._id, req.params.reqId, req.body);
     })
@@ -76,24 +64,7 @@ const updateLoggedOut = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (
-        error.message === 'No user with given phone number.' ||
-        error.message === 'No request with given id.' ||
-        error.message === 'No address with given id.'
-      ) {
-        res.status(404).send(error.message);
-        return;
-      }
-      if (error.message === 'Request is already published.') {
-        res.status(400).send(error.message);
-        return;
-      }
-      if (error.message === 'Not your request.') {
-        res.status(401).send(error.message);
-        return;
-      }
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -106,24 +77,7 @@ const publishLoggedIn = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'No request with given id.') {
-        res.status(404).send(error.message);
-        return;
-      }
-      if (error.message === 'Not your request.') {
-        res.status(401).send(error.message);
-        return;
-      }
-      if (error.message === 'Request does not contain necessary information.') {
-        res.status(400).send(error.message);
-        return;
-      }
-      if (error.message === 'Phone not validated') {
-        res.status(401).send(error.message);
-        return;
-      }
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -131,14 +85,19 @@ const publishLoggedIn = async (req, res) => {
 
 const publishLoggedOut = async (req, res) => {
   if (req.cookies.machbarschaft_phoneVerified !== req.query.phone) {
-    res.status(401).send('Phone not verified');
+    res.status(401).send('Die Telefonnummer ist nicht verifiziert.');
     return;
   }
 
   UserService.findUserByPhone(req.query.phone)
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('No user with given phone number.'));
+        return Promise.reject(
+          new APIError(
+            404,
+            'Es gibt keinen Benutzer mit der gegebenen Telefonnummer.'
+          )
+        );
       }
       return RequestService.publishRequest(user._id, req.params.reqId);
     })
@@ -147,26 +106,7 @@ const publishLoggedOut = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (
-        error.message === 'No user with given phone number.' ||
-        error.message === 'No request with given id.'
-      ) {
-        res.status(404).send(error.message);
-        return;
-      }
-      if (error.message === 'Not your request.') {
-        res.status(401).send(error.message);
-        return;
-      }
-      if (
-        error.message === 'Request has been published before.' ||
-        error.message === 'Request does not contain necessary information.'
-      ) {
-        res.status(400).send(error.message);
-        return;
-      }
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -179,24 +119,7 @@ const reopenRequest = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'No request with given id.') {
-        res.status(404).send(error.message);
-        return;
-      }
-      if (error.message === 'Not your request.') {
-        res.status(401).send(error.message);
-        return;
-      }
-      if (
-        error.message === 'Only requests with status "done" can reopen.' ||
-        error.message ===
-          'Request can only be reopened after giving feedback to this process and asking for contact.'
-      ) {
-        res.status(400).send(error.message);
-        return;
-      }
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -213,12 +136,7 @@ const getOpenRequestsNearby = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Current position not provided.') {
-        res.status(400).send(error.message);
-        return;
-      }
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;

@@ -7,12 +7,14 @@ const processSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Request',
+        default: [],
       },
     ],
     response: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Response',
+        default: [],
       },
     ],
     feedback: [

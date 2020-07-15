@@ -1,12 +1,15 @@
 'use strict';
 
 import models from '../models/bundle';
+import APIError from '../errors';
 
 export default class ProcessService {
   static async updateProcess(processId, processBody) {
     const process = await models.Process.findById(processId);
     if (!process) {
-      return Promise.reject(new Error('No process with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Prozess mit der angegebenen ID.')
+      );
     }
     if (processBody.finishedAt) {
       process.finishedAt = processBody.finishedAt;
@@ -27,7 +30,9 @@ export default class ProcessService {
   static async getProcess(processId) {
     const process = await models.Process.findById(processId);
     if (!process) {
-      return Promise.reject(new Error('No process with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Prozess mit der angegebenen ID.')
+      );
     }
     return process;
   }

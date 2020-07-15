@@ -7,6 +7,7 @@ import ProcessService from '../services/process-service';
 import ResponseService from '../services/response-service';
 
 import Process from '../models/process-model';
+import APIError from '../errors';
 
 const createNewTan = async (req, res) => {
   let userId, phone;
@@ -29,8 +30,7 @@ const createNewTan = async (req, res) => {
       return;
     })
     .catch((error) => {
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -58,19 +58,7 @@ const confirmTan = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'There was no tan generated for the given user.') {
-        res.status(404).send(error.message);
-        return;
-      }
-      if (
-        error.message === 'This tan is expired.' ||
-        error.message === 'The tan is incorrect.'
-      ) {
-        res.status(400).send(error.message);
-        return;
-      }
-      res.status(500).send();
-      console.log(error);
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -81,33 +69,22 @@ const setCalled = async (req, res) => {
     req.body.phone = req.body.phone.toString().substring(3);
     UserService.findUserByPhone(req.body.phone)
       .then((user) => {
-        return ResponseService.findResponseByUserId(user._id);
+        return ResponseService.findActiveResponseByUserId(user._id);
       })
       .then((response) => {
         response.status = 'called';
         response.log.set('called', Date.now());
         response.save();
-        res.status(200);
+        res.status(200).send();
         return;
       })
       .catch((error) => {
-        if (error.message === 'Not allowed.') {
-          res.status(403).send(error.message);
-          return;
-        }
-        if (
-          error.message === 'No process with given id.' ||
-          error.message === 'No response with given id.' ||
-          error.message === 'No request with given id.'
-        ) {
-          res.status(404).send(error.message);
-          return;
-        }
-        res.status(500).send();
-        console.log(error);
+        APIError.handleError(error, res);
         return;
       });
-  } else return Promise.reject(new Error('No user with given phone number.'));
+  } else {
+    res.status(401).send('Unauthorized.');
+  }
   return;
 };
 
@@ -116,7 +93,7 @@ const findNumber = async (req, res) => {
     req.body.phone = req.body.phone.toString().substring(3);
     UserService.findUserByPhone(req.body.phone)
       .then((user) => {
-        return ResponseService.findResponseByUserId(user._id);
+        return ResponseService.findActiveResponseByUserId(user._id);
       })
       .then((response) => {
         return ProcessService.getProcess(response.process);
@@ -137,23 +114,12 @@ const findNumber = async (req, res) => {
         return;
       })
       .catch((error) => {
-        if (error.message === 'Not allowed.') {
-          res.status(403).send(error.message);
-          return;
-        }
-        if (
-          error.message === 'No process with given id.' ||
-          error.message === 'No response with given id.' ||
-          error.message === 'No request with given id.'
-        ) {
-          res.status(404).send(error.message);
-          return;
-        }
-        res.status(500).send();
-        console.log(error);
+        APIError.handleError(error, res);
         return;
       });
-  } else return Promise.reject(new Error('No user with given phone number.'));
+  } else {
+    res.status(401).send('Unauthorized.');
+  }
   return;
 };
 

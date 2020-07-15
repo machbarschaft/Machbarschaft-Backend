@@ -3,6 +3,7 @@
 import models from '../models/bundle';
 import PhoneService from './phone-service';
 import AddressService from './address-service';
+import APIError from '../errors';
 
 export default class UserService {
   static async createUser(phone, profile) {
@@ -61,7 +62,9 @@ export default class UserService {
   static async setPreferences(userId, processBody) {
     const user = await models.User.findById(userId);
     if (!user) {
-      return Promise.reject(new Error('No user with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Benutzer mit der gegebenen ID.')
+      );
     }
     if (processBody.radius) {
       user.preferences.radius = processBody.radius;
@@ -93,7 +96,9 @@ export default class UserService {
   static async getPreferences(userId) {
     const user = await models.User.findById(userId);
     if (!user) {
-      return Promise.reject(new Error('No user with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Benutzer mit der gegebenen ID.')
+      );
     }
     return {
       radius: user.preferences.radius,
