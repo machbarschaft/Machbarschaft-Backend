@@ -1,6 +1,7 @@
 'use strict';
 
 import AddressService from '../services/address-service';
+import APIError from '../errors';
 
 const createAddress = (req, res) => {
   AddressService.createAddress(
@@ -18,12 +19,7 @@ const createAddress = (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Unable to validate exact address.') {
-        res.status(400).send(error.message);
-        return;
-      }
-      console.log(error);
-      res.status(500).send(error);
+      APIError.handleError(error, res);
       return;
     });
   return;

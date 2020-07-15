@@ -7,6 +7,7 @@ import UserService from './user-service';
 import crypto from 'crypto';
 import sgMail from '@sendgrid/mail';
 import AddressService from './address-service';
+import APIError from '../errors';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -18,13 +19,16 @@ export default class AuthService {
     });
     if (access) {
       return Promise.reject(
-        new Error('this email address is already assigned to an account')
+        new APIError(400, 'Diese Emailadresse ist bereits registriert.')
       );
     }
     if (user) {
       if (user.access) {
         return Promise.reject(
-          new Error('for this phone number exists a registered account')
+          new APIError(
+            400,
+            'Diese Telefonnummer ist bereits mit einem Konto verbunden.'
+          )
         );
       }
       user.profile = profile;
@@ -71,7 +75,12 @@ export default class AuthService {
         JWTConfig.jwtOptions(JWTConfig.AuthenticationType.logout)
       );
     } else {
-      return Promise.reject(new Error('Could not find user with given id.'));
+      return Promise.reject(
+        new APIError(
+          404,
+          'Es konnte kein Benutzer mit der gegebenen ID ermittelt werden.'
+        )
+      );
     }
   }
 
@@ -96,7 +105,12 @@ export default class AuthService {
         address: addressResponse,
       });
     } else {
-      return Promise.reject(new Error('Could not find user with given id.'));
+      return Promise.reject(
+        new APIError(
+          404,
+          'Es konnte kein Benutzer mit der gegebenen ID ermittelt werden.'
+        )
+      );
     }
   }
 
@@ -131,12 +145,16 @@ export default class AuthService {
           return access;
         }
       );
-    } else return Promise.reject(new Error('Wrong token or already done.'));
+    } else
+      return Promise.reject(
+        new APIError(400, 'Das Token ist falsch oder wurde bereits genutzt.')
+      );
   }
 
   static async changePassword(accessId, oldPassword, newPassword) {
     const access = await models.Access.findById(accessId);
-    if (!access) return Promise.reject(new Error('Access not found.'));
+    if (!access)
+      return Promise.reject(new APIError(404, 'Keine Zugangsdaten gefunden.'));
     await access.changePassword(oldPassword, newPassword);
     return Promise.resolve();
   }
@@ -144,14 +162,15 @@ export default class AuthService {
   static async verifyPasswordToken(token) {
     const resetPassword = await models.ResetPassword.findOne({ token: token });
     if (!resetPassword) {
-      return Promise.reject(new Error('Wrong token.'));
+      return Promise.reject(new APIError(400, 'Ungültiges Token.'));
     }
     return Promise.resolve();
   }
 
   static async verify(token) {
     const confirmEmail = await models.ConfirmEmail.findOne({ token: token });
-    if (!confirmEmail) return Promise.reject(new Error('Wrong token.'));
+    if (!confirmEmail)
+      return Promise.reject(new APIError(400, 'Ungültiges Token.'));
     const access = await models.Access.findById(confirmEmail.access);
     access.emailVerified = true;
     if (confirmEmail.email !== access.email) {
@@ -201,7 +220,12 @@ export default class AuthService {
 
       return Promise.resolve();
     } else {
-      return Promise.reject(new Error('No access found for given user.'));
+      return Promise.reject(
+        new APIError(
+          404,
+          'Für diesen Benutzer wurden keine Zugangsdaten gefunden.'
+        )
+      );
     }
   }
 
@@ -251,7 +275,12 @@ export default class AuthService {
 
       return Promise.resolve();
     } else {
-      return Promise.reject(new Error('No access found for given user.'));
+      return Promise.reject(
+        new APIError(
+          404,
+          'Für diesen Benutzer wurden keine Zugangsdaten gefunden.'
+        )
+      );
     }
   }
 

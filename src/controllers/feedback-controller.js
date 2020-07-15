@@ -1,6 +1,7 @@
 'use strict';
 
 import FeedbackService from '../services/feedback-service';
+import APIError from '../errors';
 
 const createFeedback = async (req, res) => {
   const type = req.path.split('/')[1];
@@ -16,16 +17,7 @@ const createFeedback = async (req, res) => {
       return;
     })
     .catch((error) => {
-      if (error.message === 'Unauthorized') {
-        res.status(401).send(error.message);
-        return;
-      }
-      if (error.message.includes('not found')) {
-        res.status(404).send(error.message);
-        return;
-      }
-      console.log(error);
-      res.send(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -38,8 +30,7 @@ const isFeedbackSubmitted = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;

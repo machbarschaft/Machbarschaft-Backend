@@ -5,6 +5,7 @@ import { statusStages } from '../models/request-model';
 import UserService from './user-service';
 import ProcessService from './process-service';
 import AddressService from './address-service';
+import APIError from '../errors';
 
 export default class RequestService {
   static async createRequestWithUserId(userId) {
@@ -81,7 +82,9 @@ export default class RequestService {
   static async getRequest(requestId) {
     const request = await models.Request.findById(requestId);
     if (!request) {
-      return Promise.reject(new Error('No request with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Auftrag mit der angegeben ID.')
+      );
     }
     return request;
   }
@@ -98,15 +101,21 @@ export default class RequestService {
   static async updateRequest(userId, requestId, requestBody) {
     const request = await models.Request.findOne({ _id: requestId });
     if (!request) {
-      return Promise.reject(new Error('No request with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Auftrag mit der angegeben ID.')
+      );
     }
 
     if (request.user.toString() !== userId.toString()) {
-      return Promise.reject(new Error('Not your request.'));
+      return Promise.reject(
+        new APIError(403, 'Zugriff auf diesen Auftrag verweigert.')
+      );
     }
 
     if (request.status !== statusStages[0]) {
-      return Promise.reject(new Error('Request is already published.'));
+      return Promise.reject(
+        new APIError(400, 'Dieser Auftrag ist bereits veröffentlicht.')
+      );
     }
 
     if (requestBody.requestType) {
@@ -130,7 +139,9 @@ export default class RequestService {
         _id: requestBody.addressId,
       });
       if (!address) {
-        return Promise.reject(new Error('No address with given id.'));
+        return Promise.reject(
+          new APIError(404, 'Es gibt keine Adresse mit der gegebenen ID.')
+        );
       }
       if (!address.requests) {
         address.requests = [requestId];
@@ -159,18 +170,26 @@ export default class RequestService {
 
   static async publishRequest(userId, requestId) {
     if (!(await UserService.isVerified(userId))) {
-      return Promise.reject(new Error('Phone not validated'));
+      return Promise.reject(
+        new APIError(401, 'Die Telefonnummer ist noch nicht verifiziert.')
+      );
     }
 
     const request = await models.Request.findOne({ _id: requestId });
     if (!request) {
-      return Promise.reject(new Error('No request with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Auftrag mit der angegeben ID.')
+      );
     }
     if (request.user.toString() !== userId.toString()) {
-      return Promise.reject(new Error('Not your request.'));
+      return Promise.reject(
+        new APIError(403, 'Zugriff auf diesen Auftrag verweigert.')
+      );
     }
     if (request.status !== statusStages[0]) {
-      return Promise.reject(new Error('Request has been published before.'));
+      return Promise.reject(
+        new APIError(400, 'Der Auftrag ist bereits veröffentlicht.')
+      );
     }
 
     if (
@@ -186,22 +205,32 @@ export default class RequestService {
     }
 
     return Promise.reject(
-      new Error('Request does not contain necessary information.')
+      new APIError(
+        400,
+        'Der Auftrag beinhaltet nicht alle notwendigen Informationen.'
+      )
     );
   }
 
   static async reopenRequest(userId, requestId) {
     const request = await models.Request.findOne({ _id: requestId });
     if (!request) {
-      return Promise.reject(new Error('No request with given id.'));
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Auftrag mit der angegeben ID.')
+      );
     }
     if (request.user.toString() !== userId) {
-      return Promise.reject(new Error('Not your request.'));
+      return Promise.reject(
+        new APIError(403, 'Zugriff auf diesen Auftrag verweigert.')
+      );
     }
 
     if (request.status !== 'done') {
       return Promise.reject(
-        new Error('Only requests with status "done" can reopen.')
+        new APIError(
+          400,
+          'Nur Aufträge mit dem Status "abgeschlossen", können wieder eröffnet werden.'
+        )
       );
     }
 
@@ -217,8 +246,9 @@ export default class RequestService {
       feedbacks[0].createdAt.getTime() < Date.now() - 30 * 60 * 1000
     ) {
       return Promise.reject(
-        new Error(
-          'Request can only be reopened after giving feedback to this process and asking for contact.'
+        new APIError(
+          400,
+          'Aufträge können nur wieder eröffnet werden, wenn bereits Feedback gegeben wurde, dass der Auftrag nicht richtig ausgeführt wurde.'
         )
       );
     }
@@ -252,7 +282,12 @@ export default class RequestService {
     const user = await UserService.findUserById(userId);
     if (!currentLat || !currentLng) {
       if (!user.preferences.staticPosition) {
-        return Promise.reject(new Error('Current position not provided.'));
+        return Promise.reject(
+          new APIError(
+            400,
+            'Es sind keine Daten zur aktuellen Position vorhanden.'
+          )
+        );
       }
       const address = await models.Address.findOne({
         _id: user.preferences.staticPosition,

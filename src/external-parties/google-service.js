@@ -6,6 +6,7 @@ import {
   GeocodeRequest,
   GeocodingAddressComponentType,
 } from '@googlemaps/google-maps-services-js/dist';
+import APIError from '../errors';
 
 const client = new Client({});
 
@@ -57,7 +58,12 @@ const translateLocation = async (
         !latitude ||
         !longitude
       ) {
-        return Promise.reject(new Error('Unable to validate exact address.'));
+        return Promise.reject(
+          new APIError(
+            400,
+            'Die Adresse konnte nicht vollständig validiert werden.'
+          )
+        );
       }
       return Promise.resolve({
         street: street.long_name,

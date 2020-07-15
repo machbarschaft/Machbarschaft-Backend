@@ -1,6 +1,7 @@
 'use strict';
 
 import DashboardService from '../services/dashboard-service';
+import APIError from '../errors';
 
 const getActiveRequests = async (req, res) => {
   DashboardService.getActiveRequests(req.user.uid)
@@ -9,8 +10,7 @@ const getActiveRequests = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
@@ -23,8 +23,7 @@ const getFinishedRequests = async (req, res) => {
       return;
     })
     .catch((error) => {
-      console.log(error);
-      res.status(500).send();
+      APIError.handleError(error, res);
       return;
     });
   return;
