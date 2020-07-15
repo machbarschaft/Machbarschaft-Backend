@@ -9,7 +9,7 @@ const router = Router();
 
 /**
  * @swagger
- * /phone:
+ * /phone/tan:
  *  put:
  *      summary: Confirm phone with tan
  *      description: Verify your phone by entering the tan send by Twilio to your phone.
@@ -27,7 +27,7 @@ const router = Router();
  *                          type: Number
  */
 router.put(
-  '/',
+  '/tan',
   Validator.requireUserIdOrPhoneNumber(),
   [
     body('tan', 'Der Tan besteht aus vier Ziffern und muss angegeben werden.')
@@ -42,7 +42,7 @@ router.put(
 
 /**
  * @swagger
- * /phone:
+ * /phone/tan:
  *  post:
  *      summary: Generate new tan.
  *      description: Generate a new tan and initiate Twilio call/sms. Can also be used for phone number change.
@@ -60,7 +60,7 @@ router.put(
  *                          type: Boolean
  */
 router.post(
-  '/',
+  '/tan',
   Validator.requireUserIdOrPhoneNumber(),
   [
     body(

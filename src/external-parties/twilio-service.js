@@ -10,6 +10,10 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 export default class TwilioService {
   static sendTan(sendSms, tan, user, phone) {
+    let tanString = tan.toString();
+    while (tanString.length < 4) {
+      tanString = '0' + tanString;
+    }
     const name = user.profile.forename ? user.profile.forename : 'Gast';
     if (sendSms === 'true') {
       return twilio.messages.create({
@@ -17,25 +21,25 @@ export default class TwilioService {
           TwilioConfig.twilio.message_1 +
           name +
           TwilioConfig.twilio.message_2 +
-          tan +
+          tanString +
           TwilioConfig.twilio.message_4,
         from: TwilioConfig.twilio.phone_number_sms,
         to: TwilioConfig.twilio.country + phone.toString(),
       });
     } else {
-      let string =
+      let phoneCallScript =
         TwilioConfig.twilio.message_5 +
         TwilioConfig.twilio.message_1 +
         name +
         TwilioConfig.twilio.message_2;
       let code = '';
-      for (let i = 0; i < tan.toString().length; i++) {
-        code += tan.toString()[i] + ', ';
+      for (let i = 0; i < tanString.length; i++) {
+        code += tanString[i] + ', ';
       }
-      string += code;
-      string += TwilioConfig.twilio.message_3;
-      string += code;
-      string += TwilioConfig.twilio.message_4;
+      phoneCallScript += code;
+      phoneCallScript += TwilioConfig.twilio.message_3;
+      phoneCallScript += code;
+      phoneCallScript += TwilioConfig.twilio.message_4;
       const response = new VoiceResponse();
       response.pause({
         length: 3,
@@ -45,7 +49,7 @@ export default class TwilioService {
           voice: TwilioConfig.twilio.voice,
           language: TwilioConfig.twilio.voice_language,
         },
-        string
+        phoneCallScript
       );
       return twilio.calls.create({
         twiml: response.toString(),
