@@ -3,6 +3,7 @@
 import RequestService from '../services/request-service';
 import ProcessService from '../services/process-service';
 import ResponseService from '../services/response-service';
+import UserService from '../services/user-service';
 
 const getRequest = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
@@ -248,6 +249,10 @@ const changeResponse = async (req, res) => {
 };
 
 const createResponse = async (req, res) => {
+  if (!(await UserService.isVerified(req.user.uid))) {
+    res.status(401).send('Phone number not verified.');
+    return;
+  }
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
       if (!process.response.length) {
