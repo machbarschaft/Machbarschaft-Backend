@@ -3,7 +3,6 @@ import {
   urgencyCategories,
   statusStages,
 } from './models/request-model';
-import { colors } from './models/example-model';
 
 const {
   check,
@@ -146,25 +145,6 @@ const cookieValidationRules = (cookieName) => {
   return [header('cookie').contains(cookieName)];
 };
 
-const exampleValidationRules = () => {
-  return [
-    body('name', 'The name must only contain letters.').isAlpha(),
-    body(
-      'color',
-      'The color attribute is required, and consists of letters only.'
-    )
-      .exists()
-      .isAlpha()
-      .custom((value) => {
-        const result = colors.find((element) => element === value);
-        if (!result) {
-          return Promise.reject('No valid color.');
-        }
-        return Promise.resolve();
-      }),
-  ];
-};
-
 const preferencesValidationRules = () => {
   return [
     body('radius', 'Der Radius muss eine positive Zahl sein')
@@ -257,6 +237,5 @@ module.exports = {
   cookieValidationRules,
   preferencesValidationRules,
   positionValidationRules,
-  exampleValidationRules,
   contactFormValidationRules,
 };

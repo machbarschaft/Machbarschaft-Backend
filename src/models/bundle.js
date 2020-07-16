@@ -14,7 +14,6 @@ import ResetPassword from './reset-password-model';
 import { Response } from './response-model';
 import { User, UserProfile, UserPreferences } from './user-model';
 import Process from './process-model';
-import { Example } from './example-model';
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useCreateIndex', true);
@@ -39,7 +38,6 @@ const models = {
   User,
   UserProfile,
   UserPreferences,
-  Example,
 };
 
 export default models;
