@@ -20,10 +20,12 @@ const createLoggedIn = async (req, res) => {
 const createLoggedOut = async (req, res) => {
   RequestService.createRequestWithPhone(req.query.phone)
     .then((request) => {
-      request['_doc']['phoneVerifiedCookieMatch'] =
-        req.cookies.machbarschaft_phoneVerified !== undefined &&
-        req.cookies.machbarschaft_phoneVerified === req.query.phone;
-      res.status(200).json(request);
+      res.status(200).json({
+        request,
+        phoneVerifiedCookieMatch:
+          req.cookies.machbarschaft_phoneVerified !== undefined &&
+          req.cookies.machbarschaft_phoneVerified === req.query.phone,
+      });
       return;
     })
     .catch((error) => {

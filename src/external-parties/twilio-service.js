@@ -14,7 +14,8 @@ export default class TwilioService {
     while (tanString.length < 4) {
       tanString = '0' + tanString;
     }
-    const name = user.profile.forename ? user.profile.forename : 'Gast';
+    const name =
+      user.profile && user.profile.forename ? user.profile.forename : 'Gast';
     if (sendSms === 'true') {
       return twilio.messages.create({
         body:
