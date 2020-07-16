@@ -43,8 +43,21 @@ const idValidationRules = (fieldName) => {
   ];
 };
 
+const tanValidationRules = () => {
+  return [
+    body('tan', 'Der Tan besteht aus vier Ziffern und muss angegeben werden.')
+      .exists()
+      .isNumeric()
+      .isLength({ min: 4, max: 4 })
+      .toInt(),
+  ];
+};
+
 const phoneValidationRules = () => {
   return [
+    check('countryCode', 'Die Landesvorwahl ist eine zweistellige Zahl.')
+      .isInt({ gt: 0 })
+      .isLength({ min: 2, max: 2 }),
     check(
       'phone',
       'Die Telefonnummer muss eine positive Zahl zwischen 8 und 30 Ziffern sein.'
@@ -229,6 +242,17 @@ const contactFormValidationRules = () => {
   ];
 };
 
+const smsValidationRules = () => {
+  return [
+    body(
+      'sms',
+      "Specify whether you prefer to receive the tan per sms with 'true' or 'false'."
+    )
+      .exists()
+      .isBoolean(),
+  ];
+};
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -259,4 +283,6 @@ module.exports = {
   positionValidationRules,
   exampleValidationRules,
   contactFormValidationRules,
+  tanValidationRules,
+  smsValidationRules,
 };

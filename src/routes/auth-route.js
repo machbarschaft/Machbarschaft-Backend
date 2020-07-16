@@ -26,6 +26,8 @@ const router = Router();
  *                 type: string
  *               password:
  *                 type: string
+ *               countryCode:
+ *                 type: Number
  *               phone:
  *                 type: Number
  *               profile:

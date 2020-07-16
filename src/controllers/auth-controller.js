@@ -1,23 +1,17 @@
 'use strict';
 
-import models from '../models/bundle';
 import AuthService from '../services/auth-service';
-import { validationResult } from 'express-validator';
 import JWTConfig from '../jwt_config';
 import jwt from 'jsonwebtoken';
 import UserService from '../services/user-service';
 import APIError from '../errors';
 
 const register = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(422).json({ errors: errors.array() });
-    return;
-  }
   const profile = { forename: req.body.forename, surname: req.body.surname };
   AuthService.register(
     req.body.email,
     req.body.password,
+    req.body.countryCode,
     req.body.phone,
     profile
   )
@@ -33,10 +27,6 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
   AuthService.login(req.user.user)
     .then((token) => {
       // Send the Set-Cookie header with the jwt to the client

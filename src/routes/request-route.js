@@ -17,6 +17,10 @@ const router = Router();
  *       - request
  *     parameters:
  *      - in: query
+ *        name: countryCode
+ *        type: Number
+ *        required: true
+ *      - in: query
  *        name: phone
  *        type: Number
  *        required: true
@@ -142,6 +146,10 @@ router.put(
  *     tags:
  *       - request
  *     parameters:
+ *      - in: query
+ *        name: countryCode
+ *        type: Number
+ *        required: true
  *      - in: query
  *        name: phone
  *        type: Number

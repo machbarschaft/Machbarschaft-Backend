@@ -6,28 +6,33 @@ import AddressService from './address-service';
 import APIError from '../errors';
 
 export default class UserService {
-  static async createUser(phone, profile) {
+  static async createUser(countryCode, phone, profile) {
     let user = await models.User.findOne({
+      countryCode: countryCode,
       phone: phone,
     });
     if (user) {
-      return new Promise((resolve, reject) => {
-        reject('User already exists');
-      });
+      return new Promise.reject(
+        new APIError(
+          400,
+          'Es gibt bereits einen Benutzer mit dieser Telefonnummer.'
+        )
+      );
     }
     user = new models.User({
+      countryCode: countryCode,
       phone: phone,
       preferences: new models.UserPreferences(),
       profile: profile,
     });
     return user.save().then((user) => {
-      PhoneService.create(user._id, user.phone, false);
+      PhoneService.create(user._id, user.countryCode, user.phone, false);
       return Promise.resolve(user);
     });
   }
 
-  static async findUserByPhone(phone) {
-    return models.User.findOne({ phone: phone });
+  static async findUserByPhone(countryCode, phone) {
+    return models.User.findOne({ countryCode: countryCode, phone: phone });
   }
 
   static async findUserById(userId) {

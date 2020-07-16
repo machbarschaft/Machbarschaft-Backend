@@ -12,8 +12,8 @@ import APIError from '../errors';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export default class AuthService {
-  static async register(email, password, phone, profile) {
-    let user = await UserService.findUserByPhone(phone);
+  static async register(email, password, countryCode, phone, profile) {
+    let user = await UserService.findUserByPhone(countryCode, phone);
     let access = await models.Access.findOne({
       email: email,
     });
@@ -33,7 +33,7 @@ export default class AuthService {
       }
       user.profile = profile;
     } else {
-      user = await UserService.createUser(phone, profile);
+      user = await UserService.createUser(countryCode, phone, profile);
     }
 
     access = new models.Access({

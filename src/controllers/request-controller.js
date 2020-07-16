@@ -18,7 +18,7 @@ const createLoggedIn = async (req, res) => {
 };
 
 const createLoggedOut = async (req, res) => {
-  RequestService.createRequestWithPhone(req.query.phone)
+  RequestService.createRequestWithPhone(req.query.countryCode, req.query.phone)
     .then((request) => {
       request['_doc']['phoneVerifiedCookieMatch'] =
         req.cookies.machbarschaft_phoneVerified !== undefined &&
@@ -47,7 +47,7 @@ const updateLoggedIn = async (req, res) => {
 };
 
 const updateLoggedOut = async (req, res) => {
-  UserService.findUserByPhone(req.query.phone)
+  UserService.findUserByPhone(req.query.countryCode, req.query.phone)
     .then((user) => {
       if (!user) {
         return Promise.reject(

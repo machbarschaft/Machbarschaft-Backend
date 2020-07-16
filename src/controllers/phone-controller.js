@@ -10,21 +10,22 @@ import Process from '../models/process-model';
 import APIError from '../errors';
 
 const createNewTan = async (req, res) => {
-  let userId, phone;
+  let user;
   if (req.body.userId) {
-    userId = req.body.userId;
-    const user = await UserService.findUserById(req.body.userId);
-    phone = user.phone;
+    user = await UserService.findUserById(req.body.userId);
   } else {
-    phone = req.body.phone;
-    const user = await UserService.findUserByPhone(req.body.phone);
-    userId = user._id;
+    user = await UserService.findUserByPhone(
+      req.body.countryCode,
+      req.body.phone
+    );
   }
-  if (!userId || !phone) {
-    res.status(404).send('No user with given id or phone number.');
+  if (!user) {
+    res
+      .status(404)
+      .send('Es gibt keinen Benutzer mit der gegebenen ID/Telefonnummer.');
     return;
   }
-  PhoneService.create(userId, phone, req.body.sms)
+  PhoneService.create(user._id, user.countryCode, user.phone, req.body.sms)
     .then((request) => {
       res.status(201).send();
       return;
@@ -41,7 +42,10 @@ const confirmTan = async (req, res) => {
   if (req.body.userId) {
     userId = req.body.userId;
   } else {
-    const user = await UserService.findUserByPhone(req.body.phone);
+    const user = await UserService.findUserByPhone(
+      req.body.countryCode,
+      req.body.phone
+    );
     userId = user._id;
   }
   PhoneService.confirm(req.body.tan, userId)

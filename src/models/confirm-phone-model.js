@@ -7,6 +7,10 @@ const confirmPhoneSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    countryCode: {
+      type: Number,
+      required: true,
+    },
     phone: {
       type: Number,
       required: true,
