@@ -57,6 +57,7 @@ export default class DashboardService {
 
   static async getActiveRequestResponseFormat(request, response, isHelper) {
     let result = {
+      _id: request._id,
       process: request.process,
       status: isHelper ? response.status : request.status,
       urgency: request.urgency,
