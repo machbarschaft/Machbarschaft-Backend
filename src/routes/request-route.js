@@ -18,7 +18,7 @@ const router = Router();
  *          - twilio
  *      requestBody:
  *      content:
- *          application/x-www-form-urlencoded:
+ *          application/json:
  *              schema:
  *                  type: object
  *                  properties:
