@@ -329,6 +329,7 @@ export default class RequestService {
           extras: request.extras,
           distance: distance,
           address: addressResponse,
+          process: request.process,
         });
       }
     }
