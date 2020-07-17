@@ -9,7 +9,7 @@ const twilio = require('twilio')(
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 export default class TwilioService {
-  static sendTan(sendSms, tan, user, phone) {
+  static sendTan(sendSms, tan, user, countryCode, phone) {
     let tanString = tan.toString();
     while (tanString.length < 4) {
       tanString = '0' + tanString;
@@ -25,7 +25,7 @@ export default class TwilioService {
           tanString +
           TwilioConfig.twilio.message_4,
         from: TwilioConfig.twilio.phone_number_sms,
-        to: TwilioConfig.twilio.country + phone.toString(),
+        to: '+' + countryCode.toString() + phone.toString(),
       });
     } else {
       let phoneCallScript =
@@ -54,7 +54,7 @@ export default class TwilioService {
       );
       return twilio.calls.create({
         twiml: response.toString(),
-        to: TwilioConfig.twilio.country + phone.toString(),
+        to: '+' + countryCode + phone.toString(),
         from: TwilioConfig.twilio.phone_number_call,
       });
     }

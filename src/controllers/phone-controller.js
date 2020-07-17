@@ -114,7 +114,7 @@ const findNumber = async (req, res) => {
       })
       .then((user) => {
         res.status(200).json({
-          phone: '+' + user.countryCode + user.phone,
+          phone: '+' + user.countryCode.toString() + user.phone.toString(),
           name: user.profile.forename,
         });
         return;

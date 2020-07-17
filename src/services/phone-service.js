@@ -32,7 +32,7 @@ export default class PhoneService {
     user.confirmPhone.push(confirmPhone._id);
     user.save();
     confirmPhone.save();
-    return TwilioService.sendTan(sms, tan, user, phone);
+    return TwilioService.sendTan(sms, tan, user, countryCode, phone);
   }
 
   static async confirm(tan, userId) {

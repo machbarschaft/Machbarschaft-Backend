@@ -7,6 +7,75 @@ import passport from 'passport';
 
 const router = Router();
 
+/**
+ * @swagger
+ * /request/twilio:
+ *  post:
+ *      summary: Twilio create and publish request
+ *      description: Called by twilio to create and publish the request of a caller
+ *      tags:
+ *          - request
+ *          - twilio
+ *      requestBody:
+ *      content:
+ *          application/x-www-form-urlencoded:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                          secret:
+ *                              type: String
+ *                              required: true
+ *                          phone:
+ *                              type: String
+ *                              required: true
+ *                          forname:
+ *                              type: String
+ *                              required: true
+ *                          surname:
+ *                              type: String
+ *                              required: true
+ *                          requestType:
+ *                              type: String
+ *                              required: true
+ *                              enum:
+ *                                  - groceries
+ *                                  - medication
+ *                                  - other
+ *                          urgency:
+ *                              type: String
+ *                              required: true
+ *                              enum:
+ *                                  - now
+ *                                  - today
+ *                                  - tomorrow
+ *                                  - this-week
+ *                          prescriptionRequired:
+ *                              type: Boolean
+ *                              required: true
+ *                          carNecessary:
+ *                              type: Boolean
+ *                              required: true
+ *                          street:
+ *                              type: String
+ *                              required: true
+ *                          houseNumber:
+ *                              type: Number
+ *                              required: true
+ *                          zipCode:
+ *                              type: Number
+ *                              required: true
+ *                          city:
+ *                              type: String
+ *                              required: true
+ *                          country:
+ *                              type: String
+ *                              required: true
+ *      responses:
+ *       201:
+ *         description: Successfully created request.
+ *       500:
+ *         description: Internal server error.
+ */
 router.post(
   '/twilio',
   Validator.twilioValidationRules(),
