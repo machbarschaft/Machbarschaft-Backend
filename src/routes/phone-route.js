@@ -21,6 +21,8 @@ const router = Router();
  *              schema:
  *                  type: object
  *                  properties:
+ *                      countryCode:
+ *                          type: Number
  *                      phone:
  *                          type: Number
  *                      tan:
@@ -29,13 +31,7 @@ const router = Router();
 router.put(
   '/tan',
   Validator.requireUserIdOrPhoneNumber(),
-  [
-    body('tan', 'Der Tan besteht aus vier Ziffern und muss angegeben werden.')
-      .exists()
-      .isNumeric()
-      .isLength({ min: 4, max: 4 })
-      .toInt(),
-  ],
+  Validator.tanValidationRules(),
   Validator.validate,
   PhoneController.confirmTan
 );
@@ -54,6 +50,8 @@ router.put(
  *              schema:
  *                  type: object
  *                  properties:
+ *                      countryCode:
+ *                          type: Number
  *                      phone:
  *                          type: Number
  *                      sms:
@@ -62,14 +60,7 @@ router.put(
 router.post(
   '/tan',
   Validator.requireUserIdOrPhoneNumber(),
-  [
-    body(
-      'sms',
-      "Specify whether you prefer to receive the tan per sms with 'true' or 'false'."
-    )
-      .exists()
-      .isBoolean(),
-  ],
+  Validator.smsValidationRules(),
   Validator.validate,
   PhoneController.createNewTan
 );
@@ -89,13 +80,13 @@ router.post(
  *                  type: object
  *                  properties:
  *                      phone:
- *                          type: Number
+ *                          type: String
  *                      secret:
  *                          type: string
  */
 router.get(
   '/findNumber',
-  Validator.requireUserIdOrPhoneNumber(),
+  Validator.twilioValidationRules(),
   Validator.validate,
   PhoneController.findNumber
 );
@@ -115,13 +106,13 @@ router.get(
  *                  type: object
  *                  properties:
  *                      phone:
- *                          type: Number
+ *                          type: String
  *                      secret:
  *                          type: string
  */
 router.post(
   '/setCalled',
-  Validator.requireUserIdOrPhoneNumber(),
+  Validator.twilioValidationRules(),
   Validator.validate,
   PhoneController.setCalled
 );

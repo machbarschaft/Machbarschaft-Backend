@@ -1,7 +1,7 @@
+
 import {
   requestTypes,
   urgencyCategories,
-  statusStages,
 } from './models/request-model';
 
 const {
@@ -42,8 +42,21 @@ const idValidationRules = (fieldName) => {
   ];
 };
 
+const tanValidationRules = () => {
+  return [
+    body('tan', 'Der Tan besteht aus vier Ziffern und muss angegeben werden.')
+      .exists()
+      .isNumeric()
+      .isLength({ min: 4, max: 4 })
+      .toInt(),
+  ];
+};
+
 const phoneValidationRules = () => {
   return [
+    check('countryCode', 'Die Landesvorwahl ist eine zweistellige Zahl.')
+      .isInt({ gt: 0 })
+      .isLength({ min: 2, max: 2 }),
     check(
       'phone',
       'Die Telefonnummer muss eine positive Zahl zwischen 8 und 30 Ziffern sein.'
@@ -51,6 +64,39 @@ const phoneValidationRules = () => {
       .isInt({ gt: 0 })
       .isLength({ min: 8, max: 30 }), //isMobilePhone('de-DE'),
   ];
+};
+
+const twilioValidationRules = () => {
+  return [
+    body(
+      'phone',
+      "Das Twilio-Format für die Telefonnummer ist '+', gefolgt von der Ländervorwahl, gefolgt von der Telefonnummer."
+    ).matches(/^[+][0-9]{10,32}$/),
+    body('secret', "Das Twilio-Secret übergeben als 'string'.").isString(),
+  ];
+};
+
+const twilioRequestValidationRules = () => {
+  return [
+    body(
+      'requestType',
+      'Der Auftragstyp darf nur folgende Werte haben: ' +
+        requestTypes.toString()
+    ).isIn(requestTypes),
+    body(
+      'urgency',
+      'Die Dringlichkeit kann nur folgende Werte haben: ' +
+        urgencyCategories.toString()
+    ).isIn(urgencyCategories),
+    body('carNecessary', "Darf nur 'true' oder 'false' sein.").isBoolean(),
+    body(
+      'prescriptionRequired',
+      "Darf nur 'true' oder 'false' sein."
+    ).isBoolean(),
+  ]
+    .concat(addressValidationRules())
+    .concat(nameValidationRules('forename'))
+    .concat(nameValidationRules('surname'));
 };
 
 const processFeedbackValidationRules = () => {
@@ -96,7 +142,9 @@ const requestValidationRules = () => {
     )
       .optional()
       .isMongoId(),
-  ].concat(nameValidationRules('name', true));
+  ]
+    .concat(nameValidationRules('forename', true))
+    .concat(nameValidationRules('surname', true));
 };
 
 const addressValidationRules = () => {
@@ -209,6 +257,17 @@ const contactFormValidationRules = () => {
   ];
 };
 
+const smsValidationRules = () => {
+  return [
+    body(
+      'sms',
+      "Specify whether you prefer to receive the tan per sms with 'true' or 'false'."
+    )
+      .exists()
+      .isBoolean(),
+  ];
+};
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -227,6 +286,8 @@ const validate = (req, res, next) => {
 module.exports = {
   addressValidationRules,
   phoneValidationRules,
+  twilioValidationRules,
+  twilioRequestValidationRules,
   idValidationRules,
   nameValidationRules,
   processFeedbackValidationRules,
@@ -238,4 +299,6 @@ module.exports = {
   preferencesValidationRules,
   positionValidationRules,
   contactFormValidationRules,
+  tanValidationRules,
+  smsValidationRules,
 };

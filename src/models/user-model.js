@@ -34,6 +34,10 @@ userProfileSchema.virtual('name').get(function () {
 });
 
 const userSchema = new mongoose.Schema({
+  countryCode: {
+    type: Number,
+    required: true,
+  },
   phone: {
     type: Number,
     required: true,

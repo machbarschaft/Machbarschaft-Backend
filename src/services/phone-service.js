@@ -6,12 +6,13 @@ import TwilioService from '../external-parties/twilio-service';
 import APIError from '../errors';
 
 export default class PhoneService {
-  static async create(userId, phone, sms) {
+  static async create(userId, countryCode, phone, sms) {
     const user = await UserService.findUserById(userId);
     if (!user) {
-      return Promise.reject('No user found with the given id.');
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Benutzer mit der gegebenen ID.')
+      );
     }
-
     const recentConfirmPhone = await PhoneService.getMostRecentConfirmPhone(
       userId
     );
@@ -23,6 +24,7 @@ export default class PhoneService {
     }
     const confirmPhone = new models.ConfirmPhone({
       user: userId,
+      countryCode: countryCode,
       phone: phone,
       tan: tan,
       sms: sms,
@@ -30,7 +32,7 @@ export default class PhoneService {
     user.confirmPhone.push(confirmPhone._id);
     user.save();
     confirmPhone.save();
-    return TwilioService.sendTan(sms, tan, user, phone);
+    return TwilioService.sendTan(sms, tan, user, countryCode, phone);
   }
 
   static async confirm(tan, userId) {
