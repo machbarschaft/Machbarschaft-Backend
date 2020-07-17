@@ -131,7 +131,8 @@ const getOpenRequestsNearby = async (req, res) => {
   RequestService.getOpenRequestsNearby(
     req.user.uid,
     req.query.latitude,
-    req.query.longitude
+    req.query.longitude,
+    req.query.radius
   )
     .then((result) => {
       res.status(200).json(result);
