@@ -17,7 +17,7 @@ const router = Router();
  *          - request
  *          - twilio
  *      requestBody:
- *      content:
+ *        content:
  *          application/json:
  *              schema:
  *                  type: object
