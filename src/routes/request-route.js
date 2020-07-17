@@ -7,6 +7,14 @@ import passport from 'passport';
 
 const router = Router();
 
+router.post(
+  '/twilio',
+  Validator.twilioValidationRules(),
+  Validator.twilioRequestValidationRules(),
+  Validator.validate,
+  RequestController.createAndPublishTwilio
+);
+
 /**
  * @swagger
  * /request/guest:
@@ -296,6 +304,10 @@ router.put(
  *       - request
  *     parameters:
  *      - in: query
+ *        name: countryCode
+ *        type: Number
+ *        required: true
+ *      - in: query
  *        name: phone
  *        type: Number
  *        required: true
@@ -318,6 +330,7 @@ router.put(
 router.put(
   '/guest/:reqId/publish',
   Validator.idValidationRules('reqId'),
+  Validator.phoneValidationRules(),
   Validator.cookieValidationRules('machbarschaft_phoneVerified'),
   Validator.validate,
   RequestController.publishLoggedOut

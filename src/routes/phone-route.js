@@ -80,13 +80,13 @@ router.post(
  *                  type: object
  *                  properties:
  *                      phone:
- *                          type: Number
+ *                          type: String
  *                      secret:
  *                          type: string
  */
 router.get(
   '/findNumber',
-  Validator.requireUserIdOrPhoneNumber(),
+  Validator.twilioValidationRules(),
   Validator.validate,
   PhoneController.findNumber
 );
@@ -106,13 +106,13 @@ router.get(
  *                  type: object
  *                  properties:
  *                      phone:
- *                          type: Number
+ *                          type: String
  *                      secret:
  *                          type: string
  */
 router.post(
   '/setCalled',
-  Validator.requireUserIdOrPhoneNumber(),
+  Validator.twilioValidationRules(),
   Validator.validate,
   PhoneController.setCalled
 );

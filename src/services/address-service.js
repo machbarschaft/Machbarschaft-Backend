@@ -33,8 +33,7 @@ export default class AddressService {
         return existingAddress;
       }
       existingAddress = new models.Address(newAddress);
-      existingAddress.save();
-      return existingAddress;
+      return existingAddress.save();
     });
   }
 

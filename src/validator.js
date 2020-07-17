@@ -1,8 +1,4 @@
-import {
-  requestTypes,
-  urgencyCategories,
-  statusStages,
-} from './models/request-model';
+import { requestTypes, urgencyCategories } from './models/request-model';
 import { colors } from './models/example-model';
 
 const {
@@ -67,6 +63,39 @@ const phoneValidationRules = () => {
   ];
 };
 
+const twilioValidationRules = () => {
+  return [
+    body(
+      'phone',
+      "Das Twilio-Format für die Telefonnummer ist '+', gefolgt von der Ländervorwahl, gefolgt von der Telefonnummer."
+    ).matches(/^[+][0-9]{10,32}$/),
+    body('secret', "Das Twilio-Secret übergeben als 'string'.").isString(),
+  ];
+};
+
+const twilioRequestValidationRules = () => {
+  return [
+    body(
+      'requestType',
+      'Der Auftragstyp darf nur folgende Werte haben: ' +
+        requestTypes.toString()
+    ).isIn(requestTypes),
+    body(
+      'urgency',
+      'Die Dringlichkeit kann nur folgende Werte haben: ' +
+        urgencyCategories.toString()
+    ).isIn(urgencyCategories),
+    body('carNecessary', "Darf nur 'true' oder 'false' sein.").isBoolean(),
+    body(
+      'prescriptionRequired',
+      "Darf nur 'true' oder 'false' sein."
+    ).isBoolean(),
+  ]
+    .concat(addressValidationRules())
+    .concat(nameValidationRules('forename'))
+    .concat(nameValidationRules('surname'));
+};
+
 const processFeedbackValidationRules = () => {
   return [
     param(
@@ -110,7 +139,9 @@ const requestValidationRules = () => {
     )
       .optional()
       .isMongoId(),
-  ].concat(nameValidationRules('name', true));
+  ]
+    .concat(nameValidationRules('forename', true))
+    .concat(nameValidationRules('surname', true));
 };
 
 const addressValidationRules = () => {
@@ -271,6 +302,8 @@ const validate = (req, res, next) => {
 module.exports = {
   addressValidationRules,
   phoneValidationRules,
+  twilioValidationRules,
+  twilioRequestValidationRules,
   idValidationRules,
   nameValidationRules,
   processFeedbackValidationRules,

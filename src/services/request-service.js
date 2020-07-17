@@ -89,10 +89,15 @@ export default class RequestService {
     return request;
   }
 
-  static async createRequestWithPhone(countryCode, phone) {
+  static async createRequestWithPhone(countryCode, phone, skipSendTan = false) {
     let user = await UserService.findUserByPhone(countryCode, phone);
     if (!user) {
-      user = await UserService.createUser(countryCode, phone, null);
+      user = await UserService.createUser(
+        countryCode,
+        phone,
+        null,
+        skipSendTan
+      );
     }
 
     return this.createRequestWithUserId(user._id);
@@ -359,5 +364,34 @@ export default class RequestService {
       });
     }
     return response;
+  }
+
+  static async createByTwilio(
+    countryCode,
+    phone,
+    forename,
+    surname,
+    address,
+    requestType,
+    urgency,
+    extras
+  ) {
+    return this.createRequestWithPhone(countryCode, phone, true)
+      .then((requestFiltered) => {
+        return this.getRequest(requestFiltered._id);
+      })
+      .then((request) => {
+        console.log(request);
+        request.forename = forename;
+        request.surname = surname;
+        request.address = address;
+        request.requestType = requestType;
+        request.urgency = urgency;
+        request.extras = extras;
+        request.status = 'open';
+        request.log.set('open', Date.now());
+        console.log(request);
+        return request.save();
+      });
   }
 }

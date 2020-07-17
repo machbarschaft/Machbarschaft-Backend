@@ -3,6 +3,47 @@
 import RequestService from '../services/request-service';
 import UserService from '../services/user-service';
 import APIError from '../errors';
+import AddressService from '../services/address-service';
+
+const createAndPublishTwilio = async (req, res) => {
+  if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
+    AddressService.createAddress(
+      req.body.street,
+      req.body.houseNumber,
+      req.body.zipCode,
+      req.body.city,
+      req.body.country
+    )
+      .then((address) => {
+        console.log(address);
+        return RequestService.createByTwilio(
+          req.body.phone.substring(1, 3),
+          req.body.phone.substring(3),
+          req.body.forename,
+          req.body.surname,
+          address._id,
+          req.body.requestType,
+          req.body.urgency,
+          {
+            carNecessary: req.body.carNecessary,
+            prescriptionRequired: req.body.prescriptionRequired,
+          }
+        );
+      })
+      .then(() => {
+        res.status(201).send();
+        return;
+      })
+      .catch((error) => {
+        console.log(error);
+        APIError.handleError(error, res);
+        return;
+      });
+  } else {
+    res.status(401).send('Unauthorized.');
+  }
+  return;
+};
 
 const createLoggedIn = async (req, res) => {
   RequestService.createRequestWithUserId(req.user.uid)
@@ -89,7 +130,7 @@ const publishLoggedOut = async (req, res) => {
     return;
   }
 
-  UserService.findUserByPhone(req.query.phone)
+  UserService.findUserByPhone(req.body.countryCode, req.query.phone)
     .then((user) => {
       if (!user) {
         return Promise.reject(
@@ -149,6 +190,7 @@ module.exports = {
   updateLoggedOut,
   publishLoggedIn,
   publishLoggedOut,
+  createAndPublishTwilio,
   reopenRequest,
   getOpenRequestsNearby,
 };

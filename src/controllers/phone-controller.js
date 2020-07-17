@@ -70,8 +70,9 @@ const confirmTan = async (req, res) => {
 
 const setCalled = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
-    req.body.phone = req.body.phone.toString().substring(3);
-    UserService.findUserByPhone(req.body.phone)
+    const countryCode = req.body.phone.substring(1, 3);
+    const phone = req.body.phone.substring(3);
+    UserService.findUserByPhone(countryCode, phone)
       .then((user) => {
         return ResponseService.findActiveResponseByUserId(user._id);
       })
@@ -94,8 +95,9 @@ const setCalled = async (req, res) => {
 
 const findNumber = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
-    req.body.phone = req.body.phone.toString().substring(3);
-    UserService.findUserByPhone(req.body.phone)
+    const countryCode = req.body.phone.substring(1, 3);
+    const phone = req.body.phone.substring(3);
+    UserService.findUserByPhone(countryCode, phone)
       .then((user) => {
         return ResponseService.findActiveResponseByUserId(user._id);
       })
@@ -112,7 +114,7 @@ const findNumber = async (req, res) => {
       })
       .then((user) => {
         res.status(200).json({
-          phone: '+49' + user.phone,
+          phone: '+' + user.countryCode + user.phone,
           name: user.profile.forename,
         });
         return;
