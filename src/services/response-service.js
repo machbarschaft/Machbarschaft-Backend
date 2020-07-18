@@ -16,7 +16,7 @@ export default class ResponseService {
       );
     }
     response.status = status;
-    if (response.log.includes(status)) {
+    if (response.log.get(status) !== undefined) {
       return Promise.reject(new APIError(400, 'Ungültiger Status.'));
     }
     response.log.set(status, Date.now());
