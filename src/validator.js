@@ -230,7 +230,7 @@ const preferencesValidationRules = () => {
     .concat(nameValidationRules('country', true));
 };
 
-const positionValidationRules = () => {
+const positionWithRadiusValidationRules = () => {
   return [
     query('latitude', 'Der Wert für latitude muss eine Dezimalzahl sein.')
       .optional()
@@ -238,6 +238,12 @@ const positionValidationRules = () => {
     query('longitude', 'Der Wert für longitude muss eine Dezimalzahl sein.')
       .optional()
       .isDecimal(),
+    query(
+      'radius',
+      'Der Radius wird angegeben in Metern und ist eine Ganzzahl größer als 0.'
+    )
+      .optional()
+      .isInt({ gt: 0 }),
   ];
 };
 
@@ -297,7 +303,7 @@ module.exports = {
   validate,
   cookieValidationRules,
   preferencesValidationRules,
-  positionValidationRules,
+  positionWithRadiusValidationRules,
   contactFormValidationRules,
   tanValidationRules,
   smsValidationRules,

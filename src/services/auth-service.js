@@ -93,7 +93,9 @@ export default class AuthService {
         const fullAddress = await models.Address.findOne({
           _id: user.preferences.staticPosition,
         });
-        addressResponse = AddressService.prepareAddressResponse(fullAddress);
+        addressResponse = await AddressService.prepareAddressResponse(
+          fullAddress
+        );
       }
       return Promise.resolve({
         uid: access.user,
