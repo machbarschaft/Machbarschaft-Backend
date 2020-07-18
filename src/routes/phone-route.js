@@ -107,6 +107,8 @@ router.get(
  *                  properties:
  *                      phone:
  *                          type: String
+ *                      status:
+ *                          type: String
  *                      secret:
  *                          type: String
  */
