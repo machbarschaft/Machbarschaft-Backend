@@ -122,8 +122,8 @@ const releaseRequest = async (req, res) => {
 const changeResponse = async (req, res) => {
   let process;
   ProcessService.getProcess(req.params.processId)
-    .then((process) => {
-      process = process;
+    .then((result) => {
+      process = result;
       return ResponseService.getResponse(
         process.response[process.response.length - 1]
       );
