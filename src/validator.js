@@ -86,10 +86,10 @@ const twilioRequestValidationRules = () => {
     ).isIn(urgencyCategories),
     body('carNecessary', "Darf nur 'true' oder 'false' sein.")
       .notEmpty()
-      .enum(['true', 'false']),
+      .enum(['true', 'false', 'undefined', '']),
     body('prescriptionRequired', "Darf nur 'true' oder 'false' sein.")
       .notEmpty()
-      .enum(['true', 'false']),
+      .enum(['true', 'false', 'undefined', '']),
   ]
     .concat(addressValidationRules())
     .concat(nameValidationRules('name'));
