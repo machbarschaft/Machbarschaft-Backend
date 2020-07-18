@@ -15,12 +15,14 @@ const createAndPublishTwilio = async (req, res) => {
       req.body.country
     )
       .then((address) => {
-        console.log(address);
+        let name = req.body.name.split(' ');
+        let forename = name[0];
+        let surname = req.body.name.substring(name[0].length).trim();
         return RequestService.createByTwilio(
           req.body.phone.substring(1, 3),
           req.body.phone.substring(3),
-          req.body.forename,
-          req.body.surname,
+          forename,
+          surname,
           address._id,
           req.body.requestType,
           req.body.urgency,
@@ -29,6 +31,7 @@ const createAndPublishTwilio = async (req, res) => {
             prescriptionRequired: req.body.prescriptionRequired,
           }
         );
+        return;
       })
       .then(() => {
         res.status(201).send();
