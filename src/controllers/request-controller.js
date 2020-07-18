@@ -15,8 +15,6 @@ const createAndPublishTwilio = async (req, res) => {
       req.body.prescriptionRequired = false;
     req.body.prescriptionRequired =
       (req.body.prescriptionRequired + '').toLowerCase() === 'true';
-    console.log(req.body);
-    console.log(req);
     AddressService.createAddress(
       req.body.street,
       req.body.houseNumber,
