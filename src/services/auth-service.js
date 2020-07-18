@@ -208,7 +208,7 @@ export default class AuthService {
       let subject = 'Bitte bestätige dein Konto';
       let to = access.email;
       let from = process.env.FROM_EMAIL;
-      let link = process.env.URL + '/auth/verify/' + token;
+      let link = process.env.URL + '/auth/verify?token=' + token;
       let html =
         `<p>Hallo ` +
         user.profile.forename +
@@ -264,7 +264,7 @@ export default class AuthService {
       let subject = 'Passwort zurücksetzen';
       let to = access.email;
       let from = process.env.FROM_EMAIL;
-      let link = process.env.URL + '/auth/verifyResetPassword/' + token;
+      let link = process.env.URL + '/auth/verifyResetPassword?token=' + token;
       let html =
         `<p>Hallo ` +
         user.profile.forename +
