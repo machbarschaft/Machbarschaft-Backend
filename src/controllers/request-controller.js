@@ -11,8 +11,6 @@ const createAndPublishTwilio = async (req, res) => {
     req.body.zipCode = parseInt(req.body.zipCode);
     req.body.carNecessary =
       (req.body.carNecessary + '').toLowerCase() === 'true';
-    if (req.body.prescriptionRequired === undefined)
-      req.body.prescriptionRequired = false;
     req.body.prescriptionRequired =
       (req.body.prescriptionRequired + '').toLowerCase() === 'true';
     console.log(req.body);

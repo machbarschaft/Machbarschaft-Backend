@@ -84,11 +84,12 @@ const twilioRequestValidationRules = () => {
       'Die Dringlichkeit kann nur folgende Werte haben: ' +
         urgencyCategories.toString()
     ).isIn(urgencyCategories),
-    body('carNecessary', "Darf nur 'true' oder 'false' sein.").isBoolean(),
-    body(
-      'prescriptionRequired',
-      "Darf nur 'true' oder 'false' sein."
-    ).isBoolean(),
+    body('carNecessary', "Darf nur 'true' oder 'false' sein.")
+      .notEmpty()
+      .enum(['true', 'false']),
+    body('prescriptionRequired', "Darf nur 'true' oder 'false' sein.")
+      .notEmpty()
+      .enum(['true', 'false']),
   ]
     .concat(addressValidationRules())
     .concat(nameValidationRules('name'));
