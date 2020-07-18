@@ -120,8 +120,10 @@ const releaseRequest = async (req, res) => {
 };
 
 const changeResponse = async (req, res) => {
+  let process;
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
+      process = process;
       return ResponseService.getResponse(
         process.response[process.response.length - 1]
       );
@@ -132,12 +134,13 @@ const changeResponse = async (req, res) => {
         response.status !== 'done' &&
         response.status !== 'aborted'
       ) {
+        let status;
         if (response.status === 'accepted') {
-          let status = 'called';
+          status = 'called';
         } else if (response.status === 'called') {
-          let status = 'on-the-way';
+          status = 'on-the-way';
         } else if (response.status === 'on-the-way') {
-          let status = 'done';
+          status = 'done';
           if (!process.finishedAt) {
             ProcessService.updateProcess(process._id, {
               finishedAt: Date.now(),
@@ -148,7 +151,7 @@ const changeResponse = async (req, res) => {
         res.status(200).send();
         return;
       } else {
-        return Promise.reject(new Error('Not allowed.'));
+        return Promise.reject(new APIError(403, 'Aktion nicht erlaubt.'));
       }
     })
     .catch((error) => {
