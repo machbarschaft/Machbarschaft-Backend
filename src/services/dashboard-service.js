@@ -78,6 +78,7 @@ export default class DashboardService {
         const helper = await UserService.findUserById(response.user);
         result['phoneHelper'] = helper.phone;
         result['name'] = helper.profile.name;
+        result['helperStatus'] = response.status;
       }
     }
     return result;
@@ -147,7 +148,6 @@ export default class DashboardService {
       if (response) {
         const helper = await UserService.findUserById(response.user);
         result['name'] = helper.profile.name;
-        result['helperStatus'] = response.status;
       }
     }
     return result;
