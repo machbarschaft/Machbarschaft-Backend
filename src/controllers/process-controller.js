@@ -15,7 +15,9 @@ const getRequest = async (req, res) => {
     })
     .then((request) => {
       if (!request) {
-        return Promise.reject(new Error('No request with given id.'));
+        return Promise.reject(
+          new APIError(404, 'Es gibt keinen Auftrag mit der gegebenen ID.')
+        );
       }
       res.status(200).json(request);
       return;
@@ -39,7 +41,9 @@ const changeRequestToDone = async (req, res) => {
     })
     .then((request) => {
       if (request.status === 'done')
-        return Promise.reject(new Error('Request is already done.'));
+        return Promise.reject(
+          new APIError(400, 'Auftrag ist bereits abgeschlossen.')
+        );
       else {
         RequestService.updateRequest(req.user.uid, request._id, {
           status: 'done',

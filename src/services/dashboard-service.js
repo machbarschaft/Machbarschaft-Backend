@@ -147,10 +147,7 @@ export default class DashboardService {
       if (response) {
         const helper = await UserService.findUserById(response.user);
         result['name'] = helper.profile.name;
-        result['askForFeedback'] =
-          response.status === 'done' ||
-          response.status === 'aborted' ||
-          response.status === 'did-not-help';
+        result['helperStatus'] = response.status;
       }
     }
     return result;
