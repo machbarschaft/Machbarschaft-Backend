@@ -393,4 +393,34 @@ export default class RequestService {
         return request.save();
       });
   }
+
+  static async updateStatus(userId, requestId, status) {
+    return this.getRequest(requestId).then((request) => {
+      if (request.user.toString() !== userId) {
+        return Promise.reject(
+          new APIError(401, 'Zugriff auf diesen Auftrag verweigert.')
+        );
+      }
+      if (status === 'abort' && request.status !== 'open') {
+        return Promise.reject(
+          new APIError(
+            403,
+            'Der Auftrag ist nicht offen. Keine Stornierung mehr möglich.'
+          )
+        );
+      }
+      if (request.log.get(status) !== undefined) {
+        return Promise.reject(
+          new APIError(
+            400,
+            'Jeder Status kann nur ein Mal durchlaufen werden. Dieser Auftrag hatte bereits den Status: ' +
+              status
+          )
+        );
+      }
+      request.status = status;
+      request.log.set(status, Date.now());
+      return request.save();
+    });
+  }
 }

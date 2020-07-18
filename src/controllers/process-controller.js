@@ -78,27 +78,14 @@ const abortResponse = async (req, res) => {
 const abortRequest = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
-      if (!process.response.length) {
-        return RequestService.getRequest(
-          process.requests[process.requests.length - 1]
-        );
-      } else {
-        return Promise.reject(new Error('Not allowed.'));
-      }
-    })
-    .then((request) => {
-      if (
-        request.status.toString() === 'open' ||
-        request.status.toString() === 'creating'
-      ) {
-        RequestService.updateRequest(req.user.uid, request._id, {
-          status: 'aborted',
-        });
+      return RequestService.updateStatus(
+        req.user.uid,
+        process.requests[process.requests.length - 1],
+        'aborted'
+      ).then(() => {
         res.status(200).send();
         return;
-      } else {
-        return Promise.reject(new Error('Not allowed.'));
-      }
+      });
     })
     .catch((error) => {
       APIError.handleError(error, res);
