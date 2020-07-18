@@ -28,7 +28,7 @@ export default class ResponseService {
     const response = await models.Response.findById(responseId);
     if (!response) {
       return Promise.reject(
-        new APIError(404, 'Es gibt keinen Prozess mit der gegebenen ID.')
+        new APIError(404, 'Es gibt keine Auftragannahme mit der gegebenen ID.')
       );
     }
     if (response.user.toString() !== userId) {
