@@ -1,8 +1,4 @@
-
-import {
-  requestTypes,
-  urgencyCategories,
-} from './models/request-model';
+import { requestTypes, urgencyCategories } from './models/request-model';
 
 const {
   check,
@@ -95,8 +91,7 @@ const twilioRequestValidationRules = () => {
     ).isBoolean(),
   ]
     .concat(addressValidationRules())
-    .concat(nameValidationRules('forename'))
-    .concat(nameValidationRules('surname'));
+    .concat(nameValidationRules('name'));
 };
 
 const processFeedbackValidationRules = () => {

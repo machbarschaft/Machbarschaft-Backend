@@ -28,10 +28,7 @@ const router = Router();
  *                          phone:
  *                              type: String
  *                              required: true
- *                          forname:
- *                              type: String
- *                              required: true
- *                          surname:
+ *                          name:
  *                              type: String
  *                              required: true
  *                          requestType:

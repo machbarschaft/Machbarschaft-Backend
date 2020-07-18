@@ -70,23 +70,27 @@ const confirmTan = async (req, res) => {
 
 const setCalled = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
-    const countryCode = req.body.phone.substring(1, 3);
-    const phone = req.body.phone.substring(3);
-    UserService.findUserByPhone(countryCode, phone)
-      .then((user) => {
-        return ResponseService.findActiveResponseByUserId(user._id);
-      })
-      .then((response) => {
-        response.status = 'called';
-        response.log.set('called', Date.now());
-        response.save();
-        res.status(200).send();
-        return;
-      })
-      .catch((error) => {
-        APIError.handleError(error, res);
-        return;
-      });
+    if (req.body.status === 'completed') {
+      const countryCode = req.body.phone.substring(1, 3);
+      const phone = req.body.phone.substring(3);
+      UserService.findUserByPhone(countryCode, phone)
+        .then((user) => {
+          return ResponseService.findActiveResponseByUserId(user._id);
+        })
+        .then((response) => {
+          response.status = 'called';
+          response.log.set('called', Date.now());
+          response.save();
+          res.status(200).send();
+          return;
+        })
+        .catch((error) => {
+          APIError.handleError(error, res);
+          return;
+        });
+    } else {
+      res.status(200).send();
+    }
   } else {
     res.status(401).send('Unauthorized.');
   }
@@ -95,10 +99,13 @@ const setCalled = async (req, res) => {
 
 const findNumber = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
+    let helperName = '';
+    let helpSeekerName = '';
     const countryCode = req.body.phone.substring(1, 3);
     const phone = req.body.phone.substring(3);
     UserService.findUserByPhone(countryCode, phone)
       .then((user) => {
+        helperName = user.profile.name;
         return ResponseService.findActiveResponseByUserId(user._id);
       })
       .then((response) => {
@@ -110,12 +117,14 @@ const findNumber = async (req, res) => {
         );
       })
       .then((request) => {
+        helpSeekerName = request.name;
         return UserService.findUserById(request.user);
       })
       .then((user) => {
         res.status(200).json({
           phone: '+' + user.countryCode.toString() + user.phone.toString(),
-          name: user.profile.forename,
+          helpSeekerName: helpSeekerName,
+          helperName: helperName,
         });
         return;
       })
