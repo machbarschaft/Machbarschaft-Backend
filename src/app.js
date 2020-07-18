@@ -56,10 +56,9 @@ passport.use(
 );
 
 //all routes
-app.use('/', routes.landingPage);
+app.use('/', routes.docs);
 app.use('/request', routes.request);
 app.use('/auth', routes.auth);
-app.use('/docs', routes.docs);
 app.use('/phone', routes.phone);
 app.use('/process', routes.process);
 app.use('/feedback', routes.feedback);
