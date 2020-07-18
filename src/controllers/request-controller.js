@@ -15,7 +15,6 @@ const createAndPublishTwilio = async (req, res) => {
       req.body.country
     )
       .then((address) => {
-        console.log(address);
         return RequestService.createByTwilio(
           req.body.phone.substring(1, 3),
           req.body.phone.substring(3),

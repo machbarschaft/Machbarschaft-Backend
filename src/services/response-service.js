@@ -118,6 +118,7 @@ export default class ResponseService {
       );
     }
     request.status = 'accepted';
+    request.log.set('accepted', Date.now());
 
     let response = new models.Response({
       status: 'accepted',

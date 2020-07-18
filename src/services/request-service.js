@@ -48,7 +48,7 @@ export default class RequestService {
       createdAt: -1,
     });
     if (!previousRequests.length) {
-      request.save();
+      await request.save();
       return Promise.resolve({
         _id: request._id,
         forename: '',
