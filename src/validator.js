@@ -1,8 +1,4 @@
-
-import {
-  requestTypes,
-  urgencyCategories,
-} from './models/request-model';
+import { requestTypes, urgencyCategories } from './models/request-model';
 
 const {
   check,
@@ -88,15 +84,9 @@ const twilioRequestValidationRules = () => {
       'Die Dringlichkeit kann nur folgende Werte haben: ' +
         urgencyCategories.toString()
     ).isIn(urgencyCategories),
-    body('carNecessary', "Darf nur 'true' oder 'false' sein.").isBoolean(),
-    body(
-      'prescriptionRequired',
-      "Darf nur 'true' oder 'false' sein."
-    ).isBoolean(),
   ]
     .concat(addressValidationRules())
-    .concat(nameValidationRules('forename'))
-    .concat(nameValidationRules('surname'));
+    .concat(nameValidationRules('name'));
 };
 
 const processFeedbackValidationRules = () => {
