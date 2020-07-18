@@ -10,7 +10,7 @@ export default class FeedbackService {
     isRequest,
     reqBody
   ) {
-    let owner, processId;
+    let owner, processId, requestOrResponse;
     if (isRequest === true) {
       const request = await models.Request.findOne({
         _id: requestOrResponseId,
@@ -20,6 +20,7 @@ export default class FeedbackService {
           new APIError(404, 'Es wurde kein Auftrag gefunden.')
         );
       }
+      requestOrResponse = request;
       owner = request.user;
       processId = request.process;
     } else {
@@ -31,6 +32,7 @@ export default class FeedbackService {
           new APIError(404, 'Es wurde keine Auftragannahme gefunden.')
         );
       }
+      requestOrResponse = response;
       owner = response.user;
       processId = response.process;
     }
@@ -46,8 +48,15 @@ export default class FeedbackService {
     });
     const process = await models.Process.findOne({ _id: processId });
     process.feedback.push(feedback._id);
-    process.save();
-    return feedback.save();
+    return feedback
+      .save()
+      .then(() => {
+        return process.save();
+      })
+      .then(() => {
+        requestOrResponse.feedbackSubmitted = true;
+        return requestOrResponse.save();
+      });
   }
 
   static async existsFeedbackForProcess(userId, processId) {

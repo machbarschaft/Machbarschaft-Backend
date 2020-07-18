@@ -26,6 +26,10 @@ const responseSchema = new mongoose.Schema(
       enum: statusStages,
       required: true,
     },
+    feedbackSubmitted: {
+      type: Boolean,
+      default: false,
+    },
     log: {
       type: Map,
       of: Date,

@@ -129,6 +129,9 @@ export default class DashboardService {
       urgency: request.urgency,
       requestType: request.requestType,
       extras: request.extras,
+      feedbackSubmitted: isHelper
+        ? response.feedbackSubmitted
+        : request.feedbackSubmitted,
       startedAt: isHelper ? response.createdAt : request.log.get('open'),
       finishedAt: isHelper
         ? response.log.get(response.status)
