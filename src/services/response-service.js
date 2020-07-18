@@ -24,7 +24,7 @@ export default class ResponseService {
     return response.save();
   }
 
-  static async abortResponse(userId, responseId, requestId) {
+  static async abortResponse(userId, responseId) {
     const response = await models.Response.findById(responseId);
     if (!response) {
       return Promise.reject(
@@ -43,16 +43,6 @@ export default class ResponseService {
     response.status = 'aborted';
     response.log.set(response.status, Date.now());
     response.save();
-    const request = await models.Request.findById(requestId);
-    if (!request) {
-      return Promise.reject(
-        new APIError(404, 'Es gibt keinen Auftrag mit der gegebenen ID.')
-      );
-    }
-    request.status = 'open';
-    request.log.set(request.status, Date.now());
-    request.save();
-    return response;
   }
 
   static async getResponse(responseId) {

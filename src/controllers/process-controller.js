@@ -64,8 +64,7 @@ const abortResponse = async (req, res) => {
     .then((process) => {
       return ResponseService.abortResponse(
         req.user.uid,
-        process.response[process.response.length - 1],
-        process.requests[process.requests.length - 1]
+        process.response[process.response.length - 1]
       );
     })
     .then((response) => {
