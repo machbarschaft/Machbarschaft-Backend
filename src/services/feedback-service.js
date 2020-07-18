@@ -54,6 +54,10 @@ export default class FeedbackService {
         return process.save();
       })
       .then(() => {
+        if (isRequest) {
+          requestOrResponse.status = 'done';
+          requestOrResponse.log.set('done', Date.now());
+        }
         requestOrResponse.feedbackSubmitted = true;
         return requestOrResponse.save();
       });
