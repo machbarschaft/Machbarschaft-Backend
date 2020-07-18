@@ -100,11 +100,12 @@ const setCalled = async (req, res) => {
 const findNumber = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
     let helperName = '';
+    let helpSeekerName = '';
     const countryCode = req.body.phone.substring(1, 3);
     const phone = req.body.phone.substring(3);
     UserService.findUserByPhone(countryCode, phone)
       .then((user) => {
-        helperName = user.name;
+        helperName = user.profile.name;
         return ResponseService.findActiveResponseByUserId(user._id);
       })
       .then((response) => {
@@ -116,14 +117,13 @@ const findNumber = async (req, res) => {
         );
       })
       .then((request) => {
+        helpSeekerName = request.name;
         return UserService.findUserById(request.user);
       })
       .then((user) => {
-        console.log(user._id);
-        console.log(user.name);
         res.status(200).json({
           phone: '+' + user.countryCode.toString() + user.phone.toString(),
-          helpSeekerName: user.name,
+          helpSeekerName: helpSeekerName,
           helperName: helperName,
         });
         return;
