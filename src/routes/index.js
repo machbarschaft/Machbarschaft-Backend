@@ -1,4 +1,3 @@
-import landingPage from './landing-page-route';
 import request from './request-route';
 import auth from './auth-route';
 import docs from './docs';
@@ -11,7 +10,6 @@ import dashboard from './dashboard-route';
 import contact from './contact-route';
 
 export default {
-  landingPage,
   request,
   auth,
   docs,
