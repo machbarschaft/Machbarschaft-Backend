@@ -265,17 +265,15 @@ export default class RequestService {
       address: request.address,
       requestType: request.requestType,
       urgency: request.urgency,
+      extras: request.extras,
     });
-    newRequest.log = { open: Date.now() };
-    if (request.extras) {
-      newRequest.extras = request.extras;
-    }
+    newRequest.log.set('open', Date.now());
 
-    const process = await models.Process.findOne({ _id: request.process });
-    process.requests.push(newRequest._id);
-    process.save();
-
-    return newRequest.save();
+    return newRequest.save().then(async (request) => {
+      const process = await models.Process.findOne({ _id: request.process });
+      process.requests.push(request._id);
+      return process.save();
+    });
   }
 
   static async getOpenRequestsNearby(userId, currentLat, currentLng, radius) {
