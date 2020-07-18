@@ -6,7 +6,7 @@ import AddressService from './address-service';
 import APIError from '../errors';
 
 export default class UserService {
-  static async createUser(countryCode, phone, profile, skipSendTan = false) {
+  static async createUser(countryCode, phone, profile) {
     let user = await models.User.findOne({
       countryCode: countryCode,
       phone: phone,
@@ -25,12 +25,7 @@ export default class UserService {
       preferences: new models.UserPreferences(),
       profile: profile,
     });
-    return user.save().then((user) => {
-      if (!skipSendTan) {
-        PhoneService.create(user._id, user.countryCode, user.phone, false);
-      }
-      return Promise.resolve(user);
-    });
+    return user.save();
   }
 
   static async findUserByPhone(countryCode, phone) {

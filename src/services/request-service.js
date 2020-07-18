@@ -89,15 +89,10 @@ export default class RequestService {
     return request;
   }
 
-  static async createRequestWithPhone(countryCode, phone, skipSendTan = false) {
+  static async createRequestWithPhone(countryCode, phone) {
     let user = await UserService.findUserByPhone(countryCode, phone);
     if (!user) {
-      user = await UserService.createUser(
-        countryCode,
-        phone,
-        null,
-        skipSendTan
-      );
+      user = await UserService.createUser(countryCode, phone, null);
     }
 
     return this.createRequestWithUserId(user._id);
@@ -380,7 +375,7 @@ export default class RequestService {
     urgency,
     extras
   ) {
-    return this.createRequestWithPhone(countryCode, phone, true)
+    return this.createRequestWithPhone(countryCode, phone)
       .then((requestFiltered) => {
         return this.getRequest(requestFiltered._id);
       })
