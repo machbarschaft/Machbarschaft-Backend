@@ -82,7 +82,7 @@ router.post(
  *                      phone:
  *                          type: String
  *                      secret:
- *                          type: string
+ *                          type: String
  */
 router.get(
   '/findNumber',
@@ -108,7 +108,7 @@ router.get(
  *                      phone:
  *                          type: String
  *                      secret:
- *                          type: string
+ *                          type: String
  */
 router.put(
   '/setCalled',
