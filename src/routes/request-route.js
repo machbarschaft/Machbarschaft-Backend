@@ -422,6 +422,10 @@ router.put(
  *        name: longitude
  *        type: Number
  *        required: false
+ *      - in: query
+ *        name: radius
+ *        type: Number
+ *        required: false
  *     responses:
  *       200:
  *         description: successfully returned open requests in area
@@ -435,7 +439,7 @@ router.put(
 router.get(
   '/open-requests',
   Validator.cookieValidationRules('jwt'),
-  Validator.positionValidationRules(),
+  Validator.positionWithRadiusValidationRules(),
   Validator.validate,
   passport.authenticate('jwt-cookiecombo', {
     session: false,

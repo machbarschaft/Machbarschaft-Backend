@@ -283,8 +283,11 @@ export default class RequestService {
     return newRequest.save();
   }
 
-  static async getOpenRequestsNearby(userId, currentLat, currentLng) {
+  static async getOpenRequestsNearby(userId, currentLat, currentLng, radius) {
     const user = await UserService.findUserById(userId);
+    if (!radius) {
+      radius = user.preferences.radius;
+    }
     if (!currentLat || !currentLng) {
       if (!user.preferences.staticPosition) {
         return Promise.reject(
@@ -315,7 +318,7 @@ export default class RequestService {
         requestAddress.geoLocation.latitude,
         requestAddress.geoLocation.longitude
       );
-      if (distance < user.preferences.radius) {
+      if (distance < radius) {
         const address = await models.Address.findOne({ _id: request.address });
         let addressResponse = await AddressService.prepareAddressResponse(
           address
