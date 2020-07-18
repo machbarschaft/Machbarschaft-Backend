@@ -7,6 +7,14 @@ import AddressService from '../services/address-service';
 
 const createAndPublishTwilio = async (req, res) => {
   if (req.body.secret.toString() === process.env.TWILIO_SECRET) {
+    req.body.houseNumber = parseInt(req.body.houseNumber);
+    req.body.zipCode = parseInt(req.body.zipCode);
+    req.body.carNecessary =
+      (req.body.carNecessary + '').toLowerCase() === 'true';
+    if (req.body.prescriptionRequired === undefined)
+      req.body.prescriptionRequired = false;
+    req.body.prescriptionRequired =
+      (req.body.prescriptionRequired + '').toLowerCase() === 'true';
     AddressService.createAddress(
       req.body.street,
       req.body.houseNumber,
