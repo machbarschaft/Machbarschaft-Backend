@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import sgMail from '@sendgrid/mail';
 import models from '../models/bundle';
-import JWTConfig from '../jwt_config';
+import JWTConfig from '../config/jwt-config';
 import UserService from './user-service';
 import AddressService from './address-service';
 import APIError from '../errors';

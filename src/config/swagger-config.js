@@ -1,4 +1,3 @@
-// -- setup up swagger-jsdoc --
 const definition = {
   info: {
     title: 'Machbarschaft',

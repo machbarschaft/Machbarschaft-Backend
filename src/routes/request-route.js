@@ -45,19 +45,19 @@ const router = Router();
  *                                  - tomorrow
  *                                  - this-week
  *                          prescriptionRequired:
- *                              type: Boolean
+ *                              type: String
  *                              required: true
  *                          carNecessary:
- *                              type: Boolean
+ *                              type: String
  *                              required: true
  *                          street:
  *                              type: String
  *                              required: true
  *                          houseNumber:
- *                              type: Number
+ *                              type: String
  *                              required: true
  *                          zipCode:
- *                              type: Number
+ *                              type: String
  *                              required: true
  *                          city:
  *                              type: String
@@ -65,6 +65,18 @@ const router = Router();
  *                          country:
  *                              type: String
  *                              required: true
+ *                  example:
+ *                      secret: '0KNse9LOTX7luBy'
+ *                      phone: '+498928901'
+ *                      name: 'Max Mustermann'
+ *                      requestType: 'groceries'
+ *                      prescriptionRequired: 'today'
+ *                      carNecessary: 'true'
+ *                      street: 'Boltzmannstraße'
+ *                      houseNumber: '15'
+ *                      zipCode: '85748'
+ *                      city: 'Garching bei München'
+ *                      country: 'de'
  *      responses:
  *       201:
  *         description: Successfully created request.

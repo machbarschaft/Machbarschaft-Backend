@@ -3,8 +3,8 @@ import APIError from '../errors';
 
 const createContact = (req, res) => {
   ContactService.createContact(req.body.email, req.body.text)
-    .then((contact) => {
-      res.status(200).json(contact._id);
+    .then(() => {
+      res.status(200).send();
     })
     .catch((error) => {
       APIError.handleError(error, res);

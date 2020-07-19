@@ -1,4 +1,4 @@
-import TwilioConfig from '../twilio_config';
+import TwilioConfig from '../config/twilio-config';
 
 const twilio = require('twilio')(
   process.env.TWILIO_ACCOUNT_SID,
@@ -23,7 +23,38 @@ export default class TwilioService {
           tanString +
           TwilioConfig.twilio.message_4,
         from: TwilioConfig.twilio.phone_number_sms,
+<<<<<<< HEAD
         to: `+${countryCode.toString()}${phone.toString()}`,
+=======
+        to: '+' + countryCode.toString() + phone.toString(),
+      });
+    } else {
+      let phoneCallScript =
+        TwilioConfig.twilio.message_1 + name + TwilioConfig.twilio.message_2;
+      let code = '';
+      for (let i = 0; i < tanString.length; i++) {
+        code += tanString[i] + ', ';
+      }
+      phoneCallScript += code;
+      phoneCallScript += TwilioConfig.twilio.message_3;
+      phoneCallScript += code;
+      phoneCallScript += TwilioConfig.twilio.message_4;
+      const response = new VoiceResponse();
+      response.pause({
+        length: 3,
+      });
+      response.say(
+        {
+          voice: TwilioConfig.twilio.voice,
+          language: TwilioConfig.twilio.voice_language,
+        },
+        phoneCallScript
+      );
+      return twilio.calls.create({
+        twiml: response.toString(),
+        to: '+' + countryCode + phone.toString(),
+        from: TwilioConfig.twilio.phone_number_call,
+>>>>>>> master
       });
     }
     let phoneCallScript =

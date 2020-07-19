@@ -8,7 +8,7 @@ import passport from 'passport';
 import JwtCookieComboStrategy from 'passport-jwt-cookiecombo';
 import accessModel from './models/access-model';
 import routes from './routes/index';
-import JWTConfig from './jwt_config';
+import JWTConfig from './config/jwt-config';
 
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -18,10 +18,7 @@ const app = express();
 app.use(helmet()); // enforcing some security best practices, e.g. https connection, prevent clickjacking ..
 app.use(
   cors({
-    origin:
-      process.env.CORS_ENV === 'development'
-        ? 'http://localhost:8080'
-        : 'https://demo.machbarschaft.jetzt',
+    origin: process.env.URL,
     credentials: true,
     optionsSuccessStatus: 200,
   })

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import AuthService from '../services/auth-service';
-import JWTConfig from '../jwt_config';
+import JWTConfig from '../config/jwt-config';
 import UserService from '../services/user-service';
 import APIError from '../errors';
 
