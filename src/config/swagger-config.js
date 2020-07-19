@@ -4,7 +4,7 @@ const definition = {
     version: '1.0.0',
     description: 'Documentation of Machbarschaft',
   },
-  host: process.env.URL,
+  host: 'localhost:3000',
   basePath: '/',
 };
 module.exports = {
