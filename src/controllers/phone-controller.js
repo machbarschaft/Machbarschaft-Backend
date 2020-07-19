@@ -78,11 +78,12 @@ const setCalled = async (req, res) => {
           return ResponseService.findActiveResponseByUserId(user._id);
         })
         .then((response) => {
-          response.status = 'called';
-          response.log.set('called', Date.now());
-          response.save();
-          res.status(200).send();
-          return;
+          return ResponseService.updateResponse(response._id, 'called').then(
+            () => {
+              res.status(200).send();
+              return;
+            }
+          );
         })
         .catch((error) => {
           APIError.handleError(error, res);

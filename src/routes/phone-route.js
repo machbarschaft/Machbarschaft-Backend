@@ -94,7 +94,7 @@ router.post(
 /**
  * @swagger
  * /phone/setCalled:
- *  put:
+ *  post:
  *      summary: Update status of response as soon as helper has called.
  *      description: Twilio endpoint to update status of response as soon as helper has called.
  *      tags:
@@ -112,7 +112,7 @@ router.post(
  *                      secret:
  *                          type: String
  */
-router.put(
+router.post(
   '/setCalled',
   Validator.twilioValidationRules(),
   Validator.validate,
