@@ -1,5 +1,3 @@
-'use strict';
-
 import models from '../models/bundle';
 import AddressService from './address-service';
 import UserService from './user-service';

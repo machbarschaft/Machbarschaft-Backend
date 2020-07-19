@@ -1,12 +1,9 @@
-'use strict';
-
 import PhoneService from '../services/phone-service';
 import UserService from '../services/user-service';
 import RequestService from '../services/request-service';
 import ProcessService from '../services/process-service';
 import ResponseService from '../services/response-service';
 
-import Process from '../models/process-model';
 import APIError from '../errors';
 
 const createNewTan = async (req, res) => {

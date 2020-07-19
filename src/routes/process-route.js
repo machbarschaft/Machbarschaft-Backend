@@ -58,41 +58,43 @@ router.put(
  *     responses:
  *       200:
  *         description: giving request details
- *         schema:
- *          type: object
- *          properties:
- *            user:
- *              type: objectid
- *            status:
- *              type: string
- *              enum: [creating, open, accepted, done, replaced, aborted]
- *            requestType:
- *              type: string
- *              enum: [groceries, medication, other]
- *            urgency:
- *              type: string
- *              enum: [now, today, tomorrow, this-week]
- *            extras:
- *              type: object
- *              properties:
- *                carNecessary:
- *                  type: boolean
- *                prescriptionRequired:
- *                  type: boolean
- *            privacyAgreed:
- *              type: boolean
- *            raw:
- *              type: string
- *            locale:
- *              type: string
- *            log:
- *              type: array
- *              items:
- *                type: date
- *            createdAt:
- *              type: date
- *            updatedAt:
- *              type: date
+ *         content:
+ *            application/json:
+ *               schema:
+ *                  type: object
+ *                  properties:
+ *                    user:
+ *                      type: objectid
+ *                    status:
+ *                      type: string
+ *                      enum: [creating, open, accepted, done, replaced, aborted]
+ *                    requestType:
+ *                      type: string
+ *                      enum: [groceries, medication, other]
+ *                    urgency:
+ *                      type: string
+ *                      enum: [now, today, tomorrow, this-week]
+ *                    extras:
+ *                      type: object
+ *                      properties:
+ *                        carNecessary:
+ *                          type: boolean
+ *                        prescriptionRequired:
+ *                          type: boolean
+ *                    privacyAgreed:
+ *                      type: boolean
+ *                    raw:
+ *                      type: string
+ *                    locale:
+ *                      type: string
+ *                    log:
+ *                      type: array
+ *                    items:
+ *                      type: date
+ *                    createdAt:
+ *                      type: date
+ *                    updatedAt:
+ *                      type: date
  *       404:
  *         description: not found
  *       500:
