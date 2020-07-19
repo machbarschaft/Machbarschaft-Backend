@@ -79,6 +79,19 @@ export default class ResponseService {
       );
     }
 
+    const activeResponse = await models.Response.findOne({
+      user: userId,
+      status: { $in: ['accepted', 'called', 'on-the-way'] },
+    });
+    if (activeResponse) {
+      return Promise.reject(
+        new APIError(
+          400,
+          'Bitte beenden Sie Ihre aktuelle Auftragannahme. Danach können Sie einen neuen Auftrag annehmen.'
+        )
+      );
+    }
+
     let process = await ProcessService.getProcess(processId);
     if (!process) {
       return Promise.reject(
@@ -94,7 +107,7 @@ export default class ResponseService {
         mostRecentResponse.status !== 'did-not-help'
       ) {
         return Promise.reject(
-          new APIError(400, 'Auftrag wurde bereits angenommen.')
+          new APIError(400, 'Dieser Auftrag wurde bereits angenommen.')
         );
       }
     }
@@ -104,7 +117,7 @@ export default class ResponseService {
     );
     if (request.status !== 'open') {
       return Promise.reject(
-        new Error('Tried to accept a request, which was not open.')
+        new APIError(400, 'Dieser Auftrag wurde bereits angenommen.')
       );
     }
     request.status = 'accepted';

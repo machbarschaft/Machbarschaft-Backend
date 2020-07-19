@@ -78,17 +78,27 @@ const setCalled = async (req, res) => {
           return ResponseService.findActiveResponseByUserId(user._id);
         })
         .then((response) => {
-          return ResponseService.updateResponse(response._id, 'called');
+          return ResponseService.updateResponse(response._id, 'called').then(
+            () => {
+              res.status(200).send();
+            }
+          );
         })
         .catch((error) => {
           //Twilio calls this endpoint whenever helper calls helpseeker
           //Only on first call the status should be updated
           //All other calls the status is intentionally not updated, but this is also not an error for twilio
-          console.log(error);
+          if (error.message === 'Ungültiger Status.') {
+            res.status(200).send();
+            return;
+          }
+          APIError.handleError(error, res);
           return;
         });
+    } else {
+      //If the call was not answered by the help seeker, the status does not need to update
+      res.status(200).send();
     }
-    res.status(200).send();
   } else {
     res.status(401).send('Unauthorized.');
   }
