@@ -41,7 +41,7 @@ Create a .env file with the following entries:
 # port to be used for the backend application. Default is 3000.
 PORT=
 
-# URL of the Frontend application to use the link in emails, for example for resetPassword or emailVerification.
+# URL of the Frontend application to use the link in swagger and in emails, for example for resetPassword or emailVerification. If you use a localhost server, include the port (for example localhost:3000).
 URL=
 
 # MongoDB connection. Format for remote instance for example mongodb+srv://dbUser:dbPasswort@dbUrl/dbName?retryWrites=true&w=majority, for local instances usually mongodb://localhost:27017/dbName
