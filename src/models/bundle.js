@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-//import all models
+// import all models
 import Access from './access-model';
 import Address from './address-model';
 import BearerToken from './bearer-token-model';

@@ -1,5 +1,3 @@
-'use strict';
-
 import models from '../models/bundle';
 import AddressService from './address-service';
 import UserService from './user-service';
@@ -19,15 +17,15 @@ export default class DashboardService {
       status: { $in: ['open', 'accepted'] },
     });
     const user = await UserService.findUserById(userId);
-    let responseHelpSeeker = [];
+    const responseHelpSeeker = [];
     for (const request of activeRequests) {
       const response = await RequestService.findResponseForRequest(request);
-      let result = await this.getActiveRequestResponseFormat(
+      const result = await this.getActiveRequestResponseFormat(
         request,
         response,
         false
       );
-      result['phoneHelpSeeker'] = user.phone;
+      result.phoneHelpSeeker = user.phone;
       responseHelpSeeker.push(result);
     }
     return responseHelpSeeker;
@@ -56,7 +54,7 @@ export default class DashboardService {
   }
 
   static async getActiveRequestResponseFormat(request, response, isHelper) {
-    let result = {
+    const result = {
       _id: isHelper ? response._id : request._id,
       process: request.process,
       status: isHelper ? response.status : request.status,
@@ -72,14 +70,12 @@ export default class DashboardService {
       if (response.status === 'accepted') {
         delete result.address.houseNumber;
       }
-      result['name'] = request.name;
-    } else {
-      if (response) {
-        const helper = await UserService.findUserById(response.user);
-        result['phoneHelper'] = helper.phone;
-        result['name'] = helper.profile.name;
-        result['helperStatus'] = response.status;
-      }
+      result.name = request.name;
+    } else if (response) {
+      const helper = await UserService.findUserById(response.user);
+      result.phoneHelper = helper.phone;
+      result.name = helper.profile.name;
+      result.helperStatus = response.status;
     }
     return result;
   }
@@ -96,7 +92,7 @@ export default class DashboardService {
       user: userId,
       status: { $in: ['done', 'reopened', 'aborted'] },
     });
-    let responseFinishedRequests = [];
+    const responseFinishedRequests = [];
     for (const request of finishedRequests) {
       const response = await RequestService.findResponseForRequest(request);
       responseFinishedRequests.push(
@@ -111,7 +107,7 @@ export default class DashboardService {
       user: userId,
       status: { $in: ['done', 'aborted', 'did-not-help'] },
     });
-    let responseFinishedRequests = [];
+    const responseFinishedRequests = [];
     for (const response of finishedResponses) {
       const process = await models.Process.findOne({ _id: response.process });
       const request = await models.Request.findOne({
@@ -125,7 +121,7 @@ export default class DashboardService {
   }
 
   static async getFinishedRequestResponseFormat(request, response, isHelper) {
-    let result = {
+    const result = {
       _id: isHelper ? response._id : request._id,
       status: isHelper ? response.status : request.status,
       urgency: request.urgency,
@@ -140,14 +136,14 @@ export default class DashboardService {
         : request.log.get(request.status),
     };
     if (isHelper) {
-      result['name'] = request.name;
+      result.name = request.name;
     } else {
-      result['address'] = await AddressService.prepareAddressResponse(
+      result.address = await AddressService.prepareAddressResponse(
         await models.Address.findOne({ _id: request.address })
       );
       if (response) {
         const helper = await UserService.findUserById(response.user);
-        result['name'] = helper.profile.name;
+        result.name = helper.profile.name;
       }
     }
     return result;

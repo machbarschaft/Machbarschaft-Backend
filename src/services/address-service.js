@@ -1,5 +1,3 @@
-'use strict';
-
 import models from '../models/bundle';
 import GoogleService from '../external-parties/google-service';
 
@@ -50,11 +48,11 @@ export default class AddressService {
 
   static async findAddress(street, houseNumber, zipCode, city, country) {
     return models.Address.findOne({
-      street: street,
-      houseNumber: houseNumber,
-      zipCode: zipCode,
-      city: city,
-      country: country,
+      street,
+      houseNumber,
+      zipCode,
+      city,
+      country,
     });
   }
 }

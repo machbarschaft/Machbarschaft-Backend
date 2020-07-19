@@ -1,5 +1,3 @@
-'use strict';
-
 import models from '../models/bundle';
 import { statusStages } from '../models/request-model';
 import UserService from './user-service';
@@ -59,28 +57,27 @@ export default class RequestService {
       request.urgency = previousRequests[0].urgency;
       request.extras = previousRequests[0].extras;
       await request.save();
-      request['_doc']['address'] = await AddressService.prepareAddressResponse(
+      request._doc.address = await AddressService.prepareAddressResponse(
         await models.Address.findOne({ _id: request.address })
       );
       return Promise.resolve(request);
-    } else {
-      await request.save();
-      return Promise.resolve({
-        _id: request._id,
-        forename: '',
-        surname: '',
-        address: {
-          street: '',
-          houseNumber: '',
-          zipCode: '',
-          city: '',
-          country: '',
-        },
-        requestType: '',
-        urgency: '',
-        extras: request.extras,
-      });
     }
+    await request.save();
+    return Promise.resolve({
+      _id: request._id,
+      forename: '',
+      surname: '',
+      address: {
+        street: '',
+        houseNumber: '',
+        zipCode: '',
+        city: '',
+        country: '',
+      },
+      requestType: '',
+      urgency: '',
+      extras: request.extras,
+    });
   }
 
   static async getRequest(requestId) {
@@ -149,10 +146,8 @@ export default class RequestService {
       }
       if (!address.requests) {
         address.requests = [requestId];
-      } else {
-        if (!address.requests.includes(requestId)) {
-          address.requests.push(requestId);
-        }
+      } else if (!address.requests.includes(requestId)) {
+        address.requests.push(requestId);
       }
       address.save();
       request.address = requestBody.addressId;
@@ -301,7 +296,7 @@ export default class RequestService {
       currentLat = address.geoLocation.latitude;
     }
     const openRequests = await models.Request.find({ status: 'open' });
-    let result = [];
+    const result = [];
     for (const request of openRequests) {
       if (request.user.toString() === userId) {
         continue;
@@ -317,17 +312,17 @@ export default class RequestService {
       );
       if (distance < radius) {
         const address = await models.Address.findOne({ _id: request.address });
-        let addressResponse = await AddressService.prepareAddressResponse(
+        const addressResponse = await AddressService.prepareAddressResponse(
           address
         );
-        delete addressResponse['houseNumber'];
-        addressResponse['geoLocation'] = address.geoLocation;
+        delete addressResponse.houseNumber;
+        addressResponse.geoLocation = address.geoLocation;
         result.push({
           _id: request._id,
           requestType: request.requestType,
           urgency: request.urgency,
           extras: request.extras,
-          distance: distance,
+          distance,
           address: addressResponse,
           process: request.process,
         });
@@ -358,7 +353,7 @@ export default class RequestService {
 
   static async findResponseForRequest(request) {
     const process = await models.Process.findOne({ _id: request.process });
-    let response = undefined;
+    let response;
     if (process.response && process.response.length) {
       response = await models.Response.findOne({
         _id: process.response[process.response.length - 1],
@@ -382,7 +377,6 @@ export default class RequestService {
         return this.getRequest(requestFiltered._id);
       })
       .then((request) => {
-        console.log(request);
         request.forename = forename;
         request.surname = surname;
         request.address = address;
@@ -391,7 +385,6 @@ export default class RequestService {
         request.extras = extras;
         request.status = 'open';
         request.log.set('open', Date.now());
-        console.log(request);
         return request.save();
       });
   }
@@ -415,8 +408,7 @@ export default class RequestService {
         return Promise.reject(
           new APIError(
             400,
-            'Jeder Status kann nur ein Mal durchlaufen werden. Dieser Auftrag hatte bereits den Status: ' +
-              status
+            `Jeder Status kann nur ein Mal durchlaufen werden. Dieser Auftrag hatte bereits den Status: ${status}`
           )
         );
       }

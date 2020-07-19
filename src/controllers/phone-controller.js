@@ -1,12 +1,9 @@
-'use strict';
-
 import PhoneService from '../services/phone-service';
 import UserService from '../services/user-service';
 import RequestService from '../services/request-service';
 import ProcessService from '../services/process-service';
 import ResponseService from '../services/response-service';
 
-import Process from '../models/process-model';
 import APIError from '../errors';
 
 const createNewTan = async (req, res) => {
@@ -26,15 +23,12 @@ const createNewTan = async (req, res) => {
     return;
   }
   PhoneService.create(user._id, user.countryCode, user.phone, req.body.sms)
-    .then((request) => {
+    .then(() => {
       res.status(201).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const confirmTan = async (req, res) => {
@@ -50,23 +44,20 @@ const confirmTan = async (req, res) => {
   }
   PhoneService.confirm(req.body.tan, userId)
     .then((phoneNumber) => {
-      let options = {
+      const options = {
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
         sameSite: true,
-        secure: process.env.CORS_ENV === 'development' ? false : true,
+        secure: process.env.CORS_ENV !== 'development',
       };
 
       res.cookie('machbarschaft_phoneVerified', phoneNumber, options);
 
       res.status(200).json(phoneNumber);
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const setCalled = async (req, res) => {
@@ -86,24 +77,22 @@ const setCalled = async (req, res) => {
           );
         })
         .catch((error) => {
-          //Twilio calls this endpoint whenever helper calls helpseeker
-          //Only on first call the status should be updated
-          //All other calls the status is intentionally not updated, but this is also not an error for twilio
+          // Twilio calls this endpoint whenever helper calls helpseeker
+          // Only on first call the status should be updated
+          // All other calls the status is intentionally not updated, but this is also not an error for twilio
           if (error.message === 'Ungültiger Status.') {
             res.status(200).send();
             return;
           }
           APIError.handleError(error, res);
-          return;
         });
     } else {
-      //If the call was not answered by the help seeker, the status does not need to update
+      // If the call was not answered by the help seeker, the status does not need to update
       res.status(200).send();
     }
   } else {
     res.status(401).send('Unauthorized.');
   }
-  return;
 };
 
 const findNumber = async (req, res) => {
@@ -131,20 +120,17 @@ const findNumber = async (req, res) => {
       })
       .then((user) => {
         res.status(200).json({
-          phone: '+' + user.countryCode.toString() + user.phone.toString(),
-          helpSeekerName: helpSeekerName,
-          helperName: helperName,
+          phone: `+${user.countryCode.toString()}${user.phone.toString()}`,
+          helpSeekerName,
+          helperName,
         });
-        return;
       })
       .catch((error) => {
         APIError.handleError(error, res);
-        return;
       });
   } else {
     res.status(401).send('Unauthorized.');
   }
-  return;
 };
 
 module.exports = { createNewTan, confirmTan, findNumber, setCalled };

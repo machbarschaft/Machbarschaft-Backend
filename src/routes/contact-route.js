@@ -1,8 +1,6 @@
-'use strict';
-
 import Router from 'express';
-import Validator from './../validator';
-import ContactController from "../controllers/contact-controller";
+import Validator from '../validator';
+import ContactController from '../controllers/contact-controller';
 
 const router = Router();
 
@@ -37,10 +35,10 @@ const router = Router();
  *          description: Internal server error
  */
 router.post(
-    '/',
-    Validator.contactFormValidationRules(),
-    Validator.validate,
-    ContactController.createContact
+  '/',
+  Validator.contactFormValidationRules(),
+  Validator.validate,
+  ContactController.createContact
 );
 
 export default router;

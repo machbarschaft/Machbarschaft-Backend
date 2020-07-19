@@ -1,9 +1,7 @@
-'use strict';
-
+import { response } from 'express';
 import models from '../models/bundle';
 import ProcessService from './process-service';
 import RequestService from './request-service';
-import { response } from 'express';
 import APIError from '../errors';
 import UserService from './user-service';
 
@@ -54,6 +52,7 @@ export default class ResponseService {
     }
     return response;
   }
+
   static async findActiveResponseByUserId(userId) {
     const response = await models.Response.findOne({ user: userId }).sort({
       createdAt: -1,
@@ -92,7 +91,7 @@ export default class ResponseService {
       );
     }
 
-    let process = await ProcessService.getProcess(processId);
+    const process = await ProcessService.getProcess(processId);
     if (!process) {
       return Promise.reject(
         new APIError(404, 'Es gibt keinen Prozess mit der gegebenen ID.')
@@ -112,7 +111,7 @@ export default class ResponseService {
       }
     }
 
-    let request = await RequestService.getRequest(
+    const request = await RequestService.getRequest(
       process.requests[process.requests.length - 1]
     );
     if (request.status !== 'open') {
@@ -123,7 +122,7 @@ export default class ResponseService {
     request.status = 'accepted';
     request.log.set('accepted', Date.now());
 
-    let response = new models.Response({
+    const response = new models.Response({
       status: 'accepted',
       user: userId,
       process: processId,

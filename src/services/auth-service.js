@@ -1,11 +1,9 @@
-'use strict';
-
-import models from '../models/bundle';
-import JWTConfig from '../jwt_config';
 import jwt from 'jsonwebtoken';
-import UserService from './user-service';
 import crypto from 'crypto';
 import sgMail from '@sendgrid/mail';
+import models from '../models/bundle';
+import JWTConfig from '../jwt_config';
+import UserService from './user-service';
 import AddressService from './address-service';
 import APIError from '../errors';
 
@@ -15,7 +13,7 @@ export default class AuthService {
   static async register(email, password, countryCode, phone, profile) {
     let user = await UserService.findUserByPhone(countryCode, phone);
     let access = await models.Access.findOne({
-      email: email,
+      email,
     });
     if (access) {
       return Promise.reject(
@@ -38,7 +36,7 @@ export default class AuthService {
 
     access = new models.Access({
       user: user._id,
-      email: email,
+      email,
     });
 
     return models.Access.register(access, password).then((result) => {
@@ -74,14 +72,13 @@ export default class AuthService {
         JWTConfig.jwtSecret(),
         JWTConfig.jwtOptions(JWTConfig.AuthenticationType.logout)
       );
-    } else {
-      return Promise.reject(
-        new APIError(
-          404,
-          'Es konnte kein Benutzer mit der gegebenen ID ermittelt werden.'
-        )
-      );
     }
+    return Promise.reject(
+      new APIError(
+        404,
+        'Es konnte kein Benutzer mit der gegebenen ID ermittelt werden.'
+      )
+    );
   }
 
   static async authenticate(userId) {
@@ -107,22 +104,21 @@ export default class AuthService {
         profile: user.profile ? user.profile : null,
         address: addressResponse,
       });
-    } else {
-      return Promise.reject(
-        new APIError(
-          404,
-          'Es konnte kein Benutzer mit der gegebenen ID ermittelt werden.'
-        )
-      );
     }
+    return Promise.reject(
+      new APIError(
+        404,
+        'Es konnte kein Benutzer mit der gegebenen ID ermittelt werden.'
+      )
+    );
   }
 
   static async createConfirmEmail(accessId, email) {
-    var token = crypto.randomBytes(20).toString('hex');
+    const token = crypto.randomBytes(20).toString('hex');
     const confirmEmail = new models.ConfirmEmail({
       access: accessId,
-      email: email,
-      token: token,
+      email,
+      token,
     });
     confirmEmail.save();
     const access = await models.Access.findById(accessId);
@@ -132,7 +128,7 @@ export default class AuthService {
   }
 
   static async resetPasswordInAccess(token, password) {
-    const resetPassword = await models.ResetPassword.findOne({ token: token });
+    const resetPassword = await models.ResetPassword.findOne({ token });
     resetPassword.processCompleted = false;
     if (resetPassword && resetPassword.processCompleted === false) {
       resetPassword.processCompleted = true;
@@ -163,7 +159,7 @@ export default class AuthService {
   }
 
   static async verifyPasswordToken(token) {
-    const resetPassword = await models.ResetPassword.findOne({ token: token });
+    const resetPassword = await models.ResetPassword.findOne({ token });
     if (!resetPassword) {
       return Promise.reject(new APIError(400, 'Ungültiges Token.'));
     }
@@ -171,7 +167,7 @@ export default class AuthService {
   }
 
   static async verify(token) {
-    const confirmEmail = await models.ConfirmEmail.findOne({ token: token });
+    const confirmEmail = await models.ConfirmEmail.findOne({ token });
     if (!confirmEmail)
       return Promise.reject(new APIError(400, 'Ungültiges Token.'));
     const access = await models.Access.findById(confirmEmail.access);
@@ -208,35 +204,31 @@ export default class AuthService {
           token = confirmEmail.token;
         }
       }
-      let subject = 'Bitte bestätige dein Konto';
-      let to = access.email;
-      let from = process.env.FROM_EMAIL;
-      let link = process.env.URL + '/email-bestaetigen?token=' + token;
-      let html =
-        `<p>Hallo ` +
-        user.profile.forename +
-        `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Konto zu verifizieren. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
+      const subject = 'Bitte bestätige dein Konto';
+      const to = access.email;
+      const from = process.env.FROM_EMAIL;
+      const link = `${process.env.URL}/email-bestaetigen?token=${token}`;
+      const html = `<p>Hallo ${user.profile.forename}, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Konto zu verifizieren. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
                     <br><p><a href="${link}">${link}</a></p><br>
                     <p>Deine Machbarschaft.</p>`;
 
       await this.sendEmail({ to, from, subject, html });
 
       return Promise.resolve();
-    } else {
-      return Promise.reject(
-        new APIError(
-          404,
-          'Für diesen Benutzer wurden keine Zugangsdaten gefunden.'
-        )
-      );
     }
+    return Promise.reject(
+      new APIError(
+        404,
+        'Für diesen Benutzer wurden keine Zugangsdaten gefunden.'
+      )
+    );
   }
 
   static async createResetPassword(accessId) {
-    var token = crypto.randomBytes(20).toString('hex');
+    const token = crypto.randomBytes(20).toString('hex');
     const resetPassword = new models.ResetPassword({
       access: accessId,
-      token: token,
+      token,
     });
     resetPassword.save();
     const access = await models.Access.findById(accessId);
@@ -246,7 +238,7 @@ export default class AuthService {
   }
 
   static async sendResetPasswordEmail(email) {
-    const access = await models.Access.findOne({ email: email });
+    const access = await models.Access.findOne({ email });
     if (access) {
       if (access.resetPassword.length) {
         const resetPassword = await models.ResetPassword.findById(
@@ -254,37 +246,33 @@ export default class AuthService {
         );
         if (resetPassword.processCompleted === true) {
           const resetPasswordCreated = this.createResetPassword(access._id);
-          var token = resetPasswordCreated.token;
+          var { token } = resetPasswordCreated;
         } else {
-          var token = resetPassword.token;
+          var { token } = resetPassword;
         }
       }
       if (!access.resetPassword.length) {
         const resetPasswordCreated = await this.createResetPassword(access._id);
-        var token = resetPasswordCreated.token;
+        var { token } = resetPasswordCreated;
       }
-      let user = await models.User.findById(access.user);
-      let subject = 'Passwort zurücksetzen';
-      let to = access.email;
-      let from = process.env.FROM_EMAIL;
-      let link = process.env.URL + '/auth/verifyResetPassword?token=' + token;
-      let html =
-        `<p>Hallo ` +
-        user.profile.forename +
-        `, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
+      const user = await models.User.findById(access.user);
+      const subject = 'Passwort zurücksetzen';
+      const to = access.email;
+      const from = process.env.FROM_EMAIL;
+      const link = `${process.env.URL}/auth/verifyResetPassword?token=${token}`;
+      const html = `<p>Hallo ${user.profile.forename}, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
                   <br><p><a href="${link}">${link}</a></p><br>
                   <p>Deine Machbarschaft.</p>`;
       await AuthService.sendEmail({ to, from, subject, html });
 
       return Promise.resolve();
-    } else {
-      return Promise.reject(
-        new APIError(
-          404,
-          'Für diesen Benutzer wurden keine Zugangsdaten gefunden.'
-        )
-      );
     }
+    return Promise.reject(
+      new APIError(
+        404,
+        'Für diesen Benutzer wurden keine Zugangsdaten gefunden.'
+      )
+    );
   }
 
   static async sendEmail(mailOptions) {

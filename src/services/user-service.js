@@ -1,18 +1,15 @@
-'use strict';
-
 import models from '../models/bundle';
-import PhoneService from './phone-service';
 import AddressService from './address-service';
 import APIError from '../errors';
 
 export default class UserService {
   static async createUser(countryCode, phone, profile) {
     let user = await models.User.findOne({
-      countryCode: countryCode,
-      phone: phone,
+      countryCode,
+      phone,
     });
     if (user) {
-      return new Promise.reject(
+      return Promise.reject(
         new APIError(
           400,
           'Es gibt bereits einen Benutzer mit dieser Telefonnummer.'
@@ -20,16 +17,16 @@ export default class UserService {
       );
     }
     user = new models.User({
-      countryCode: countryCode,
-      phone: phone,
+      countryCode,
+      phone,
       preferences: new models.UserPreferences(),
-      profile: profile,
+      profile,
     });
     return user.save();
   }
 
   static async findUserByPhone(countryCode, phone) {
-    return models.User.findOne({ countryCode: countryCode, phone: phone });
+    return models.User.findOne({ countryCode, phone });
   }
 
   static async findUserById(userId) {
@@ -43,6 +40,7 @@ export default class UserService {
     }
     return false;
   }
+
   static async emailVerified(userId) {
     const user = await this.findUserById(userId);
     const access = await models.Access.findById(user.access);
@@ -55,9 +53,11 @@ export default class UserService {
   static async updateProfile(userId, forename, surname) {
     const user = await this.findUserById(userId);
     if (!user) {
-      return Promise.reject('Could not find user with given id.');
+      return Promise.reject(
+        new APIError(404, 'Es gibt keinen Benutzer mit der angegebenen ID.')
+      );
     }
-    user.profile = { forename: forename, surname: surname };
+    user.profile = { forename, surname };
     return user.save();
   }
 

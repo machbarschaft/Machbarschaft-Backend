@@ -1,5 +1,3 @@
-'use strict';
-
 import AddressService from '../services/address-service';
 import APIError from '../errors';
 
@@ -16,13 +14,10 @@ const createAddress = (req, res) => {
     })
     .then((addressResponse) => {
       res.status(200).json(addressResponse);
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 module.exports = {

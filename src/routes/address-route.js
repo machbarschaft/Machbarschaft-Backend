@@ -1,8 +1,6 @@
-'use strict';
-
 import Router from 'express';
 import AddressController from '../controllers/address-controller';
-import Validator from './../validator';
+import Validator from '../validator';
 
 const router = Router();
 

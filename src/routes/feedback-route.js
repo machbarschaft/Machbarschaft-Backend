@@ -1,9 +1,7 @@
-'use strict';
-
 import Router from 'express';
-import FeedbackController from './../controllers/feedback-controller';
-import Validator from '../validator';
 import passport from 'passport';
+import FeedbackController from '../controllers/feedback-controller';
+import Validator from '../validator';
 
 const router = Router();
 

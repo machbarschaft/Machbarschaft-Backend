@@ -1,5 +1,3 @@
-'use strict';
-
 export default class APIError {
   constructor(status, message) {
     this.message = message;
@@ -12,11 +10,8 @@ export default class APIError {
       return;
     }
     console.log(error);
-    res
-      .status(500)
-      .json({
-        errors: [{ Fehler: 'Es ist ein interner Fehler aufgetreten.' }],
-      });
-    return;
+    res.status(500).json({
+      errors: [{ Fehler: 'Es ist ein interner Fehler aufgetreten.' }],
+    });
   }
 }

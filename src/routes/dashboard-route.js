@@ -1,9 +1,7 @@
-'use strict';
-
 import Router from 'express';
-import Validator from './../validator';
 import passport from 'passport';
-import DashboardController from './../controllers/dashboard-controller';
+import Validator from '../validator';
+import DashboardController from '../controllers/dashboard-controller';
 
 const router = Router();
 

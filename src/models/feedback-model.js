@@ -34,7 +34,7 @@ const AudioFeedback = ProcessFeedback.discriminator(
   'AudioFeedback',
   {
     duration: {
-      type: Number, //in ms
+      type: Number, // in ms
       required: true,
     },
     url: {

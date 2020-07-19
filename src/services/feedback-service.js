@@ -1,5 +1,3 @@
-'use strict';
-
 import models from '../models/bundle';
 import APIError from '../errors';
 
@@ -10,7 +8,9 @@ export default class FeedbackService {
     isRequest,
     reqBody
   ) {
-    let owner, processId, requestOrResponse;
+    let owner;
+    let processId;
+    let requestOrResponse;
     if (isRequest === true) {
       const request = await models.Request.findOne({
         _id: requestOrResponseId,

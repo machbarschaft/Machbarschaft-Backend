@@ -1,18 +1,16 @@
-'use strict';
-
 import TwilioConfig from '../twilio_config';
 
 const twilio = require('twilio')(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
 );
-const VoiceResponse = require('twilio').twiml.VoiceResponse;
+const { VoiceResponse } = require('twilio').twiml;
 
 export default class TwilioService {
   static sendTan(sendSms, tan, user, countryCode, phone) {
     let tanString = tan.toString();
     while (tanString.length < 4) {
-      tanString = '0' + tanString;
+      tanString = `0${tanString}`;
     }
     const name =
       user.profile && user.profile.forename ? user.profile.forename : 'Gast';
@@ -25,38 +23,37 @@ export default class TwilioService {
           tanString +
           TwilioConfig.twilio.message_4,
         from: TwilioConfig.twilio.phone_number_sms,
-        to: '+' + countryCode.toString() + phone.toString(),
-      });
-    } else {
-      let phoneCallScript =
-        TwilioConfig.twilio.message_5 +
-        TwilioConfig.twilio.message_1 +
-        name +
-        TwilioConfig.twilio.message_2;
-      let code = '';
-      for (let i = 0; i < tanString.length; i++) {
-        code += tanString[i] + ', ';
-      }
-      phoneCallScript += code;
-      phoneCallScript += TwilioConfig.twilio.message_3;
-      phoneCallScript += code;
-      phoneCallScript += TwilioConfig.twilio.message_4;
-      const response = new VoiceResponse();
-      response.pause({
-        length: 3,
-      });
-      response.say(
-        {
-          voice: TwilioConfig.twilio.voice,
-          language: TwilioConfig.twilio.voice_language,
-        },
-        phoneCallScript
-      );
-      return twilio.calls.create({
-        twiml: response.toString(),
-        to: '+' + countryCode + phone.toString(),
-        from: TwilioConfig.twilio.phone_number_call,
+        to: `+${countryCode.toString()}${phone.toString()}`,
       });
     }
+    let phoneCallScript =
+      TwilioConfig.twilio.message_5 +
+      TwilioConfig.twilio.message_1 +
+      name +
+      TwilioConfig.twilio.message_2;
+    let code = '';
+    for (let i = 0; i < tanString.length; i++) {
+      code += `${tanString[i]}, `;
+    }
+    phoneCallScript += code;
+    phoneCallScript += TwilioConfig.twilio.message_3;
+    phoneCallScript += code;
+    phoneCallScript += TwilioConfig.twilio.message_4;
+    const response = new VoiceResponse();
+    response.pause({
+      length: 3,
+    });
+    response.say(
+      {
+        voice: TwilioConfig.twilio.voice,
+        language: TwilioConfig.twilio.voice_language,
+      },
+      phoneCallScript
+    );
+    return twilio.calls.create({
+      twiml: response.toString(),
+      to: `+${countryCode}${phone.toString()}`,
+      from: TwilioConfig.twilio.phone_number_call,
+    });
   }
 }

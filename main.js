@@ -1,15 +1,14 @@
-'use strict';
-
 import 'dotenv/config';
-import app from './src/app';
 import mongoose from 'mongoose';
+import app from './src/app';
+
 const http = require('http');
 
 app.set('port', process.env.PORT);
 
 const server = http.createServer(app);
 
-//Connect to the MongoDB database; then start the server
+// Connect to the MongoDB database; then start the server
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(async () => server.listen(process.env.PORT))
