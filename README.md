@@ -20,6 +20,7 @@ Just for the backend application:
 ```
 npm install
 ```
+Details of dependencies can be found in DEPENDENCIES.md, best practices in BEST-PRACTICES.md.
 
 **Set up your database**
 
