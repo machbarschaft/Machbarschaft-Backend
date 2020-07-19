@@ -23,7 +23,7 @@ npm install
 
 **Set up your database**
 
-' Start the database server
+Start the database server
 
 **Configure Twilio**
 
