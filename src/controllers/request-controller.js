@@ -73,7 +73,7 @@ const createLoggedOut = async (req, res) => {
   RequestService.createRequestWithPhone(req.query.countryCode, req.query.phone)
     .then((request) => {
       res.status(200).json({
-        request,
+        ...request,
         phoneVerifiedCookieMatch:
           req.cookies.machbarschaft_phoneVerified !== undefined &&
           req.cookies.machbarschaft_phoneVerified === req.query.phone,
