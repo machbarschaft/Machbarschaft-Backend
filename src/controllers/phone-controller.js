@@ -53,6 +53,8 @@ const confirmTan = async (req, res) => {
       let options = {
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
+        sameSite: true,
+        signed: true,
         secure: process.env.CORS_ENV === 'development' ? false : true,
       };
 
