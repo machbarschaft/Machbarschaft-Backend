@@ -46,7 +46,7 @@ const router = Router();
  *                  houseNumber: 15
  *                  zipCode: 85748
  *                  city: 'Garching bei München'
- *                  country: 'de'
+ *                  country: 'Germany'
  *       422:
  *          description: Internal server error
  *       500:
