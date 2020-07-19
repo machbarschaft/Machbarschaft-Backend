@@ -208,9 +208,9 @@ export default class AuthService {
       const to = access.email;
       const from = process.env.FROM_EMAIL;
       const link = `${process.env.URL}/email-bestaetigen?token=${token}`;
-      const html = `<p>Hallo ${user.profile.forename}, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Konto zu verifizieren. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
+      const html = `<p>Hallo ${user.profile.name}, <p><br><p>bitte klicken Sie auf folgenden <a href="${link}">Link</a>, um Ihr Konto zu verifizieren. Falls Sie diesen Link nicht aufrufen können, benutzen Sie folgende URL und kopieren Sie diese in den Browser:</p> 
                     <br><p><a href="${link}">${link}</a></p><br>
-                    <p>Deine Machbarschaft.</p>`;
+                    <p>Ihre Machbarschaft.</p>`;
 
       await this.sendEmail({ to, from, subject, html });
 
@@ -260,9 +260,9 @@ export default class AuthService {
       const to = access.email;
       const from = process.env.FROM_EMAIL;
       const link = `${process.env.URL}/auth/verifyResetPassword?token=${token}`;
-      const html = `<p>Hallo ${user.profile.forename}, <p><br><p>bitte klicke auf folgenden <a href="${link}">Link</a>, um dein Passwort zurückzusetzen. Falls du diesen Link nicht aufrufen kannst, benutze folgende URL und kopiere sie in deinen Browser:</p> 
+      const html = `<p>Hallo ${user.profile.name}, <p><br><p>bitte klicken Sie auf folgenden <a href="${link}">Link</a>, um Ihr Passwort zurückzusetzen. Falls Sie diesen Link nicht aufrufen können, benutzen Sie folgende URL und kopieren Sie diese in den Browser:</p> 
                   <br><p><a href="${link}">${link}</a></p><br>
-                  <p>Deine Machbarschaft.</p>`;
+                  <p>Ihre Machbarschaft.</p>`;
       await AuthService.sendEmail({ to, from, subject, html });
 
       return Promise.resolve();
