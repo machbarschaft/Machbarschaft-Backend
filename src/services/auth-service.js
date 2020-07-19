@@ -204,7 +204,7 @@ export default class AuthService {
           token = confirmEmail.token;
         }
       }
-      const subject = 'Bitte bestätige dein Konto';
+      const subject = 'Bitte bestätigen Sie Ihr Konto';
       const to = access.email;
       const from = process.env.FROM_EMAIL;
       const link = `${process.env.URL}/email-bestaetigen?token=${token}`;
