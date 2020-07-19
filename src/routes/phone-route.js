@@ -144,9 +144,9 @@ router.post(
  *                      secret: '0KNse9LOTX7luBy'
  *      responses:
  *        200:
- *         description: success
+ *         description: Status successfully set to called
  *        401:
- *         description: unauthorized
+ *         description: Unauthorized
  *        500:
  *         description: Internal server error
  */

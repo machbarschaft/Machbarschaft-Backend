@@ -240,6 +240,8 @@ router.get(
  *         description: Wrong token
  *       200:
  *         description: Verification successful
+ *       500:
+ *         description: Internal server error
  */
 
 router.get('/verify/:token', AuthController.verify);
@@ -292,6 +294,8 @@ router.get(
  *         description: Wrong token
  *       200:
  *         description: Verification successful
+ *       500:
+ *         description: Internal server error
  */
 
 router.get('/verifyResetPassword/:token', AuthController.verifyResetPassword);

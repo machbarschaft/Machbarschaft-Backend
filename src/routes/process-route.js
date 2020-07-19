@@ -65,6 +65,7 @@ router.put(
  *                  properties:
  *                    user:
  *                      type: objectid
+ *                      example: '5f14732f59ff6dm9386ee0d1'
  *                    status:
  *                      type: string
  *                      enum: [creating, open, accepted, done, replaced, aborted]
@@ -83,18 +84,17 @@ router.put(
  *                          type: boolean
  *                    privacyAgreed:
  *                      type: boolean
- *                    raw:
- *                      type: string
  *                    locale:
  *                      type: string
+ *                      example: 'de'
  *                    log:
  *                      type: array
- *                    items:
- *                      type: date
  *                    createdAt:
  *                      type: date
+ *                      example: '2020-07-01T17:40:18.481Z'
  *                    updatedAt:
  *                      type: date
+ *                      example: '2020-07-01T17:40:18.501Z'
  *       404:
  *         description: not found
  *       500:
