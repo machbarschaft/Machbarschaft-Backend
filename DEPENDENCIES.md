@@ -11,7 +11,7 @@
 * twilio - twilio connection
 * @sendgrid/mail - sendgrid mail send functions
 * @googlemaps/google-maps-services-js - Google Maps API
-* swagger-jsdoc - documentation for endpoints
+* swagger-jsdoc & jade - documentation for endpoints
 
 ### authentication:
 * JWT
