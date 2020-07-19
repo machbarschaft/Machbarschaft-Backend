@@ -1,8 +1,8 @@
 import Router from 'express';
-import AuthController from './../controllers/auth-controller';
 import passport from 'passport';
-import Validator from '../validator.js';
 import { body } from 'express-validator';
+import AuthController from '../controllers/auth-controller';
+import Validator from '../validator.js';
 
 const router = Router();
 

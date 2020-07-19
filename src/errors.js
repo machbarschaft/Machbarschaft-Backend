@@ -13,6 +13,5 @@ export default class APIError {
     res.status(500).json({
       errors: [{ Fehler: 'Es ist ein interner Fehler aufgetreten.' }],
     });
-    return;
   }
 }

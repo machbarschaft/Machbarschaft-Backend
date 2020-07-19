@@ -1,7 +1,6 @@
 import {
   AddressType,
   Client,
-  GeocodeRequest,
   GeocodingAddressComponentType,
 } from '@googlemaps/google-maps-services-js/dist';
 import APIError from '../errors';
@@ -15,12 +14,11 @@ const translateLocation = async (
   city,
   country
 ) => {
-  const address =
-    street + '-' + houseNumber + '-' + zipCode + '-' + city + '-' + country;
+  const address = `${street}-${houseNumber}-${zipCode}-${city}-${country}`;
   return client
     .geocode({
       params: {
-        address: address,
+        address,
         key: process.env.GOOGLE_API_KEY,
       },
     })
@@ -70,8 +68,8 @@ const translateLocation = async (
         city: city.long_name,
         country: country.long_name,
         geoLocation: {
-          latitude: latitude,
-          longitude: longitude,
+          latitude,
+          longitude,
         },
       });
     });

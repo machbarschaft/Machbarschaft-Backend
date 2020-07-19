@@ -22,10 +22,10 @@ export default class PhoneService {
     }
     const confirmPhone = new models.ConfirmPhone({
       user: userId,
-      countryCode: countryCode,
-      phone: phone,
-      tan: tan,
-      sms: sms,
+      countryCode,
+      phone,
+      tan,
+      sms,
     });
     user.confirmPhone.push(confirmPhone._id);
     user.save();
@@ -47,7 +47,7 @@ export default class PhoneService {
         }
         confirmPhone.successful = true;
         confirmPhone.save();
-        let user = await models.User.findOne({ _id: userId });
+        const user = await models.User.findOne({ _id: userId });
         user.phoneVerified = true;
         if (user.phone.toString() !== confirmPhone.phone.toString()) {
           user.phone = confirmPhone.phone;
@@ -59,9 +59,11 @@ export default class PhoneService {
   }
 
   static async getMostRecentConfirmPhone(userId) {
-    let sortedEntries = await models.ConfirmPhone.find({ user: userId }).sort({
-      createdAt: -1,
-    });
+    const sortedEntries = await models.ConfirmPhone.find({ user: userId }).sort(
+      {
+        createdAt: -1,
+      }
+    );
     if (!sortedEntries) {
       return Promise.reject(
         new APIError(404, 'Für diesen Benutzer wurde kein Tan erstellt.')

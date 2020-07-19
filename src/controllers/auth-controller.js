@@ -1,6 +1,6 @@
+import jwt from 'jsonwebtoken';
 import AuthService from '../services/auth-service';
 import JWTConfig from '../config/jwt-config';
-import jwt from 'jsonwebtoken';
 import UserService from '../services/user-service';
 import APIError from '../errors';
 
@@ -15,13 +15,10 @@ const register = async (req, res) => {
   )
     .then(() => {
       res.status(201).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const login = async (req, res) => {
@@ -34,13 +31,10 @@ const login = async (req, res) => {
         JWTConfig.jwtCookie(JWTConfig.AuthenticationType.login)
       );
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const logout = async (req, res) => {
@@ -53,97 +47,76 @@ const logout = async (req, res) => {
         JWTConfig.jwtCookie(JWTConfig.AuthenticationType.logout)
       );
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const authenticate = async (req, res) => {
   AuthService.authenticate(req.user.uid)
     .then((result) => {
       res.status(200).json(result);
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const verify = async (req, res) => {
   AuthService.verify(req.params.token)
     .then((result) => {
       res.status(200).json(result);
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const resendEmail = async (req, res) => {
   AuthService.sendVerificationEmail(req.user.uid)
-    .then((result) => {
+    .then(() => {
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 // trigger email to generate token and send email with password reset link to user
 
 const sendResetPassword = async (req, res) => {
   AuthService.sendResetPasswordEmail(req.body.email)
-    .then((result) => {
+    .then(() => {
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 // change password itself
 
 const resetPassword = async (req, res) => {
   AuthService.resetPasswordInAccess(req.params.token, req.body.password)
-    .then((result) => {
+    .then(() => {
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 // verify if password reset token is correct
 
 const verifyResetPassword = async (req, res) => {
   AuthService.verifyPasswordToken(req.params.token)
-    .then((result) => {
+    .then(() => {
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const changePassword = async (req, res) => {
@@ -155,15 +128,12 @@ const changePassword = async (req, res) => {
         req.body.newPassword
       );
     })
-    .then((result) => {
+    .then(() => {
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 module.exports = {

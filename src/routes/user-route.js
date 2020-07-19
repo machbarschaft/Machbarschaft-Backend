@@ -1,7 +1,7 @@
 import Router from 'express';
-import UserController from './../controllers/user-controller';
-import Validator from './../validator';
 import passport from 'passport';
+import UserController from '../controllers/user-controller';
+import Validator from '../validator';
 
 const router = Router();
 

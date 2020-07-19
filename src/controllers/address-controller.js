@@ -14,13 +14,10 @@ const createAddress = (req, res) => {
     })
     .then((addressResponse) => {
       res.status(200).json(addressResponse);
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 module.exports = {

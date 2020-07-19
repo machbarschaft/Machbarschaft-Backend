@@ -17,13 +17,10 @@ const getRequest = async (req, res) => {
         );
       }
       res.status(200).json(request);
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const changeRequestToDone = async (req, res) => {
@@ -41,19 +38,15 @@ const changeRequestToDone = async (req, res) => {
         return Promise.reject(
           new APIError(400, 'Auftrag ist bereits abgeschlossen.')
         );
-      else {
-        RequestService.updateRequest(req.user.uid, request._id, {
-          status: 'done',
-        });
-        res.status(200).send();
-        return;
-      }
+
+      RequestService.updateRequest(req.user.uid, request._id, {
+        status: 'done',
+      });
+      res.status(200).send();
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const abortResponse = async (req, res) => {
@@ -64,15 +57,12 @@ const abortResponse = async (req, res) => {
         process.response[process.response.length - 1]
       );
     })
-    .then((response) => {
+    .then(() => {
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const abortRequest = async (req, res) => {
@@ -84,14 +74,11 @@ const abortRequest = async (req, res) => {
         'aborted'
       ).then(() => {
         res.status(200).send();
-        return;
       });
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const releaseRequest = async (req, res) => {
@@ -110,13 +97,10 @@ const releaseRequest = async (req, res) => {
         }
       );
       res.status(200).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const changeResponse = async (req, res) => {
@@ -149,29 +133,23 @@ const changeResponse = async (req, res) => {
         }
         ResponseService.updateResponse(response._id, status);
         res.status(200).send();
-        return;
       } else {
         return Promise.reject(new APIError(403, 'Aktion nicht erlaubt.'));
       }
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 const createResponse = async (req, res) => {
   ResponseService.createResponse(req.user.uid, req.params.processId)
     .then(() => {
       res.status(201).send();
-      return;
     })
     .catch((error) => {
       APIError.handleError(error, res);
-      return;
     });
-  return;
 };
 
 module.exports = {
