@@ -68,7 +68,7 @@ router.post(
 /**
  * @swagger
  * /phone/findNumber:
- *  get:
+ *  post:
  *      summary: Get number of help seeker.
  *      description: Twilio endpoint to get number of help seeker to redirect call at hotline.
  *      tags:
@@ -84,7 +84,7 @@ router.post(
  *                      secret:
  *                          type: String
  */
-router.get(
+router.post(
   '/findNumber',
   Validator.twilioValidationRules(),
   Validator.validate,
