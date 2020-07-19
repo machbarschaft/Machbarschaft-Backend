@@ -232,7 +232,7 @@ router.put(
  *         required: true
  *     responses:
  *       200:
- *         description: status change was successful
+ *         description: response creation was successful
  *       401:
  *         description: not authorized
  *       404:

@@ -24,6 +24,13 @@ const router = Router();
  *                          type: Number
  *                      tan:
  *                          type: Number
+ *      responses:
+ *        200:
+ *         description: confirmation successful
+ *        400:
+ *         description: TAN expired
+ *        500:
+ *         description: Internal server error
  */
 router.put(
   '/tan',
@@ -57,6 +64,13 @@ router.put(
  *                      countryCode: 49
  *                      phone: 8928901
  *                      sms: true
+ *      responses:
+ *        201:
+ *         description: TAN successfully created
+ *        404:
+ *         description: No user with given ID
+ *        500:
+ *         description: Internal server error
  */
 router.post(
   '/tan',
@@ -87,6 +101,13 @@ router.post(
  *                  example:
  *                      phone: '+498928901'
  *                      secret: '0KNse9LOTX7luBy'
+ *      responses:
+ *        200:
+ *         description: help seeker successfully found
+ *        401:
+ *         description: unauthorized
+ *        500:
+ *         description: Internal server error
  */
 router.post(
   '/findNumber',
@@ -120,6 +141,13 @@ router.post(
  *                      phone: '+498928901'
  *                      status: 'completed'
  *                      secret: '0KNse9LOTX7luBy'
+ *      responses:
+ *        200:
+ *         description: success
+ *        401:
+ *         description: unauthorized
+ *        500:
+ *         description: Internal server error
  */
 router.post(
   '/setCalled',

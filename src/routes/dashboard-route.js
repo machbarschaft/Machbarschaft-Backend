@@ -16,6 +16,29 @@ const router = Router();
  *     responses:
  *       200:
  *         description: returned active requests successfully
+ *         content:
+ *          application/json:
+ *              schema:
+ *                  type: address
+ *              example:
+ *                helpSeeker: []
+ *                helper:
+ *                  _id: '5f14732f59ff6da9386ee0d3'
+ *                  process: '5f14732f59ff6da9386ee0d4'
+ *                  status: 'accepted'
+ *                  urgency: 'today'
+ *                  extras:
+ *                    carNecessary: false
+ *                    prescriptionRequired: false
+ *                    _id: '5f14732f59ff6da9386ee0d5'
+ *                  address:
+ *                    _id: '5f14732f59ff6da9386ee0d6'
+ *                    street: 'Boltzmannstraße'
+ *                    zipCode: 85748
+ *                    city: 'Garching bei München'
+ *                    country: 'Germany'
+ *                  startedAt: '2020-07-19T17:26:23.269Z'
+ *                  name: 'Max Mustermann'
  *       401:
  *         description: not authorized
  *       500:
