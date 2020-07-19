@@ -143,7 +143,7 @@ const publishLoggedOut = async (req, res) => {
     return;
   }
 
-  UserService.findUserByPhone(req.body.countryCode, req.query.phone)
+  UserService.findUserByPhone(req.query.countryCode, req.query.phone)
     .then((user) => {
       if (!user) {
         return Promise.reject(
