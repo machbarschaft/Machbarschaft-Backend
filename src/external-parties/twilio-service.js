@@ -23,10 +23,7 @@ export default class TwilioService {
           tanString +
           TwilioConfig.twilio.message_4,
         from: TwilioConfig.twilio.phone_number_sms,
-<<<<<<< HEAD
         to: `+${countryCode.toString()}${phone.toString()}`,
-=======
-        to: '+' + countryCode.toString() + phone.toString(),
       });
     } else {
       let phoneCallScript =
@@ -54,7 +51,6 @@ export default class TwilioService {
         twiml: response.toString(),
         to: '+' + countryCode + phone.toString(),
         from: TwilioConfig.twilio.phone_number_call,
->>>>>>> master
       });
     }
     let phoneCallScript =
