@@ -1,5 +1,3 @@
-'use strict';
-
 import Router from 'express';
 import AuthController from './../controllers/auth-controller';
 import passport from 'passport';
@@ -53,7 +51,7 @@ const router = Router();
  *             errors:
  *               type: array
  *       500:
- *         description: internal server error
+ *         description: registration failed
  *       201:
  *         description: registration was successful
  */
@@ -99,7 +97,7 @@ router.post(
  *       500:
  *         description: authentication failed
  *       200:
- *         description: registration was successful
+ *         description: login was successful
  *         headers:
  *          Set-Cookie:
  *            schema:
@@ -122,7 +120,7 @@ router.put(
  * /auth/authenticate:
  *   get:
  *     summary: Authenticate user
- *     description: Identify user by by providing his jwt cookie
+ *     description: Identify user by providing his jwt cookie
  *     tags:
  *       - auth
  *     responses:
@@ -193,7 +191,7 @@ router.get(
  *            err:
  *            type: array
  *       200:
- *         description: registration was successful
+ *         description: logout was successful
  */
 router.put(
   '/logout',
@@ -315,6 +313,8 @@ router.get('/verifyResetPassword/:token', AuthController.verifyResetPassword);
  *               password:
  *                 type: string
  *     responses:
+ *       500:
+ *         description: Internal server error
  *       401:
  *         description: Wrong token
  *       200:

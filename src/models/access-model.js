@@ -1,5 +1,3 @@
-'use strict';
-
 import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 import Address from './address-model';

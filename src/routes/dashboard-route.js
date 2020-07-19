@@ -1,5 +1,3 @@
-'use strict';
-
 import Router from 'express';
 import Validator from './../validator';
 import passport from 'passport';

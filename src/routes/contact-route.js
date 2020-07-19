@@ -1,8 +1,6 @@
-'use strict';
-
 import Router from 'express';
 import Validator from './../validator';
-import ContactController from "../controllers/contact-controller";
+import ContactController from '../controllers/contact-controller';
 
 const router = Router();
 
@@ -28,19 +26,15 @@ const router = Router();
  *                              required: true
  *     responses:
  *       200:
- *         description: Successfully create contact enquiry.
- *         content:
- *          application/json:
- *              schema:
- *                  type: contact
+ *         description: Successfully created contact enquiry.
  *       500:
  *          description: Internal server error
  */
 router.post(
-    '/',
-    Validator.contactFormValidationRules(),
-    Validator.validate,
-    ContactController.createContact
+  '/',
+  Validator.contactFormValidationRules(),
+  Validator.validate,
+  ContactController.createContact
 );
 
 export default router;

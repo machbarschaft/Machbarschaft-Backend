@@ -1,5 +1,3 @@
-'use strict';
-
 import RequestService from '../services/request-service';
 import UserService from '../services/user-service';
 import APIError from '../errors';
@@ -57,7 +55,7 @@ const createAndPublishTwilio = async (req, res) => {
 };
 
 const createLoggedIn = async (req, res) => {
-  RequestService.createRequestWithUserId(req.user.uid)
+  RequestService.createRequestWithUserId(req.user.uid, true)
     .then((request) => {
       res.status(200).json(request);
       return;
@@ -70,13 +68,19 @@ const createLoggedIn = async (req, res) => {
 };
 
 const createLoggedOut = async (req, res) => {
-  RequestService.createRequestWithPhone(req.query.countryCode, req.query.phone)
+  req.query.phone = parseInt(req.query.phone, 10);
+  const verifyCookieProvided =
+    req.cookies.machbarschaft_phoneVerified !== undefined &&
+    req.cookies.machbarschaft_phoneVerified === req.query.phone.toString();
+  RequestService.createRequestWithPhone(
+    req.query.countryCode,
+    req.query.phone,
+    verifyCookieProvided
+  )
     .then((request) => {
       res.status(200).json({
         ...request,
-        phoneVerifiedCookieMatch:
-          req.cookies.machbarschaft_phoneVerified !== undefined &&
-          req.cookies.machbarschaft_phoneVerified === req.query.phone,
+        phoneVerifiedCookieMatch: verifyCookieProvided,
       });
       return;
     })
@@ -138,7 +142,8 @@ const publishLoggedIn = async (req, res) => {
 };
 
 const publishLoggedOut = async (req, res) => {
-  if (req.cookies.machbarschaft_phoneVerified !== req.query.phone) {
+  req.query.phone = parseInt(req.query.phone, 10);
+  if (req.cookies.machbarschaft_phoneVerified !== req.query.phone.toString()) {
     res.status(401).send('Die Telefonnummer ist nicht verifiziert.');
     return;
   }
@@ -160,6 +165,7 @@ const publishLoggedOut = async (req, res) => {
       return;
     })
     .catch((error) => {
+      console.log(error);
       APIError.handleError(error, res);
       return;
     });

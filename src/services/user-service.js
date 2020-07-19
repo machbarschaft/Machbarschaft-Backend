@@ -1,7 +1,4 @@
-'use strict';
-
 import models from '../models/bundle';
-import PhoneService from './phone-service';
 import AddressService from './address-service';
 import APIError from '../errors';
 

@@ -1,7 +1,5 @@
-'use strict';
-
 import models from '../models/bundle';
-import JWTConfig from '../jwt_config';
+import JWTConfig from '../config/jwt-config';
 import jwt from 'jsonwebtoken';
 import UserService from './user-service';
 import crypto from 'crypto';

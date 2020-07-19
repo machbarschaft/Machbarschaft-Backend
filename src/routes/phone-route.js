@@ -1,9 +1,6 @@
-'use strict';
-
 import Router from 'express';
 import PhoneController from '../controllers/phone-controller';
 import Validator from '../validator';
-import { body } from 'express-validator';
 
 const router = Router();
 
@@ -56,6 +53,10 @@ router.put(
  *                          type: Number
  *                      sms:
  *                          type: Boolean
+ *                  example:
+ *                      countryCode: 49
+ *                      phone: 8928901
+ *                      sms: true
  */
 router.post(
   '/tan',
@@ -83,6 +84,9 @@ router.post(
  *                          type: String
  *                      secret:
  *                          type: String
+ *                  example:
+ *                      phone: '+498928901'
+ *                      secret: '0KNse9LOTX7luBy'
  */
 router.post(
   '/findNumber',
@@ -109,8 +113,13 @@ router.post(
  *                          type: String
  *                      status:
  *                          type: String
+ *                          enum: [completed, busy, no-answer, failed]
  *                      secret:
  *                          type: String
+ *                  example:
+ *                      phone: '+498928901'
+ *                      status: 'completed'
+ *                      secret: '0KNse9LOTX7luBy'
  */
 router.post(
   '/setCalled',

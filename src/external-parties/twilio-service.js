@@ -1,6 +1,4 @@
-'use strict';
-
-import TwilioConfig from '../twilio_config';
+import TwilioConfig from '../config/twilio-config';
 
 const twilio = require('twilio')(
   process.env.TWILIO_ACCOUNT_SID,
@@ -29,10 +27,7 @@ export default class TwilioService {
       });
     } else {
       let phoneCallScript =
-        TwilioConfig.twilio.message_5 +
-        TwilioConfig.twilio.message_1 +
-        name +
-        TwilioConfig.twilio.message_2;
+        TwilioConfig.twilio.message_1 + name + TwilioConfig.twilio.message_2;
       let code = '';
       for (let i = 0; i < tanString.length; i++) {
         code += tanString[i] + ', ';
