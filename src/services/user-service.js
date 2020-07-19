@@ -105,7 +105,7 @@ export default class UserService {
     return {
       radius: user.preferences.radius,
       notifyNearbyRequests: user.preferences.notifyNearbyRequests,
-      useGps: user.preferences.notifyNearbyRequests,
+      useGps: user.preferences.useGps,
       staticPosition: user.preferences.staticPosition
         ? await AddressService.prepareAddressResponse(
             await models.Address.findById(user.preferences.staticPosition)
