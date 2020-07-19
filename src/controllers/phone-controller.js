@@ -78,20 +78,17 @@ const setCalled = async (req, res) => {
           return ResponseService.findActiveResponseByUserId(user._id);
         })
         .then((response) => {
-          return ResponseService.updateResponse(response._id, 'called').then(
-            () => {
-              res.status(200).send();
-              return;
-            }
-          );
+          return ResponseService.updateResponse(response._id, 'called');
         })
         .catch((error) => {
-          APIError.handleError(error, res);
+          //Twilio calls this endpoint whenever helper calls helpseeker
+          //Only on first call the status should be updated
+          //All other calls the status is intentionally not updated, but this is also not an error for twilio
+          console.log(error);
           return;
         });
-    } else {
-      res.status(200).send();
     }
+    res.status(200).send();
   } else {
     res.status(401).send('Unauthorized.');
   }
