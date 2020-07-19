@@ -1,7 +1,7 @@
 import Router from 'express';
-import ProcessController from './../controllers/process-controller';
-import Validator from '../validator';
 import passport from 'passport';
+import ProcessController from '../controllers/process-controller';
+import Validator from '../validator';
 
 const router = Router();
 

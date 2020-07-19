@@ -1,4 +1,5 @@
 import Router from 'express';
+import { body } from 'express-validator';
 import PhoneController from '../controllers/phone-controller';
 import Validator from '../validator';
 

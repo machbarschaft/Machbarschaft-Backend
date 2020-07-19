@@ -1,28 +1,28 @@
 import cors from 'cors';
 import helmet from 'helmet';
 import express from 'express';
-import routes from './routes/index';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import accessModel from './models/access-model';
 import JwtCookieComboStrategy from 'passport-jwt-cookiecombo';
+import accessModel from './models/access-model';
+import routes from './routes/index';
 import JWTConfig from './config/jwt-config';
 
 const LocalStrategy = require('passport-local').Strategy;
 
 const app = express();
 
-//all application-wide middlewares
-app.use(helmet()); //enforcing some security best practices, e.g. https connection, prevent clickjacking ..
+// all application-wide middlewares
+app.use(helmet()); // enforcing some security best practices, e.g. https connection, prevent clickjacking ..
 app.use(
   cors({
     origin: process.env.URL,
     credentials: true,
     optionsSuccessStatus: 200,
   })
-); //Cross-Origin Resource Sharing, restrict access between web applications
+); // Cross-Origin Resource Sharing, restrict access between web applications
 
 app.use(cookieParser(JWTConfig.jwtSecret()));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -50,7 +50,7 @@ passport.use(
   )
 );
 
-//all routes
+// all routes
 app.use('/', routes.docs);
 app.use('/request', routes.request);
 app.use('/auth', routes.auth);

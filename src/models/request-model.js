@@ -73,7 +73,7 @@ const requestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 requestSchema.virtual('name').get(function () {
-  return this.forename + ' ' + this.surname;
+  return `${this.forename} ${this.surname}`;
 });
 
 const RequestExtras = mongoose.model('RequestExtras', requestExtrasSchema);

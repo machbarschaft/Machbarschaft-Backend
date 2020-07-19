@@ -30,7 +30,7 @@ const userProfileSchema = new mongoose.Schema({
   },
 });
 userProfileSchema.virtual('name').get(function () {
-  return this.forename + ' ' + this.surname;
+  return `${this.forename} ${this.surname}`;
 });
 
 const userSchema = new mongoose.Schema({

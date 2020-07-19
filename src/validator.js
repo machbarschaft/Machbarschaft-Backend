@@ -10,6 +10,44 @@ const {
   query,
 } = require('express-validator');
 
+const nameValidationRules = (fieldName, optional = false) => {
+  if (optional === true) {
+    return [
+      check(
+        fieldName,
+        `Das Feld '${fieldName}' darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen.`
+      )
+        .optional()
+        .matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
+    ];
+  }
+  return [
+    check(
+      fieldName,
+      `Das Feld '${fieldName}' muss angegeben werden und darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen.`
+    ).matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
+  ];
+};
+
+const addressValidationRules = () => {
+  return [
+    body(
+      'houseNumber',
+      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein. Bitte lasse Adresszusätze ' +
+        'weg (z.B. nicht Hausnummer 3a sondern nur 3)'
+    )
+      .isNumeric()
+      .isLength({ max: 10 }),
+    body(
+      'zipCode',
+      'Es muss eine in Deutschland gültige Postleitzahl angegeben werden.'
+    ).isPostalCode('DE'),
+  ]
+    .concat(nameValidationRules('street'))
+    .concat(nameValidationRules('city'))
+    .concat(nameValidationRules('country'));
+};
+
 const userValidationRules = () => {
   return [
     // username must be an email
@@ -25,15 +63,11 @@ const userValidationRules = () => {
   ];
 };
 
-const requireUserIdOrPhoneNumber = () => {
-  return oneOf(phoneValidationRules().concat(idValidationRules('userId')));
-};
-
 const idValidationRules = (fieldName) => {
   return [
     check(
       fieldName,
-      "Die '" + fieldName + "' muss aus 24 Kleinbuchstaben und Zahlen bestehen."
+      `Die '${fieldName}' muss aus 24 Kleinbuchstaben und Zahlen bestehen.`
     ).isMongoId(),
   ];
 };
@@ -58,8 +92,12 @@ const phoneValidationRules = () => {
       'Die Telefonnummer muss eine positive Zahl zwischen 8 und 30 Ziffern sein.'
     )
       .isInt({ gt: 0 })
-      .isLength({ min: 8, max: 30 }), //isMobilePhone('de-DE'),
+      .isLength({ min: 8, max: 30 }), // isMobilePhone('de-DE'),
   ];
+};
+
+const requireUserIdOrPhoneNumber = () => {
+  return oneOf(phoneValidationRules().concat(idValidationRules('userId')));
 };
 
 const twilioValidationRules = () => {
@@ -76,13 +114,11 @@ const twilioRequestValidationRules = () => {
   return [
     body(
       'requestType',
-      'Der Auftragstyp darf nur folgende Werte haben: ' +
-        requestTypes.toString()
+      `Der Auftragstyp darf nur folgende Werte haben: ${requestTypes.toString()}`
     ).isIn(requestTypes),
     body(
       'urgency',
-      'Die Dringlichkeit kann nur folgende Werte haben: ' +
-        urgencyCategories.toString()
+      `Die Dringlichkeit kann nur folgende Werte haben: ${urgencyCategories.toString()}`
     ).isIn(urgencyCategories),
   ]
     .concat(addressValidationRules())
@@ -107,15 +143,13 @@ const requestValidationRules = () => {
   return [
     body(
       'requestType',
-      'Der Auftragstyp darf nur folgende Werte haben: ' +
-        requestTypes.toString()
+      `Der Auftragstyp darf nur folgende Werte haben: ${requestTypes.toString()}`
     )
       .optional()
       .isIn(requestTypes),
     body(
       'urgency',
-      'Die Dringlichkeit kann nur folgende Werte haben: ' +
-        urgencyCategories.toString()
+      `Die Dringlichkeit kann nur folgende Werte haben: ${urgencyCategories.toString()}`
     )
       .optional()
       .isIn(urgencyCategories),
@@ -135,48 +169,6 @@ const requestValidationRules = () => {
   ]
     .concat(nameValidationRules('forename', true))
     .concat(nameValidationRules('surname', true));
-};
-
-const addressValidationRules = () => {
-  return [
-    body(
-      'houseNumber',
-      'Die Hausnummer muss angegeben werden und darf maximal 10 Ziffern lang sein. Bitte lasse Adresszusätze ' +
-        'weg (z.B. nicht Hausnummer 3a sondern nur 3)'
-    )
-      .isNumeric()
-      .isLength({ max: 10 }),
-    body(
-      'zipCode',
-      'Es muss eine in Deutschland gültige Postleitzahl angegeben werden.'
-    ).isPostalCode('DE'),
-  ]
-    .concat(nameValidationRules('street'))
-    .concat(nameValidationRules('city'))
-    .concat(nameValidationRules('country'));
-};
-
-const nameValidationRules = (fieldName, optional = false) => {
-  if (optional === true) {
-    return [
-      check(
-        fieldName,
-        "Das Feld '" +
-          fieldName +
-          "' darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen."
-      )
-        .optional()
-        .matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
-    ];
-  }
-  return [
-    check(
-      fieldName,
-      "Das Feld '" +
-        fieldName +
-        "' muss angegeben werden und darf aus maximal drei Wörtern bestehen, je bis zu 60 Zeichen."
-    ).matches(/^([a-zA-Z\-\.\xC0-\uFFFF]{1,60}[ ]{0,1}){1,3}$/),
-  ];
 };
 
 const cookieValidationRules = (cookieName) => {

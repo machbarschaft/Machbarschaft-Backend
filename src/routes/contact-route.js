@@ -1,5 +1,5 @@
 import Router from 'express';
-import Validator from './../validator';
+import Validator from '../validator';
 import ContactController from '../controllers/contact-controller';
 
 const router = Router();
