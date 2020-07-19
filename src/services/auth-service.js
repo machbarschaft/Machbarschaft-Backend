@@ -100,6 +100,7 @@ export default class AuthService {
       return Promise.resolve({
         uid: access.user,
         email: access.email,
+        countryCode: user.countryCode,
         phone: user.phone,
         emailVerified: access.emailVerified,
         phoneVerified: user.phoneVerified,

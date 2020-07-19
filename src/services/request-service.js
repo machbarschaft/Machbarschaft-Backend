@@ -89,15 +89,10 @@ export default class RequestService {
     return request;
   }
 
-  static async createRequestWithPhone(countryCode, phone, skipSendTan = false) {
+  static async createRequestWithPhone(countryCode, phone) {
     let user = await UserService.findUserByPhone(countryCode, phone);
     if (!user) {
-      user = await UserService.createUser(
-        countryCode,
-        phone,
-        null,
-        skipSendTan
-      );
+      user = await UserService.createUser(countryCode, phone, null);
     }
 
     return this.createRequestWithUserId(user._id);
@@ -270,17 +265,15 @@ export default class RequestService {
       address: request.address,
       requestType: request.requestType,
       urgency: request.urgency,
+      extras: request.extras,
     });
-    newRequest.log = { open: Date.now() };
-    if (request.extras) {
-      newRequest.extras = request.extras;
-    }
+    newRequest.log.set('open', Date.now());
 
-    const process = await models.Process.findOne({ _id: request.process });
-    process.requests.push(newRequest._id);
-    process.save();
-
-    return newRequest.save();
+    return newRequest.save().then(async (request) => {
+      const process = await models.Process.findOne({ _id: request.process });
+      process.requests.push(request._id);
+      return process.save();
+    });
   }
 
   static async getOpenRequestsNearby(userId, currentLat, currentLng, radius) {
@@ -380,7 +373,7 @@ export default class RequestService {
     urgency,
     extras
   ) {
-    return this.createRequestWithPhone(countryCode, phone, true)
+    return this.createRequestWithPhone(countryCode, phone)
       .then((requestFiltered) => {
         return this.getRequest(requestFiltered._id);
       })
@@ -397,5 +390,35 @@ export default class RequestService {
         console.log(request);
         return request.save();
       });
+  }
+
+  static async updateStatus(userId, requestId, status) {
+    return this.getRequest(requestId).then((request) => {
+      if (request.user.toString() !== userId) {
+        return Promise.reject(
+          new APIError(401, 'Zugriff auf diesen Auftrag verweigert.')
+        );
+      }
+      if (status === 'abort' && request.status !== 'open') {
+        return Promise.reject(
+          new APIError(
+            403,
+            'Der Auftrag ist nicht offen. Keine Stornierung mehr möglich.'
+          )
+        );
+      }
+      if (request.log.get(status) !== undefined) {
+        return Promise.reject(
+          new APIError(
+            400,
+            'Jeder Status kann nur ein Mal durchlaufen werden. Dieser Auftrag hatte bereits den Status: ' +
+              status
+          )
+        );
+      }
+      request.status = status;
+      request.log.set(status, Date.now());
+      return request.save();
+    });
   }
 }

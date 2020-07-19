@@ -16,7 +16,7 @@ export default class ResponseService {
       );
     }
     response.status = status;
-    if (response.log.includes(status)) {
+    if (response.log.get(status) !== undefined) {
       return Promise.reject(new APIError(400, 'Ungültiger Status.'));
     }
     response.log.set(status, Date.now());
@@ -24,11 +24,11 @@ export default class ResponseService {
     return response.save();
   }
 
-  static async abortResponse(userId, responseId, requestId) {
+  static async abortResponse(userId, responseId) {
     const response = await models.Response.findById(responseId);
     if (!response) {
       return Promise.reject(
-        new APIError(404, 'Es gibt keinen Prozess mit der gegebenen ID.')
+        new APIError(404, 'Es gibt keine Auftragannahme mit der gegebenen ID.')
       );
     }
     if (response.user.toString() !== userId) {
@@ -43,16 +43,6 @@ export default class ResponseService {
     response.status = 'aborted';
     response.log.set(response.status, Date.now());
     response.save();
-    const request = await models.Request.findById(requestId);
-    if (!request) {
-      return Promise.reject(
-        new APIError(404, 'Es gibt keinen Auftrag mit der gegebenen ID.')
-      );
-    }
-    request.status = 'open';
-    request.log.set(request.status, Date.now());
-    request.save();
-    return response;
   }
 
   static async getResponse(responseId) {
@@ -118,6 +108,7 @@ export default class ResponseService {
       );
     }
     request.status = 'accepted';
+    request.log.set('accepted', Date.now());
 
     let response = new models.Response({
       status: 'accepted',

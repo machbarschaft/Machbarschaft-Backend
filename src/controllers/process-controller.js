@@ -15,7 +15,9 @@ const getRequest = async (req, res) => {
     })
     .then((request) => {
       if (!request) {
-        return Promise.reject(new Error('No request with given id.'));
+        return Promise.reject(
+          new APIError(404, 'Es gibt keinen Auftrag mit der gegebenen ID.')
+        );
       }
       res.status(200).json(request);
       return;
@@ -39,7 +41,9 @@ const changeRequestToDone = async (req, res) => {
     })
     .then((request) => {
       if (request.status === 'done')
-        return Promise.reject(new Error('Request is already done.'));
+        return Promise.reject(
+          new APIError(400, 'Auftrag ist bereits abgeschlossen.')
+        );
       else {
         RequestService.updateRequest(req.user.uid, request._id, {
           status: 'done',
@@ -60,8 +64,7 @@ const abortResponse = async (req, res) => {
     .then((process) => {
       return ResponseService.abortResponse(
         req.user.uid,
-        process.response[process.response.length - 1],
-        process.requests[process.requests.length - 1]
+        process.response[process.response.length - 1]
       );
     })
     .then((response) => {
@@ -78,27 +81,14 @@ const abortResponse = async (req, res) => {
 const abortRequest = async (req, res) => {
   ProcessService.getProcess(req.params.processId)
     .then((process) => {
-      if (!process.response.length) {
-        return RequestService.getRequest(
-          process.requests[process.requests.length - 1]
-        );
-      } else {
-        return Promise.reject(new Error('Not allowed.'));
-      }
-    })
-    .then((request) => {
-      if (
-        request.status.toString() === 'open' ||
-        request.status.toString() === 'creating'
-      ) {
-        RequestService.updateRequest(req.user.uid, request._id, {
-          status: 'aborted',
-        });
+      return RequestService.updateStatus(
+        req.user.uid,
+        process.requests[process.requests.length - 1],
+        'aborted'
+      ).then(() => {
         res.status(200).send();
         return;
-      } else {
-        return Promise.reject(new Error('Not allowed.'));
-      }
+      });
     })
     .catch((error) => {
       APIError.handleError(error, res);
@@ -133,8 +123,10 @@ const releaseRequest = async (req, res) => {
 };
 
 const changeResponse = async (req, res) => {
+  let process;
   ProcessService.getProcess(req.params.processId)
-    .then((process) => {
+    .then((result) => {
+      process = result;
       return ResponseService.getResponse(
         process.response[process.response.length - 1]
       );
@@ -145,12 +137,13 @@ const changeResponse = async (req, res) => {
         response.status !== 'done' &&
         response.status !== 'aborted'
       ) {
+        let status;
         if (response.status === 'accepted') {
-          let status = 'called';
+          status = 'called';
         } else if (response.status === 'called') {
-          let status = 'on-the-way';
+          status = 'on-the-way';
         } else if (response.status === 'on-the-way') {
-          let status = 'done';
+          status = 'done';
           if (!process.finishedAt) {
             ProcessService.updateProcess(process._id, {
               finishedAt: Date.now(),
@@ -161,7 +154,7 @@ const changeResponse = async (req, res) => {
         res.status(200).send();
         return;
       } else {
-        return Promise.reject(new Error('Not allowed.'));
+        return Promise.reject(new APIError(403, 'Aktion nicht erlaubt.'));
       }
     })
     .catch((error) => {

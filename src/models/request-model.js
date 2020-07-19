@@ -40,6 +40,10 @@ const requestSchema = new mongoose.Schema(
       enum: statusStages,
       default: statusStages[0],
     },
+    feedbackSubmitted: {
+      type: Boolean,
+      default: false,
+    },
     forename: String,
     surname: String,
     address: {

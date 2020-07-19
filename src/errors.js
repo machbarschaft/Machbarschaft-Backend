@@ -8,11 +8,15 @@ export default class APIError {
 
   static handleError(error, res) {
     if (error instanceof APIError) {
-      res.status(error.status).send(error.message);
+      res.status(error.status).json({ errors: [{ Fehler: error.message }] });
       return;
     }
     console.log(error);
-    res.status(500).send('Internal server error.');
+    res
+      .status(500)
+      .json({
+        errors: [{ Fehler: 'Es ist ein interner Fehler aufgetreten.' }],
+      });
     return;
   }
 }

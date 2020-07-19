@@ -78,6 +78,7 @@ export default class DashboardService {
         const helper = await UserService.findUserById(response.user);
         result['phoneHelper'] = helper.phone;
         result['name'] = helper.profile.name;
+        result['helperStatus'] = response.status;
       }
     }
     return result;
@@ -130,6 +131,9 @@ export default class DashboardService {
       urgency: request.urgency,
       requestType: request.requestType,
       extras: request.extras,
+      feedbackSubmitted: isHelper
+        ? response.feedbackSubmitted
+        : request.feedbackSubmitted,
       startedAt: isHelper ? response.createdAt : request.log.get('open'),
       finishedAt: isHelper
         ? response.log.get(response.status)
