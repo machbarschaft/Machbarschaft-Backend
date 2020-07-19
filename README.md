@@ -25,19 +25,47 @@ npm install
 
 ' Start the database server
 
+**Configure Twilio**
+
+See Twilio documentation in folder twilio. 
+
+**Configure Sendgrid**
+
+You need any email address. With SendGrid, you have to verify ownership of the email address by confirming an email or by connecting your domain to it. After successful verification, emails can be sent with SendGrid which improves the delivery rate.
+
 **Set the environment variables**
 
-Create a .env file with the following entries (the JWT secret is for test purposes and may be subject to changes):
+Create a .env file with the following entries:
 
 ```
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/machbarschaft
-JWT_SECRET=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAru//ki6E7T3jACIHGqwaV+gm5/ezGFUCqI7k/6Vdh7HvhOCGdL8hyEIUmOcwhYBgmkAFunuZSAq6wq8xk6QjwkHNya9nd+Nfv2/ynfqNgUNBOiYCoIVTTAYmee46tlvXBYrNYHDcPLe1PJTqL4ytgD+WmwE1oHkIZ6qDflHsh0/KnV/+0HZm6qLtW2uPaKqOfF/YitcSNBzlxrDSYBPEH4+FyWx+CGnyxldLhfiV986O6bnAHhOjX81/ASDyE4wsKRgziKR4gRReINblAeRjCwTVT2pCL623+JhrC1Of38U6aJ92zqKJxw5744YcZsSgiVse8O8wccjRsv+nRyMnZQIDAQAB
+# port to be used for the backend application. Default is 3000.
+PORT=
+
+# URL of the Frontend application to use the link in emails, for example for resetPassword or emailVerification.
+URL=
+
+# MongoDB connection. Format for remote instance for example mongodb+srv://dbUser:dbPasswort@dbUrl/dbName?retryWrites=true&w=majority, for local instances usually mongodb://localhost:27017/dbName
+MONGODB_URI=
+
+# Secret for JWT to sign the tokens for authentication. This can be for example a password or a public key.
+JWT_SECRET=
+
+# Account SID to use Twilio service
 TWILIO_ACCOUNT_SID=
+
+# Auth token to use Twilio service
 TWILIO_AUTH_TOKEN=
+
+# API Key to send emails using Sendgrid
 SENDGRID_API_KEY=
+
+# Email address configured in Sendgrid to send emails from
 FROM_EMAIL=
+
+# Own Twilio secret to make twilio endpoints only accessible for Twilio. Can be any password.
 TWILIO_SECRET=
+
+# Choose nodejs environment
 CORS_ENV=production|development
 ```
 
@@ -50,4 +78,4 @@ npm start
 ```
 **API Documentation**
 
-The documentation can be found on /docs.
+The documentation can be found on root /.
