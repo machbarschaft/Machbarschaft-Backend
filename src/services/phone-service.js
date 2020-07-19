@@ -1,5 +1,3 @@
-'use strict';
-
 import models from '../models/bundle';
 import UserService from './user-service';
 import TwilioService from '../external-parties/twilio-service';

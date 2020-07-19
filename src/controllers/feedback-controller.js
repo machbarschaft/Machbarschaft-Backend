@@ -1,5 +1,3 @@
-'use strict';
-
 import FeedbackService from '../services/feedback-service';
 import APIError from '../errors';
 

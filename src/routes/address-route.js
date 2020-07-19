@@ -1,5 +1,3 @@
-'use strict';
-
 import Router from 'express';
 import AddressController from '../controllers/address-controller';
 import Validator from './../validator';
@@ -42,6 +40,15 @@ const router = Router();
  *          application/json:
  *              schema:
  *                  type: address
+ *              example:
+ *                  _id: '5f14732f59ff6dm9386ee0d3'
+ *                  street: 'Boltzmannstraße'
+ *                  houseNumber: 15
+ *                  zipCode: 85748
+ *                  city: 'Garching bei München'
+ *                  country: 'de'
+ *       422:
+ *          description: Internal server error
  *       500:
  *          description: Internal server error
  */

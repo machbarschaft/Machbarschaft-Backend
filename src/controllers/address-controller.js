@@ -1,5 +1,3 @@
-'use strict';
-
 import AddressService from '../services/address-service';
 import APIError from '../errors';
 

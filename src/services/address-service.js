@@ -1,5 +1,3 @@
-'use strict';
-
 import models from '../models/bundle';
 import GoogleService from '../external-parties/google-service';
 

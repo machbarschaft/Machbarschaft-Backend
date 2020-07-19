@@ -1,5 +1,3 @@
-'use strict';
-
 import DashboardService from '../services/dashboard-service';
 import APIError from '../errors';
 

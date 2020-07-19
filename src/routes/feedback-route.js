@@ -1,5 +1,3 @@
-'use strict';
-
 import Router from 'express';
 import FeedbackController from './../controllers/feedback-controller';
 import Validator from '../validator';

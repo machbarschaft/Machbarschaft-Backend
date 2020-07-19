@@ -1,5 +1,3 @@
-'use strict';
-
 import RequestService from '../services/request-service';
 import UserService from '../services/user-service';
 import APIError from '../errors';

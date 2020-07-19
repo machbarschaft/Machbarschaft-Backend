@@ -1,9 +1,6 @@
-'use strict';
-
 import models from '../models/bundle';
 import ProcessService from './process-service';
 import RequestService from './request-service';
-import { response } from 'express';
 import APIError from '../errors';
 import UserService from './user-service';
 

@@ -1,9 +1,6 @@
-'use strict';
-
 import RequestService from '../services/request-service';
 import ProcessService from '../services/process-service';
 import ResponseService from '../services/response-service';
-import UserService from '../services/user-service';
 import APIError from '../errors';
 
 const getRequest = async (req, res) => {
