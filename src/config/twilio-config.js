@@ -9,9 +9,9 @@ const twilio = {
   phone_number_call: '+4940299960804',
   // text for SMS and phone verification
   message_1: 'Hallo ',
-  message_2: ', dein Code lautet: ',
+  message_2: ', Ihr Code lautet: ',
   message_3: '. Ich wiederhole: ',
-  message_4: '. Deine Machbarschaft',
+  message_4: '. Ihre Machbarschaft',
 };
 module.exports = {
   twilio,
