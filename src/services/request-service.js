@@ -8,12 +8,12 @@ import AddressService from './address-service';
 import APIError from '../errors';
 
 export default class RequestService {
-  static async createRequestWithUserId(userId) {
+  static async createRequestWithUserId(userId, authenticated) {
     let request = await models.Request.findOne({
       user: userId,
       status: statusStages[0],
     });
-    if (request) {
+    if (request && authenticated) {
       return {
         _id: request._id,
         forename: request.forename ? request.forename : '',
@@ -38,16 +38,32 @@ export default class RequestService {
     process.requests.push(request._id);
     process.save();
 
-    return this.prefillRequest(request);
+    return this.prefillRequest(request, authenticated);
   }
 
-  static async prefillRequest(request) {
-    const previousRequests = await models.Request.find({
-      user: request.user,
-    }).sort({
-      createdAt: -1,
-    });
-    if (!previousRequests.length) {
+  static async prefillRequest(request, authenticated) {
+    let previousRequests;
+    if (authenticated) {
+      previousRequests = await models.Request.find({
+        user: request.user,
+      }).sort({
+        createdAt: -1,
+      });
+    }
+
+    if (authenticated && previousRequests.length) {
+      request.forename = previousRequests[0].forename;
+      request.surname = previousRequests[0].surname;
+      request.address = previousRequests[0].address;
+      request.requestType = previousRequests[0].requestType;
+      request.urgency = previousRequests[0].urgency;
+      request.extras = previousRequests[0].extras;
+      await request.save();
+      request['_doc']['address'] = await AddressService.prepareAddressResponse(
+        await models.Address.findOne({ _id: request.address })
+      );
+      return Promise.resolve(request);
+    } else {
       await request.save();
       return Promise.resolve({
         _id: request._id,
@@ -64,18 +80,6 @@ export default class RequestService {
         urgency: '',
         extras: request.extras,
       });
-    } else {
-      request.forename = previousRequests[0].forename;
-      request.surname = previousRequests[0].surname;
-      request.address = previousRequests[0].address;
-      request.requestType = previousRequests[0].requestType;
-      request.urgency = previousRequests[0].urgency;
-      request.extras = previousRequests[0].extras;
-      await request.save();
-      request['_doc']['address'] = await AddressService.prepareAddressResponse(
-        await models.Address.findOne({ _id: request.address })
-      );
-      return Promise.resolve(request);
     }
   }
 
@@ -89,13 +93,13 @@ export default class RequestService {
     return request;
   }
 
-  static async createRequestWithPhone(countryCode, phone) {
+  static async createRequestWithPhone(countryCode, phone, authenticated) {
     let user = await UserService.findUserByPhone(countryCode, phone);
     if (!user) {
       user = await UserService.createUser(countryCode, phone, null);
     }
 
-    return this.createRequestWithUserId(user._id);
+    return this.createRequestWithUserId(user._id, authenticated);
   }
 
   static async updateRequest(userId, requestId, requestBody) {

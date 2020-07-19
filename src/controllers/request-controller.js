@@ -57,7 +57,7 @@ const createAndPublishTwilio = async (req, res) => {
 };
 
 const createLoggedIn = async (req, res) => {
-  RequestService.createRequestWithUserId(req.user.uid)
+  RequestService.createRequestWithUserId(req.user.uid, true)
     .then((request) => {
       res.status(200).json(request);
       return;
@@ -71,14 +71,18 @@ const createLoggedIn = async (req, res) => {
 
 const createLoggedOut = async (req, res) => {
   req.query.phone = parseInt(req.query.phone, 10);
-  RequestService.createRequestWithPhone(req.query.countryCode, req.query.phone)
+  const verifyCookieProvided =
+    req.cookies.machbarschaft_phoneVerified !== undefined &&
+    req.cookies.machbarschaft_phoneVerified === req.query.phone.toString();
+  RequestService.createRequestWithPhone(
+    req.query.countryCode,
+    req.query.phone,
+    verifyCookieProvided
+  )
     .then((request) => {
       res.status(200).json({
         ...request,
-        phoneVerifiedCookieMatch:
-          req.cookies.machbarschaft_phoneVerified !== undefined &&
-          req.cookies.machbarschaft_phoneVerified ===
-            req.query.phone.toString(),
+        phoneVerifiedCookieMatch: verifyCookieProvided,
       });
       return;
     })
