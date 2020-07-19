@@ -27,7 +27,7 @@ const router = Router();
  *                          type: Number
  *      responses:
  *        200:
- *         description: confirmation successful
+ *         description: Confirmation successful
  *        400:
  *         description: TAN expired
  *        500:
@@ -104,9 +104,9 @@ router.post(
  *                      secret: '0KNse9LOTX7luBy'
  *      responses:
  *        200:
- *         description: help seeker successfully found
+ *         description: Help seeker successfully found
  *        401:
- *         description: unauthorized
+ *         description: Unauthorized
  *        500:
  *         description: Internal server error
  */

@@ -24,9 +24,9 @@ const router = Router();
  *        required: true
  *     responses:
  *       201:
- *         description: Successfully save feedback.
+ *         description: Successfully saved feedback
  *       401:
- *          description: Unauthorized to give feedback for this request/response.
+ *          description: Unauthorized to give feedback for this request/response
  *       404:
  *          description: Request not found OR Response not found
  *       500:
@@ -59,7 +59,7 @@ router.post(
  *        required: true
  *     responses:
  *       200:
- *         description: Result if authenticated user submitted feedback for process.
+ *         description: Result if authenticated user submitted feedback for process
  *       500:
  *          description: Internal server error
  */

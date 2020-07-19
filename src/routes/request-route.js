@@ -10,7 +10,7 @@ const router = Router();
  * /request/twilio:
  *  post:
  *      summary: Twilio create and publish request
- *      description: Called by twilio to create and publish the request of a caller
+ *      description: Called by twilio to create and publish the request of a caller.
  *      tags:
  *          - request
  *          - twilio
@@ -79,9 +79,9 @@ const router = Router();
  *                      country: 'de'
  *      responses:
  *       201:
- *         description: Successfully created request.
+ *         description: Successfully created request
  *       500:
- *         description: Internal server error.
+ *         description: Internal server error
  */
 router.post(
   '/twilio',
@@ -110,7 +110,7 @@ router.post(
  *        required: true
  *     responses:
  *       200:
- *         description: Successfully created or loaded unpublished request.
+ *         description: Successfully created or loaded unpublished request
  *         schema:
  *           type: request
  *       500:
@@ -133,7 +133,7 @@ router.post(
  *       - request
  *     responses:
  *       200:
- *         description: Successfully created or loaded unpublished request.
+ *         description: Successfully created or loaded unpublished request
  *         schema:
  *           type: request
  *       500:
@@ -277,15 +277,15 @@ router.put(
  *                              required: false
  *     responses:
  *       200:
- *         description: Successfully updated request.
+ *         description: Successfully updated request
  *         schema:
  *           type: request
  *       400:
- *          description: Request is already published.
+ *          description: Request is already published
  *       401:
- *          description: Not your request.
+ *          description: Not your request
  *       404:
- *          description: No user with given phone number. OR No request with given id.
+ *          description: No user with given phone number. OR No request with given id
  *       500:
  *          description: Internal server error
  */
@@ -313,13 +313,13 @@ router.put(
  *        required: true
  *     responses:
  *       200:
- *         description: Successfully reopened the request.
+ *         description: Successfully reopened the request
  *       400:
- *          description: Request can only be reopened after giving feedback to this process and asking for contact. The request's' status must be "done".
+ *          description: Request can only be reopened after giving feedback to this process and asking for contact. The request's' status must be "done"
  *       401:
- *          description: Not your request.
+ *          description: Not your request
  *       404:
- *          description: No request with given id.
+ *          description: No request with given id
  *       500:
  *          description: Internal server error
  */
@@ -349,13 +349,13 @@ router.put(
  *        required: true
  *     responses:
  *       200:
- *         description: Successfully published the request.
+ *         description: Successfully published the request
  *       400:
- *          description: Request does not contain necessary information. OR Request has been published before.
+ *          description: Request does not contain necessary information. OR Request has been published before
  *       401:
- *          description: Not your request.
+ *          description: Not your request
  *       404:
- *          description: No request with given id.
+ *          description: No request with given id
  *       500:
  *          description: Internal server error
  */
@@ -393,13 +393,13 @@ router.put(
  *        required: true
  *     responses:
  *       200:
- *         description: Successfully published the request.
+ *         description: Successfully published the request
  *       400:
- *          description: Request does not contain necessary information. OR Request has been published before.
+ *          description: Request does not contain necessary information. OR Request has been published before
  *       401:
- *          description: Not your request.
+ *          description: Not your request
  *       404:
- *          description: No user with given phone number. OR No request with given id.
+ *          description: No user with given phone number. OR No request with given id
  *       500:
  *          description: Internal server error
  */
@@ -435,11 +435,11 @@ router.put(
  *        required: false
  *     responses:
  *       200:
- *         description: successfully returned open requests in area
+ *         description: Successfully returned open requests in area
  *       400:
- *         description: The user's location is not provided. Either set staticPosition in user-preferences or enable gps tracking.
+ *         description: The user's location is not provided. Either set staticPosition in user-preferences or enable GPS tracking
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       500:
  *         description: Internal server error
  */

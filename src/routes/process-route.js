@@ -10,7 +10,7 @@ const router = Router();
  * /process/{processId}/request/done:
  *   put:
  *     summary: Help seeker marks request as done
- *     description: Help seeker can mark a request as successfully done
+ *     description: Help seeker can mark a request as successfully done.
  *     tags:
  *       - process
  *       - request
@@ -20,13 +20,13 @@ const router = Router();
  *         required: true
  *     responses:
  *       200:
- *         description: status change was successful
+ *         description: Status change was successful
  *       400:
- *         description: request already done
+ *         description: Request already done
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */
@@ -47,7 +47,7 @@ router.put(
  * /process/{processId}/request/details:
  *   get:
  *     summary: Get details of request
- *     description: Get all information of a help request
+ *     description: Get all information of a help request.
  *     tags:
  *       - process
  *       - request
@@ -57,7 +57,7 @@ router.put(
  *         required: true
  *     responses:
  *       200:
- *         description: giving request details
+ *         description: Giving request details
  *         content:
  *            application/json:
  *               schema:
@@ -96,7 +96,7 @@ router.put(
  *                      type: date
  *                      example: '2020-07-01T17:40:18.501Z'
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */
@@ -117,7 +117,7 @@ router.get(
  * /process/{processId}/response/abort:
  *   put:
  *     summary: Helper aborts a response
- *     description: The response will be marked as aborted in its status
+ *     description: The response will be marked as aborted in its status.
  *     tags:
  *       - process
  *       - response
@@ -127,11 +127,11 @@ router.get(
  *         required: true
  *     responses:
  *       200:
- *         description: abortion was successful
+ *         description: Abortion was successful
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */
@@ -152,7 +152,7 @@ router.put(
  * /process/{processId}/request/abort:
  *   put:
  *     summary: Help seeker aborts a request
- *     description: The help request will be marked as aborted in its status
+ *     description: The help request will be marked as aborted in its status.
  *     tags:
  *       - process
  *       - request
@@ -162,11 +162,11 @@ router.put(
  *         required: true
  *     responses:
  *       200:
- *         description: abortion was successful
+ *         description: Abortion was successful
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */
@@ -187,7 +187,7 @@ router.put(
  * /process/{processId}/request/release:
  *   put:
  *     summary: Help seeker releases existing request
- *     description: The help request will be marked as open again, and the response as did-not-help
+ *     description: The help request will be marked as open again, and the response as did-not-help.
  *     tags:
  *       - process
  *       - request
@@ -197,11 +197,11 @@ router.put(
  *         required: true
  *     responses:
  *       200:
- *         description: release was successful
+ *         description: Release was successful
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */
@@ -222,7 +222,7 @@ router.put(
  * /process/{processId}/response:
  *   post:
  *     summary: Create a new response to request/process
- *     description: Helper can accept a help request
+ *     description: Helper can accept a help request.
  *     tags:
  *       - process
  *       - response
@@ -232,11 +232,11 @@ router.put(
  *         required: true
  *     responses:
  *       200:
- *         description: response creation was successful
+ *         description: Response creation was successful
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */
@@ -257,7 +257,7 @@ router.post(
  * /process/{processId}/response:
  *   put:
  *     summary: Respond to request/process
- *     description: Helper can change status of help request to accepted, called, on-the-way and done
+ *     description: Helper can change status of help request to accepted, called, on-the-way and done.
  *     tags:
  *       - process
  *       - response
@@ -267,11 +267,11 @@ router.post(
  *         required: true
  *     responses:
  *       200:
- *         description: status change was successful
+ *         description: Status change was successful
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */

@@ -52,7 +52,7 @@ router.put(
  * /user/preferences:
  *   get:
  *     summary: Get preferences
- *     description: Preferences includes position of user and radius in which the user wants to be notified
+ *     description: Preferences includes position of user and radius in which the user wants to be notified.
  *     tags:
  *       - user-preferences
  *     responses:
@@ -79,7 +79,7 @@ router.get(
  * /user/preferences:
  *   put:
  *     summary: Set preference of user
- *     description: Set the preferences of the user including position of user and radius in which the user wants to be notified
+ *     description: Set the preferences of the user including position of user and radius in which the user wants to be notified.
  *     tags:
  *       - user-preferences
  *     requestBody:

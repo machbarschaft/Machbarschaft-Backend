@@ -26,7 +26,7 @@ const router = Router();
  *                              required: true
  *     responses:
  *       200:
- *         description: Successfully created contact enquiry.
+ *         description: Successfully created contact enquiry
  *       500:
  *          description: Internal server error
  */

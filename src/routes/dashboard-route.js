@@ -64,9 +64,9 @@ router.get(
  *       - dashboard
  *     responses:
  *       200:
- *         description: returned finished requests successfully
+ *         description: Returned finished requests successfully
  *       401:
- *         description: not authorized
+ *         description: Not authorized
  *       500:
  *         description: Internal server error
  */

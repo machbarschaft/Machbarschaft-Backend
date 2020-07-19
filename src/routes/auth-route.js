@@ -11,7 +11,7 @@ const router = Router();
  * /auth/register:
  *   post:
  *     summary: Register user account
- *     description: Register user account with identifier phone, email and password after checking if user exists
+ *     description: Register user account with identifier phone, email and password after checking if user exists.
  *     tags:
  *       - auth
  *     requestBody:
@@ -37,23 +37,23 @@ const router = Router();
  *                      type: String
  *     responses:
  *       422:
- *         description: request is not valid
+ *         description: Request is not valid
  *         schema:
  *           type: object
  *           properties:
  *             errors:
  *               type: array
  *       401:
- *         description: error occured while registration, check if phone or email is already assigned to an account.
+ *         description: Error occured while registration, check if phone or email is already assigned to an account
  *         schema:
  *           type: object
  *           properties:
  *             errors:
  *               type: array
  *       500:
- *         description: registration failed
+ *         description: Registration failed
  *       201:
- *         description: registration was successful
+ *         description: Registration was successful
  */
 
 router.post(
@@ -71,7 +71,7 @@ router.post(
  * /auth/login:
  *   put:
  *     summary: Login user account
- *     description: Login user account with identifier email and password
+ *     description: Login user account with identifier email and password.
  *     tags:
  *       - auth
  *     requestBody:
@@ -86,18 +86,18 @@ router.post(
  *                 type: string
  *     responses:
  *       403:
- *         description: The phone number must be verified before logging in.
+ *         description: The phone number must be verified before logging in
  *       422:
- *         description: request is not valid
+ *         description: Request is not valid
  *         schema:
  *           type: object
  *           properties:
  *             errors:
  *               type: array
  *       500:
- *         description: authentication failed
+ *         description: Authentication failed
  *       200:
- *         description: login was successful
+ *         description: Login was successful
  *         headers:
  *          Set-Cookie:
  *            schema:
@@ -120,14 +120,14 @@ router.put(
  * /auth/authenticate:
  *   get:
  *     summary: Authenticate user
- *     description: Identify user by providing his jwt cookie
+ *     description: Identify user by providing his JWT cookie.
  *     tags:
  *       - auth
  *     responses:
  *       500:
- *         description: authentication failed
+ *         description: Authentication failed
  *       200:
- *         description: authentication was successful
+ *         description: Authentication was successful
  *         schema:
  *           type: object
  *           properties:
@@ -179,7 +179,7 @@ router.get(
  * /auth/logout:
  *   put:
  *     summary: Logout user
- *     description: Logout user by changing the cookie
+ *     description: Logout user by changing the cookie.
  *     tags:
  *       - auth
  *     responses:
@@ -191,7 +191,7 @@ router.get(
  *            err:
  *            type: array
  *       200:
- *         description: logout was successful
+ *         description: Logout was successful
  */
 router.put(
   '/logout',
@@ -208,7 +208,7 @@ router.put(
  * /auth/resendEmail:
  *   get:
  *     summary: Resend Email confirmation, change email address
- *     description: Trigger to resend email confirmation or change email address itself
+ *     description: Trigger to resend email confirmation or change email address itself.
  *     tags:
  *       - auth
  *     responses:
@@ -232,7 +232,7 @@ router.get(
  * /auth/verify/{token}:
  *   get:
  *     summary: Verify Email token
- *     description: Verify email token and set user to verified if true
+ *     description: Verify email token and set user to verified if true.
  *     tags:
  *       - auth
  *     responses:
@@ -251,7 +251,7 @@ router.get('/verify/:token', AuthController.verify);
  * /auth/sendResetPassword:
  *   get:
  *     summary: Send reset password email
- *     description: Send reset password email for user
+ *     description: Send reset password email for user.
  *     tags:
  *       - auth
  *     requestBody:
@@ -286,7 +286,7 @@ router.get(
  * /auth/verifyResetPassword/{token}:
  *   get:
  *     summary: Verify reset password token
- *     description: Verify if reset password token is correct
+ *     description: Verify if reset password token is correct.
  *     tags:
  *       - auth
  *     responses:
@@ -305,7 +305,7 @@ router.get('/verifyResetPassword/:token', AuthController.verifyResetPassword);
  * /auth/resetPassword/{token}:
  *   get:
  *     summary: Reset password
- *     description: Change to new password of user in backend
+ *     description: Change to new password of user in backend.
  *     tags:
  *       - auth
  *     requestBody:
@@ -342,7 +342,7 @@ router.get(
  * /auth/changePassword:
  *   get:
  *     summary: Change password
- *     description: Change to new password of user in backend
+ *     description: Change to new password of user in backend.
  *     tags:
  *       - auth
  *     requestBody:
@@ -357,11 +357,11 @@ router.get(
  *                 type: string
  *     responses:
  *       200:
- *         description: password change was successful
+ *         description: Password change was successful
  *       401:
- *         description: wrong password
+ *         description: Wrong password
  *       404:
- *         description: not found
+ *         description: Not found
  *       500:
  *         description: Internal server error
  */
