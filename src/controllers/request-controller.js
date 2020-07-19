@@ -70,13 +70,15 @@ const createLoggedIn = async (req, res) => {
 };
 
 const createLoggedOut = async (req, res) => {
+  req.query.phone = parseInt(req.query.phone, 10);
   RequestService.createRequestWithPhone(req.query.countryCode, req.query.phone)
     .then((request) => {
       res.status(200).json({
         ...request,
         phoneVerifiedCookieMatch:
           req.cookies.machbarschaft_phoneVerified !== undefined &&
-          req.cookies.machbarschaft_phoneVerified === req.query.phone,
+          req.cookies.machbarschaft_phoneVerified ===
+            req.query.phone.toString(),
       });
       return;
     })
@@ -138,7 +140,8 @@ const publishLoggedIn = async (req, res) => {
 };
 
 const publishLoggedOut = async (req, res) => {
-  if (req.cookies.machbarschaft_phoneVerified !== req.query.phone) {
+  req.query.phone = parseInt(req.query.phone, 10);
+  if (req.cookies.machbarschaft_phoneVerified !== req.query.phone.toString()) {
     res.status(401).send('Die Telefonnummer ist nicht verifiziert.');
     return;
   }
@@ -160,6 +163,7 @@ const publishLoggedOut = async (req, res) => {
       return;
     })
     .catch((error) => {
+      console.log(error);
       APIError.handleError(error, res);
       return;
     });
